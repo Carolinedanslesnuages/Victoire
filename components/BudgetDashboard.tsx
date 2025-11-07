@@ -13,6 +13,7 @@ import {
   getTransactionsForCurrentCycle,
 } from '../utils/storage';
 import { BudgetConfig, Transaction } from '../types';
+import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 
 interface BudgetDashboardProps {
   config: BudgetConfig;
@@ -153,13 +154,13 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
           <View style={styles.budgetSummary}>
             <View style={styles.budgetSummaryItem}>
               <Text style={styles.budgetSummaryLabel}>Dépensé</Text>
-              <Text style={[styles.budgetSummaryAmount, { color: '#FF3B30' }]}>
+              <Text style={[styles.budgetSummaryAmount, { color: colors.error }]}>
                 {formatCurrency(totalSpent)}
               </Text>
             </View>
             <View style={styles.budgetSummaryItem}>
               <Text style={styles.budgetSummaryLabel}>Restant</Text>
-              <Text style={[styles.budgetSummaryAmount, { color: '#4CAF50' }]}>
+              <Text style={[styles.budgetSummaryAmount, { color: colors.success }]}>
                 {formatCurrency(Math.max(0, resteAVivre - totalSpent))}
               </Text>
             </View>
@@ -203,7 +204,11 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
         </View>
 
         {/* Settings Button */}
-        <TouchableOpacity style={styles.configButton} onPress={onReconfigure}>
+        <TouchableOpacity
+          style={styles.configButton}
+          onPress={onReconfigure}
+          activeOpacity={0.7}
+        >
           <Text style={styles.configButtonText}>⚙️ Modifier la configuration</Text>
         </TouchableOpacity>
 
@@ -214,6 +219,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => setIsAddExpenseVisible(true)}
+        activeOpacity={0.7}
       >
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
@@ -231,109 +237,101 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
   },
   header: {
-    padding: 20,
+    padding: spacing.lg,
     paddingTop: 60,
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 4,
+    fontSize: typography.fontSize.h2,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textInverse,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    fontSize: 14,
-    color: '#fff',
-    opacity: 0.9,
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textInverse,
+    opacity: opacity.active,
   },
-  // Feature 2.1: Daily Budget Card
+  // Feature 2.1: Daily Budget Card - Flat design with minimal elevation
   dailyBudgetCard: {
-    backgroundColor: '#fff',
-    margin: 16,
-    marginBottom: 8,
-    padding: 24,
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    margin: spacing.md,
+    marginBottom: spacing.sm,
+    padding: spacing.xl,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
-    borderWidth: 3,
-    borderColor: '#4CAF50',
+    ...elevation.low,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.success,
   },
   dailyBudgetCardNegative: {
-    borderColor: '#FF3B30',
-    backgroundColor: '#FFF5F5',
+    borderLeftColor: colors.error,
+    backgroundColor: colors.surface,
   },
   dailyBudgetLabel: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 8,
+    fontSize: typography.fontSize.h4,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
   },
   dailyBudgetAmount: {
-    fontSize: 56,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginBottom: 8,
+    fontSize: typography.fontSize.h1,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.success,
+    marginBottom: spacing.sm,
   },
   dailyBudgetAmountNegative: {
-    color: '#FF3B30',
+    color: colors.error,
   },
   dailyBudgetWarning: {
-    fontSize: 16,
-    color: '#FF3B30',
-    fontWeight: '600',
-    marginBottom: 8,
+    fontSize: typography.fontSize.body,
+    color: colors.error,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing.sm,
   },
   dailyBudgetHint: {
-    fontSize: 14,
-    color: '#888',
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
-  // Feature 2.2: Monthly Health Card
+  // Feature 2.2: Monthly Health Card - Minimalist flat card
   monthlyHealthCard: {
-    backgroundColor: '#fff',
-    margin: 16,
-    marginTop: 8,
-    padding: 20,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: colors.surface,
+    margin: spacing.md,
+    marginTop: spacing.sm,
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    ...elevation.low,
   },
   cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
+    fontSize: typography.fontSize.h4,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
   },
   daysRemainingContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: spacing.lg,
   },
   daysRemainingNumber: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#007AFF',
-    marginRight: 8,
+    fontSize: typography.fontSize.h1,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
+    marginRight: spacing.sm,
   },
   daysRemainingLabel: {
-    fontSize: 18,
-    color: '#666',
+    fontSize: typography.fontSize.body,
+    color: colors.textSecondary,
   },
   ringChartContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 20,
+    marginVertical: spacing.lg,
     position: 'relative',
   },
   ringChartCenter: {
@@ -342,127 +340,119 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   ringChartPercentage: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: typography.fontSize.h2,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
   },
   ringChartLabel: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
   },
   budgetSummary: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 16,
-    paddingVertical: 16,
+    marginVertical: spacing.md,
+    paddingVertical: spacing.md,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.border,
   },
   budgetSummaryItem: {
     alignItems: 'center',
   },
   budgetSummaryLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
   },
   budgetSummaryAmount: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: typography.fontSize.h4,
+    fontWeight: typography.fontWeight.bold,
   },
   statusBadge: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 24,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.full,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   statusBadgeText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textInverse,
   },
-  // Transactions
+  // Transactions - Minimalist card
   transactionsCard: {
-    backgroundColor: '#fff',
-    margin: 16,
-    marginTop: 8,
-    padding: 20,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: colors.surface,
+    margin: spacing.md,
+    marginTop: spacing.sm,
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    ...elevation.low,
   },
   noTransactions: {
-    fontSize: 14,
-    color: '#999',
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
     textAlign: 'center',
-    paddingVertical: 20,
+    paddingVertical: spacing.lg,
   },
   transactionItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: colors.borderLight,
   },
   transactionLeft: {
     flex: 1,
   },
   transactionDescription: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+    fontWeight: typography.fontWeight.medium,
     marginBottom: 2,
   },
   transactionDate: {
-    fontSize: 12,
-    color: '#999',
+    fontSize: typography.fontSize.caption,
+    color: colors.textSecondary,
   },
   transactionAmount: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FF3B30',
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.error,
   },
-  // Buttons
+  // Buttons - Flat design with opacity feedback
   addButton: {
     position: 'absolute',
-    bottom: 24,
-    right: 24,
+    bottom: spacing.lg,
+    right: spacing.lg,
     width: 64,
     height: 64,
-    borderRadius: 32,
-    backgroundColor: '#007AFF',
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    ...elevation.medium,
   },
   addButtonText: {
     fontSize: 36,
-    color: '#fff',
-    fontWeight: '300',
+    color: colors.textInverse,
+    fontWeight: typography.fontWeight.regular,
   },
   configButton: {
-    backgroundColor: '#fff',
-    margin: 16,
-    marginTop: 8,
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: colors.surface,
+    margin: spacing.md,
+    marginTop: spacing.sm,
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.border,
   },
   configButtonText: {
-    color: '#666',
-    fontSize: 16,
-    fontWeight: '500',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.medium,
   },
 });

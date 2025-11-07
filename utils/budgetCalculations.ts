@@ -3,6 +3,7 @@
  */
 
 import { BudgetCycle, BudgetStatus } from '../types';
+import { colors } from '../constants/theme';
 
 /**
  * Get the current budget cycle dates
@@ -125,7 +126,7 @@ export const calculateBudgetStatus = (
     return {
       type: 'ahead',
       label: 'En Avance',
-      color: '#4CAF50', // Green
+      color: colors.success,
     };
   }
   
@@ -134,7 +135,7 @@ export const calculateBudgetStatus = (
     return {
       type: 'behind',
       label: 'En Retard',
-      color: '#FF3B30', // Red
+      color: colors.error,
     };
   }
   
@@ -142,7 +143,7 @@ export const calculateBudgetStatus = (
   return {
     type: 'attention',
     label: 'Attention',
-    color: '#FF9500', // Orange
+    color: colors.warning,
   };
 };
 

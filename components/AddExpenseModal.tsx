@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { Transaction } from '../types';
+import { colors, typography, spacing, borderRadius } from '../constants/theme';
 
 interface AddExpenseModalProps {
   visible: boolean;
@@ -21,6 +22,7 @@ interface AddExpenseModalProps {
 export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddExpenseModalProps) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = () => {
     const expenseAmount = parseFloat(amount);
@@ -70,22 +72,34 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
           <View style={styles.formSection}>
             <Text style={styles.label}>Montant (€)</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                focusedField === 'amount' && styles.inputFocused,
+              ]}
               placeholder="Ex: 15.50"
+              placeholderTextColor={colors.textDisabled}
               keyboardType="decimal-pad"
               value={amount}
               onChangeText={setAmount}
               autoFocus
+              onFocus={() => setFocusedField('amount')}
+              onBlur={() => setFocusedField(null)}
             />
           </View>
 
           <View style={styles.formSection}>
             <Text style={styles.label}>Description</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                focusedField === 'description' && styles.inputFocused,
+              ]}
               placeholder="Ex: Courses, Restaurant..."
+              placeholderTextColor={colors.textDisabled}
               value={description}
               onChangeText={setDescription}
+              onFocus={() => setFocusedField('description')}
+              onBlur={() => setFocusedField(null)}
             />
           </View>
 
@@ -93,6 +107,7 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}
               onPress={handleCancel}
+              activeOpacity={0.7}
             >
               <Text style={styles.cancelButtonText}>Annuler</Text>
             </TouchableOpacity>
@@ -100,6 +115,7 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
             <TouchableOpacity
               style={[styles.button, styles.submitButton]}
               onPress={handleSubmit}
+              activeOpacity={0.7}
             >
               <Text style={styles.submitButtonText}>Ajouter</Text>
             </TouchableOpacity>
@@ -117,64 +133,69 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 24,
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: borderRadius.xl,
+    borderTopRightRadius: borderRadius.xl,
+    padding: spacing.lg,
     paddingBottom: 40,
   },
   modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 24,
+    fontSize: typography.fontSize.h3,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.lg,
     textAlign: 'center',
   },
   formSection: {
-    marginBottom: 20,
+    marginBottom: spacing.lg,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   input: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+  },
+  inputFocused: {
+    borderColor: colors.primary,
+    borderWidth: 2,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 16,
+    marginTop: spacing.md,
   },
   button: {
     flex: 1,
-    padding: 14,
-    borderRadius: 8,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
     alignItems: 'center',
     marginHorizontal: 6,
   },
   cancelButton: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.border,
   },
   cancelButtonText: {
-    color: '#666',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
   },
   submitButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
   },
   submitButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
   },
 });
