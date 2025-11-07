@@ -156,6 +156,16 @@ Le projet utilise **commitlint** et **husky** pour valider automatiquement les m
 
 Après avoir cloné le projet et exécuté `npm install`, husky sera automatiquement configuré grâce au script `prepare` dans `package.json`.
 
+### Configuration du Template de Commit (Optionnel)
+
+Pour faciliter l'écriture de vos messages de commit, vous pouvez configurer Git pour utiliser le template fourni :
+
+```bash
+git config commit.template .gitmessage
+```
+
+Maintenant, quand vous faites `git commit`, le template s'affichera automatiquement dans votre éditeur.
+
 ### Test Local
 
 Pour tester si votre message de commit est valide avant de commiter :
