@@ -5,6 +5,7 @@ import ConfigWizard from './components/ConfigWizard';
 import BudgetDashboard from './components/BudgetDashboard';
 import { saveBudgetConfig, loadBudgetConfig } from './utils/storage';
 import { BudgetConfig } from './types';
+import { colors } from './constants/theme';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +35,7 @@ export default function App() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -57,6 +58,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
   },
 });

@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { BudgetConfig } from '../types';
+import { colors, typography, spacing, borderRadius } from '../constants/theme';
 
 interface ConfigWizardProps {
   onComplete: (config: BudgetConfig) => void;
@@ -21,6 +22,7 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
   const [fixedCharges, setFixedCharges] = useState('');
   const [savingsGoal, setSavingsGoal] = useState('');
   const [cycleStartDay, setCycleStartDay] = useState('');
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = () => {
     // Validation
@@ -73,33 +75,51 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
         <View style={styles.formSection}>
           <Text style={styles.label}>Revenus mensuels nets (€)</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              focusedField === 'income' && styles.inputFocused,
+            ]}
             placeholder="Ex: 2500"
+            placeholderTextColor={colors.textDisabled}
             keyboardType="decimal-pad"
             value={monthlyIncome}
             onChangeText={setMonthlyIncome}
+            onFocus={() => setFocusedField('income')}
+            onBlur={() => setFocusedField(null)}
           />
         </View>
 
         <View style={styles.formSection}>
           <Text style={styles.label}>Charges fixes totales (€)</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              focusedField === 'charges' && styles.inputFocused,
+            ]}
             placeholder="Ex: 1200"
+            placeholderTextColor={colors.textDisabled}
             keyboardType="decimal-pad"
             value={fixedCharges}
             onChangeText={setFixedCharges}
+            onFocus={() => setFocusedField('charges')}
+            onBlur={() => setFocusedField(null)}
           />
         </View>
 
         <View style={styles.formSection}>
           <Text style={styles.label}>Objectif d'épargne (€)</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              focusedField === 'savings' && styles.inputFocused,
+            ]}
             placeholder="Ex: 300"
+            placeholderTextColor={colors.textDisabled}
             keyboardType="decimal-pad"
             value={savingsGoal}
             onChangeText={setSavingsGoal}
+            onFocus={() => setFocusedField('savings')}
+            onBlur={() => setFocusedField(null)}
           />
         </View>
 
@@ -111,16 +131,26 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
             Le jour du mois où vous recevez votre salaire
           </Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              focusedField === 'cycle' && styles.inputFocused,
+            ]}
             placeholder="Ex: 5"
+            placeholderTextColor={colors.textDisabled}
             keyboardType="number-pad"
             value={cycleStartDay}
             onChangeText={setCycleStartDay}
             maxLength={2}
+            onFocus={() => setFocusedField('cycle')}
+            onBlur={() => setFocusedField(null)}
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSubmit}
+          activeOpacity={0.7}
+        >
           <Text style={styles.buttonText}>Enregistrer</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -131,59 +161,64 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
   },
   scrollContent: {
-    padding: 20,
+    padding: spacing.lg,
     paddingTop: 60,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: typography.fontSize.h2,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 32,
+    fontSize: typography.fontSize.body,
+    color: colors.textSecondary,
+    marginBottom: spacing.xl,
     textAlign: 'center',
   },
   formSection: {
-    marginBottom: 24,
+    marginBottom: spacing.lg,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   hint: {
-    fontSize: 13,
-    color: '#888',
-    marginBottom: 8,
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
     fontStyle: 'italic',
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+  },
+  inputFocused: {
+    borderColor: colors.primary,
+    borderWidth: 2,
   },
   button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    padding: 16,
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
     alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 32,
+    marginTop: spacing.md,
+    marginBottom: spacing.xl,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
   },
 });
