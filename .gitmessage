@@ -1,0 +1,26 @@
+# <type>(<scope>): <description courte>
+#
+# Types autorisés:
+#   feat:     Nouvelle fonctionnalité
+#   fix:      Correction de bug
+#   docs:     Modification de documentation
+#   style:    Formatage (sans changement de logique)
+#   refactor: Refactorisation du code
+#   perf:     Amélioration de performance
+#   test:     Ajout/modification de tests
+#   chore:    Tâches de maintenance
+#   ci:       Changements CI/CD
+#   build:    Changements du système de build
+#   revert:   Annulation d'un commit
+#
+# Scope (optionnel): auth, ui, api, navigation, etc.
+#
+# Breaking change: Ajouter ! après le type
+#   feat!: nouvelle API avec changements cassants
+#
+# Exemples:
+#   feat(auth): ajouter l'authentification Google
+#   fix(ui): corriger l'alignement du bouton
+#   docs: mettre à jour le README
+#
+# Voir CONTRIBUTING.md pour plus de détails
