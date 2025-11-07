@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
 import BudgetRing from './BudgetRing';
 import AddExpenseModal from './AddExpenseModal';
 import {
@@ -11,6 +11,7 @@ import {
 import {
   saveTransaction,
   getTransactionsForCurrentCycle,
+  deleteTransaction,
 } from '../utils/storage';
 import { BudgetConfig, Transaction } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
@@ -48,6 +49,41 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     }
   };
 
+  const handleDeleteExpense = (transaction: Transaction) => {
+    Alert.alert(
+      i18n.t('dashboard.deleteExpense.title'),
+      i18n.t('dashboard.deleteExpense.message', { 
+        amount: formatCurrency(transaction.amount), 
+        description: transaction.description 
+      }),
+      [
+        {
+          text: i18n.t('dashboard.deleteExpense.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: i18n.t('dashboard.deleteExpense.confirm'),
+          style: 'destructive',
+          onPress: async () => {
+            const success = await deleteTransaction(transaction.id);
+            if (success) {
+              await loadTransactions();
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const formatCurrency = (amount: number) => {
+    // Get current locale from i18n, default to 'fr-FR'
+    const locale = i18n.locale.startsWith('en') ? 'en-US' : 'fr-FR';
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount);
+  };
+
   // Calculate values
   const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
   const resteAVivre = config.monthlyIncome - config.fixedCharges - config.savingsGoal;
@@ -72,15 +108,6 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     config.savingsGoal,
     totalSpent
   );
-
-  const formatCurrency = (amount: number) => {
-    // Get current locale from i18n, default to 'fr-FR'
-    const locale = i18n.locale.startsWith('en') ? 'en-US' : 'fr-FR';
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount);
-  };
 
   const isDailyBudgetNegative = dailyBudget < 0;
 
@@ -188,7 +215,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
           </View>
         </View>
 
-        {/* Recent Transactions */}
+        {/* Feature 3.2.1: Transaction History - All transactions for current cycle */}
         <View style={styles.transactionsCard}>
           <Text style={styles.cardTitle}>{i18n.t('dashboard.transactions.title')}</Text>
           {transactions.length === 0 ? (
@@ -196,19 +223,33 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
               {i18n.t('dashboard.transactions.noTransactions')}
             </Text>
           ) : (
-            transactions.slice(-5).reverse().map((transaction) => (
+            transactions.slice().reverse().map((transaction) => (
               <View key={transaction.id} style={styles.transactionItem}>
                 <View style={styles.transactionLeft}>
                   <Text style={styles.transactionDescription}>
                     {transaction.description}
                   </Text>
+                  {transaction.category && (
+                    <Text style={styles.transactionCategory}>
+                      {transaction.category}
+                    </Text>
+                  )}
                   <Text style={styles.transactionDate}>
                     {new Date(transaction.date).toLocaleDateString(i18n.locale)}
                   </Text>
                 </View>
-                <Text style={styles.transactionAmount}>
-                  -{formatCurrency(transaction.amount)}
-                </Text>
+                <View style={styles.transactionRight}>
+                  <Text style={styles.transactionAmount}>
+                    -{formatCurrency(transaction.amount)}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => handleDeleteExpense(transaction)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.deleteButtonText}>🗑️</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             ))
           )}
@@ -424,14 +465,32 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
     marginBottom: 2,
   },
+  transactionCategory: {
+    fontSize: typography.fontSize.caption,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium,
+    marginBottom: 2,
+  },
   transactionDate: {
     fontSize: typography.fontSize.caption,
     color: colors.textSecondary,
+  },
+  transactionRight: {
+    alignItems: 'flex-end',
+    marginLeft: spacing.sm,
   },
   transactionAmount: {
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.bold,
     color: colors.error,
+    marginBottom: spacing.xs,
+  },
+  deleteButton: {
+    padding: spacing.xs,
+    marginTop: spacing.xs,
+  },
+  deleteButtonText: {
+    fontSize: typography.fontSize.body,
   },
   // Buttons - Flat design with opacity feedback
   addButton: {

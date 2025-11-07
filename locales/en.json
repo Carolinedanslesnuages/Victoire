@@ -47,6 +47,12 @@
       "title": "Recent expenses",
       "noTransactions": "No expenses recorded this month"
     },
+    "deleteExpense": {
+      "title": "Delete expense",
+      "message": "Do you really want to delete this expense of {{amount}} for {{description}}?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
     "configButton": "⚙️ Change configuration"
   },
   "addExpense": {
@@ -55,6 +61,8 @@
     "amountPlaceholder": "E.g.: 15.50",
     "description": "Description",
     "descriptionPlaceholder": "E.g.: Groceries, Restaurant...",
+    "category": "Category (optional)",
+    "categoryPlaceholder": "E.g.: Food, Transport...",
     "cancelButton": "Cancel",
     "addButton": "Add",
     "errors": {
