@@ -2,12 +2,14 @@
  * Budget calculation utilities for the PACE app
  */
 
+import { BudgetCycle, BudgetStatus } from '../types';
+
 /**
  * Get the current budget cycle dates
- * @param {number} cycleStartDay - Day of month when cycle starts (1-31)
- * @returns {Object} Object with cycleStart and cycleEnd dates
+ * @param cycleStartDay - Day of month when cycle starts (1-31)
+ * @returns Object with cycleStart and cycleEnd dates
  */
-export const getCurrentCycle = (cycleStartDay) => {
+export const getCurrentCycle = (cycleStartDay: number): BudgetCycle => {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
@@ -29,10 +31,10 @@ export const getCurrentCycle = (cycleStartDay) => {
 
 /**
  * Calculate days remaining in current cycle
- * @param {number} cycleStartDay - Day of month when cycle starts (1-31)
- * @returns {number} Number of days remaining in cycle
+ * @param cycleStartDay - Day of month when cycle starts (1-31)
+ * @returns Number of days remaining in cycle
  */
-export const getDaysRemainingInCycle = (cycleStartDay) => {
+export const getDaysRemainingInCycle = (cycleStartDay: number): number => {
   const today = new Date();
   const { cycleEnd } = getCurrentCycle(cycleStartDay);
   
@@ -44,11 +46,10 @@ export const getDaysRemainingInCycle = (cycleStartDay) => {
 
 /**
  * Calculate days elapsed in current cycle
- * @param {number} cycleStartDay - Day of month when cycle starts (1-31)
- * @returns {number} Number of days elapsed in cycle
+ * @param cycleStartDay - Day of month when cycle starts (1-31)
+ * @returns Number of days elapsed in cycle
  */
-export const getDaysElapsedInCycle = (cycleStartDay) => {
-  const today = new Date();
+export const getDaysElapsedInCycle = (cycleStartDay: number): number => {
   const { cycleStart, cycleEnd } = getCurrentCycle(cycleStartDay);
   
   const totalDays = Math.ceil((cycleEnd.getTime() - cycleStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -59,24 +60,30 @@ export const getDaysElapsedInCycle = (cycleStartDay) => {
 
 /**
  * Calculate total days in current cycle
- * @param {number} cycleStartDay - Day of month when cycle starts (1-31)
- * @returns {number} Total number of days in cycle
+ * @param cycleStartDay - Day of month when cycle starts (1-31)
+ * @returns Total number of days in cycle
  */
-export const getTotalDaysInCycle = (cycleStartDay) => {
+export const getTotalDaysInCycle = (cycleStartDay: number): number => {
   const { cycleStart, cycleEnd } = getCurrentCycle(cycleStartDay);
   return Math.ceil((cycleEnd.getTime() - cycleStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 };
 
 /**
  * Calculate daily budget based on remaining budget and days
- * @param {number} monthlyIncome - Monthly income
- * @param {number} fixedCharges - Fixed charges
- * @param {number} savingsGoal - Savings goal
- * @param {number} totalSpent - Total amount spent in current cycle
- * @param {number} cycleStartDay - Day of month when cycle starts
- * @returns {number} Daily budget for today
+ * @param monthlyIncome - Monthly income
+ * @param fixedCharges - Fixed charges
+ * @param savingsGoal - Savings goal
+ * @param totalSpent - Total amount spent in current cycle
+ * @param cycleStartDay - Day of month when cycle starts
+ * @returns Daily budget for today
  */
-export const calculateDailyBudget = (monthlyIncome, fixedCharges, savingsGoal, totalSpent, cycleStartDay) => {
+export const calculateDailyBudget = (
+  monthlyIncome: number,
+  fixedCharges: number,
+  savingsGoal: number,
+  totalSpent: number,
+  cycleStartDay: number
+): number => {
   const resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
   const remainingBudget = resteAVivre - totalSpent;
   const daysRemaining = getDaysRemainingInCycle(cycleStartDay);
@@ -91,14 +98,20 @@ export const calculateDailyBudget = (monthlyIncome, fixedCharges, savingsGoal, t
 
 /**
  * Calculate budget status based on spending pace
- * @param {number} monthlyIncome - Monthly income
- * @param {number} fixedCharges - Fixed charges
- * @param {number} savingsGoal - Savings goal
- * @param {number} totalSpent - Total amount spent in current cycle
- * @param {number} cycleStartDay - Day of month when cycle starts
- * @returns {Object} Status object with type and label
+ * @param monthlyIncome - Monthly income
+ * @param fixedCharges - Fixed charges
+ * @param savingsGoal - Savings goal
+ * @param totalSpent - Total amount spent in current cycle
+ * @param cycleStartDay - Day of month when cycle starts
+ * @returns Status object with type and label
  */
-export const calculateBudgetStatus = (monthlyIncome, fixedCharges, savingsGoal, totalSpent, cycleStartDay) => {
+export const calculateBudgetStatus = (
+  monthlyIncome: number,
+  fixedCharges: number,
+  savingsGoal: number,
+  totalSpent: number,
+  cycleStartDay: number
+): BudgetStatus => {
   const resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
   const daysElapsed = getDaysElapsedInCycle(cycleStartDay);
   const totalDays = getTotalDaysInCycle(cycleStartDay);
@@ -135,13 +148,18 @@ export const calculateBudgetStatus = (monthlyIncome, fixedCharges, savingsGoal, 
 
 /**
  * Calculate percentage of budget spent
- * @param {number} monthlyIncome - Monthly income
- * @param {number} fixedCharges - Fixed charges
- * @param {number} savingsGoal - Savings goal
- * @param {number} totalSpent - Total amount spent in current cycle
- * @returns {number} Percentage of budget spent (0-100)
+ * @param monthlyIncome - Monthly income
+ * @param fixedCharges - Fixed charges
+ * @param savingsGoal - Savings goal
+ * @param totalSpent - Total amount spent in current cycle
+ * @returns Percentage of budget spent (0-100)
  */
-export const calculateSpentPercentage = (monthlyIncome, fixedCharges, savingsGoal, totalSpent) => {
+export const calculateSpentPercentage = (
+  monthlyIncome: number,
+  fixedCharges: number,
+  savingsGoal: number,
+  totalSpent: number
+): number => {
   const resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
   if (resteAVivre === 0) return 0;
   return Math.min(100, Math.max(0, (totalSpent / resteAVivre) * 100));

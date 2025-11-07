@@ -4,10 +4,11 @@ import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import ConfigWizard from './components/ConfigWizard';
 import BudgetDashboard from './components/BudgetDashboard';
 import { saveBudgetConfig, loadBudgetConfig } from './utils/storage';
+import { BudgetConfig } from './types';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const [budgetConfig, setBudgetConfig] = useState(null);
+  const [budgetConfig, setBudgetConfig] = useState<BudgetConfig | null>(null);
 
   useEffect(() => {
     loadConfig();
@@ -19,7 +20,7 @@ export default function App() {
     setIsLoading(false);
   };
 
-  const handleConfigComplete = async (config) => {
+  const handleConfigComplete = async (config: BudgetConfig) => {
     const success = await saveBudgetConfig(config);
     if (success) {
       setBudgetConfig(config);

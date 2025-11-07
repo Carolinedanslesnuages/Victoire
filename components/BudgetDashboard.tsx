@@ -12,9 +12,15 @@ import {
   saveTransaction,
   getTransactionsForCurrentCycle,
 } from '../utils/storage';
+import { BudgetConfig, Transaction } from '../types';
 
-export default function BudgetDashboard({ config, onReconfigure }) {
-  const [transactions, setTransactions] = useState([]);
+interface BudgetDashboardProps {
+  config: BudgetConfig;
+  onReconfigure: () => void;
+}
+
+export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboardProps) {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isAddExpenseVisible, setIsAddExpenseVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -33,7 +39,7 @@ export default function BudgetDashboard({ config, onReconfigure }) {
     setRefreshing(false);
   };
 
-  const handleAddExpense = async (expense) => {
+  const handleAddExpense = async (expense: Omit<Transaction, 'id'>) => {
     const success = await saveTransaction(expense);
     if (success) {
       await loadTransactions();
@@ -65,7 +71,7 @@ export default function BudgetDashboard({ config, onReconfigure }) {
     totalSpent
   );
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR',

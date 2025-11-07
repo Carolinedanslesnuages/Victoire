@@ -1,17 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BudgetConfig, Transaction } from '../types';
 
 const BUDGET_CONFIG_KEY = '@pace_budget_config';
 const TRANSACTIONS_KEY = '@pace_transactions';
 
 /**
  * Save budget configuration to local storage
- * @param {Object} config - Budget configuration object
- * @param {number} config.monthlyIncome - Monthly net income
- * @param {number} config.fixedCharges - Total fixed charges
- * @param {number} config.savingsGoal - Savings goal
- * @param {number} config.cycleStartDay - Day of month when budget cycle starts (1-31)
+ * @param config - Budget configuration object
+ * @returns Success status
  */
-export const saveBudgetConfig = async (config) => {
+export const saveBudgetConfig = async (config: BudgetConfig): Promise<boolean> => {
   try {
     const jsonValue = JSON.stringify(config);
     await AsyncStorage.setItem(BUDGET_CONFIG_KEY, jsonValue);
@@ -24,9 +22,9 @@ export const saveBudgetConfig = async (config) => {
 
 /**
  * Load budget configuration from local storage
- * @returns {Object|null} Budget configuration or null if not found
+ * @returns Budget configuration or null if not found
  */
-export const loadBudgetConfig = async () => {
+export const loadBudgetConfig = async (): Promise<BudgetConfig | null> => {
   try {
     const jsonValue = await AsyncStorage.getItem(BUDGET_CONFIG_KEY);
     return jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -38,8 +36,9 @@ export const loadBudgetConfig = async () => {
 
 /**
  * Clear budget configuration from local storage
+ * @returns Success status
  */
-export const clearBudgetConfig = async () => {
+export const clearBudgetConfig = async (): Promise<boolean> => {
   try {
     await AsyncStorage.removeItem(BUDGET_CONFIG_KEY);
     return true;
@@ -51,13 +50,12 @@ export const clearBudgetConfig = async () => {
 
 /**
  * Save a new transaction
- * @param {Object} transaction - Transaction object
- * @param {number} transaction.amount - Transaction amount
- * @param {string} transaction.description - Transaction description
- * @param {Date} transaction.date - Transaction date
- * @returns {boolean} Success status
+ * @param transaction - Transaction object (without id)
+ * @returns Success status
  */
-export const saveTransaction = async (transaction) => {
+export const saveTransaction = async (
+  transaction: Omit<Transaction, 'id'>
+): Promise<boolean> => {
   try {
     const transactions = await loadTransactions();
     const newTransaction = {
@@ -77,9 +75,9 @@ export const saveTransaction = async (transaction) => {
 
 /**
  * Load all transactions from local storage
- * @returns {Array} Array of transactions
+ * @returns Array of transactions
  */
-export const loadTransactions = async () => {
+export const loadTransactions = async (): Promise<Transaction[]> => {
   try {
     const jsonValue = await AsyncStorage.getItem(TRANSACTIONS_KEY);
     return jsonValue != null ? JSON.parse(jsonValue) : [];
@@ -91,10 +89,12 @@ export const loadTransactions = async () => {
 
 /**
  * Get transactions for current budget cycle
- * @param {number} cycleStartDay - Day of month when cycle starts
- * @returns {Array} Array of transactions in current cycle
+ * @param cycleStartDay - Day of month when cycle starts
+ * @returns Array of transactions in current cycle
  */
-export const getTransactionsForCurrentCycle = async (cycleStartDay) => {
+export const getTransactionsForCurrentCycle = async (
+  cycleStartDay: number
+): Promise<Transaction[]> => {
   try {
     const transactions = await loadTransactions();
     const today = new Date();
@@ -121,10 +121,10 @@ export const getTransactionsForCurrentCycle = async (cycleStartDay) => {
 
 /**
  * Delete a transaction by ID
- * @param {string} id - Transaction ID
- * @returns {boolean} Success status
+ * @param id - Transaction ID
+ * @returns Success status
  */
-export const deleteTransaction = async (id) => {
+export const deleteTransaction = async (id: string): Promise<boolean> => {
   try {
     const transactions = await loadTransactions();
     const filtered = transactions.filter(t => t.id !== id);
