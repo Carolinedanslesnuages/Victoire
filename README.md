@@ -199,12 +199,47 @@ npm install
 
 ---
 
+## Epic 31 : Automatisation des Releases
+
+Ce projet utilise **Release Please** pour automatiser la gestion des versions et des releases.
+
+### Comment Contribuer
+
+📝 **Utilisez les Conventional Commits** pour vos messages de commit :
+
+```bash
+feat: ajouter une nouvelle fonctionnalité
+fix: corriger un bug
+docs: mettre à jour la documentation
+chore: tâches de maintenance
+```
+
+Pour plus de détails, consultez le [Guide de Contribution](CONTRIBUTING.md).
+
+### Processus de Release Automatique
+
+1. Les commits suivant les Conventional Commits sont poussés sur `main`
+2. Release Please analyse les commits et crée automatiquement une "Release PR"
+3. La Release PR met à jour :
+   - La version dans `package.json`
+   - La version dans `app.json`
+   - Le `CHANGELOG.md`
+4. Une fois la Release PR mergée, un tag Git et une release GitHub sont créés automatiquement
+
+### Validation des Commits
+
+Le projet utilise **commitlint** et **husky** pour valider automatiquement vos messages de commit. Si votre message ne suit pas les conventions, le commit sera rejeté.
+
+Pour plus d'informations sur les conventions de commit et le processus de release, consultez [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
 ## Prochaines Étapes
 
 Maintenant que votre environnement est configuré et que l'application "Hello World" fonctionne, vous êtes prêt à :
 
 1. Personnaliser l'application en modifiant `App.js`
-2. Ajouter de nouvelles fonctionnalités
+2. Ajouter de nouvelles fonctionnalités en suivant les [conventions de commit](CONTRIBUTING.md)
 3. Explorer les composants React Native
 4. Intégrer des bibliothèques tierces
 
