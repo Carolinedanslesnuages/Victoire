@@ -1,0 +1,66 @@
+{
+  "configWizard": {
+    "title": "Budget Configuration",
+    "subtitle": "Define your budget framework to get started",
+    "monthlyIncome": "Monthly net income (€)",
+    "monthlyIncomePlaceholder": "E.g.: 2500",
+    "fixedCharges": "Total fixed charges (€)",
+    "fixedChargesPlaceholder": "E.g.: 1200",
+    "savingsGoal": "Savings goal (€)",
+    "savingsGoalPlaceholder": "E.g.: 300",
+    "cycleStartDay": "Budget cycle start day (1-31)",
+    "cycleStartDayHint": "The day of the month you receive your salary",
+    "cycleStartDayPlaceholder": "E.g.: 5",
+    "saveButton": "Save",
+    "errors": {
+      "title": "Error",
+      "invalidIncome": "Please enter a valid monthly income",
+      "invalidCharges": "Please enter a valid charges amount",
+      "invalidSavings": "Please enter a valid savings goal",
+      "invalidCycleDay": "Please enter a day between 1 and 31"
+    }
+  },
+  "dashboard": {
+    "title": "My PACE Budget",
+    "cycleSubtitle": "Cycle from the {{day}} of each month",
+    "dailyBudget": {
+      "label": "Daily Budget",
+      "hint": "What you can spend today",
+      "warning": "⚠️ You need to reduce your spending"
+    },
+    "monthlyHealth": {
+      "title": "Monthly Health",
+      "daysRemaining": "day",
+      "daysRemainingPlural": "days",
+      "remaining": "remaining",
+      "remainingPlural": "remaining",
+      "spent": "spent",
+      "spentLabel": "Spent",
+      "remainingLabel": "Remaining"
+    },
+    "budgetStatus": {
+      "ahead": "On Track",
+      "attention": "Attention",
+      "behind": "Behind"
+    },
+    "transactions": {
+      "title": "Recent expenses",
+      "noTransactions": "No expenses recorded this month"
+    },
+    "configButton": "⚙️ Change configuration"
+  },
+  "addExpense": {
+    "title": "Add expense",
+    "amount": "Amount (€)",
+    "amountPlaceholder": "E.g.: 15.50",
+    "description": "Description",
+    "descriptionPlaceholder": "E.g.: Groceries, Restaurant...",
+    "cancelButton": "Cancel",
+    "addButton": "Add",
+    "errors": {
+      "title": "Error",
+      "invalidAmount": "Please enter a valid amount",
+      "missingDescription": "Please enter a description"
+    }
+  }
+}

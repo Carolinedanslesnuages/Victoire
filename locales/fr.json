@@ -1,0 +1,66 @@
+{
+  "configWizard": {
+    "title": "Configuration Budgétaire",
+    "subtitle": "Définissez votre cadre budgétaire pour commencer",
+    "monthlyIncome": "Revenus mensuels nets (€)",
+    "monthlyIncomePlaceholder": "Ex: 2500",
+    "fixedCharges": "Charges fixes totales (€)",
+    "fixedChargesPlaceholder": "Ex: 1200",
+    "savingsGoal": "Objectif d'épargne (€)",
+    "savingsGoalPlaceholder": "Ex: 300",
+    "cycleStartDay": "Jour de début du cycle budgétaire (1-31)",
+    "cycleStartDayHint": "Le jour du mois où vous recevez votre salaire",
+    "cycleStartDayPlaceholder": "Ex: 5",
+    "saveButton": "Enregistrer",
+    "errors": {
+      "title": "Erreur",
+      "invalidIncome": "Veuillez saisir un revenu mensuel valide",
+      "invalidCharges": "Veuillez saisir un montant de charges valide",
+      "invalidSavings": "Veuillez saisir un objectif d'épargne valide",
+      "invalidCycleDay": "Veuillez saisir un jour entre 1 et 31"
+    }
+  },
+  "dashboard": {
+    "title": "Mon Budget PACE",
+    "cycleSubtitle": "Cycle du {{day}} de chaque mois",
+    "dailyBudget": {
+      "label": "Budget du Jour",
+      "hint": "Ce que vous pouvez dépenser aujourd'hui",
+      "warning": "⚠️ Vous devez réduire vos dépenses"
+    },
+    "monthlyHealth": {
+      "title": "Santé du Mois",
+      "daysRemaining": "jour",
+      "daysRemainingPlural": "jours",
+      "remaining": "restant",
+      "remainingPlural": "restants",
+      "spent": "dépensé",
+      "spentLabel": "Dépensé",
+      "remainingLabel": "Restant"
+    },
+    "budgetStatus": {
+      "ahead": "En Avance",
+      "attention": "Attention",
+      "behind": "En Retard"
+    },
+    "transactions": {
+      "title": "Dépenses récentes",
+      "noTransactions": "Aucune dépense enregistrée ce mois-ci"
+    },
+    "configButton": "⚙️ Modifier la configuration"
+  },
+  "addExpense": {
+    "title": "Ajouter une dépense",
+    "amount": "Montant (€)",
+    "amountPlaceholder": "Ex: 15.50",
+    "description": "Description",
+    "descriptionPlaceholder": "Ex: Courses, Restaurant...",
+    "cancelButton": "Annuler",
+    "addButton": "Ajouter",
+    "errors": {
+      "title": "Erreur",
+      "invalidAmount": "Veuillez saisir un montant valide",
+      "missingDescription": "Veuillez saisir une description"
+    }
+  }
+}
