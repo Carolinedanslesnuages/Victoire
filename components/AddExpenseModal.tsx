@@ -10,8 +10,15 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { Transaction } from '../types';
 
-export default function AddExpenseModal({ visible, onClose, onAddExpense }) {
+interface AddExpenseModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onAddExpense: (expense: Omit<Transaction, 'id'>) => void;
+}
+
+export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddExpenseModalProps) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
 

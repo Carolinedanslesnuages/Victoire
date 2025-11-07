@@ -10,8 +10,13 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { BudgetConfig } from '../types';
 
-export default function ConfigWizard({ onComplete }) {
+interface ConfigWizardProps {
+  onComplete: (config: BudgetConfig) => void;
+}
+
+export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
   const [monthlyIncome, setMonthlyIncome] = useState('');
   const [fixedCharges, setFixedCharges] = useState('');
   const [savingsGoal, setSavingsGoal] = useState('');

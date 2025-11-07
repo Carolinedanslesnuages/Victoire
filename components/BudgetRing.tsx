@@ -2,13 +2,16 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
+interface BudgetRingProps {
+  percentage?: number;
+  size?: number;
+  strokeWidth?: number;
+  color?: string;
+  backgroundColor?: string;
+}
+
 /**
  * Simple ring chart component to visualize budget consumption
- * @param {number} percentage - Percentage filled (0-100)
- * @param {number} size - Diameter of the ring
- * @param {number} strokeWidth - Width of the ring stroke
- * @param {string} color - Color of the filled portion
- * @param {string} backgroundColor - Color of the unfilled portion
  */
 export default function BudgetRing({ 
   percentage = 0, 
@@ -16,7 +19,7 @@ export default function BudgetRing({
   strokeWidth = 12,
   color = '#4CAF50',
   backgroundColor = '#E0E0E0'
-}) {
+}: BudgetRingProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (circumference * Math.min(percentage, 100)) / 100;
