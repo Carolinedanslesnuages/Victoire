@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { BudgetConfig } from '../types';
 import { colors, typography, spacing, borderRadius } from '../constants/theme';
+import i18n from '../utils/i18n';
 
 interface ConfigWizardProps {
   onComplete: (config: BudgetConfig) => void;
@@ -32,22 +33,22 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
     const startDay = parseInt(cycleStartDay);
 
     if (isNaN(income) || income <= 0) {
-      Alert.alert('Erreur', 'Veuillez saisir un revenu mensuel valide');
+      Alert.alert(i18n.t('configWizard.errors.title'), i18n.t('configWizard.errors.invalidIncome'));
       return;
     }
 
     if (isNaN(charges) || charges < 0) {
-      Alert.alert('Erreur', 'Veuillez saisir un montant de charges valide');
+      Alert.alert(i18n.t('configWizard.errors.title'), i18n.t('configWizard.errors.invalidCharges'));
       return;
     }
 
     if (isNaN(savings) || savings < 0) {
-      Alert.alert('Erreur', 'Veuillez saisir un objectif d\'épargne valide');
+      Alert.alert(i18n.t('configWizard.errors.title'), i18n.t('configWizard.errors.invalidSavings'));
       return;
     }
 
     if (isNaN(startDay) || startDay < 1 || startDay > 31) {
-      Alert.alert('Erreur', 'Veuillez saisir un jour entre 1 et 31');
+      Alert.alert(i18n.t('configWizard.errors.title'), i18n.t('configWizard.errors.invalidCycleDay'));
       return;
     }
 
@@ -67,19 +68,19 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Configuration Budgétaire</Text>
+        <Text style={styles.title}>{i18n.t('configWizard.title')}</Text>
         <Text style={styles.subtitle}>
-          Définissez votre cadre budgétaire pour commencer
+          {i18n.t('configWizard.subtitle')}
         </Text>
 
         <View style={styles.formSection}>
-          <Text style={styles.label}>Revenus mensuels nets (€)</Text>
+          <Text style={styles.label}>{i18n.t('configWizard.monthlyIncome')}</Text>
           <TextInput
             style={[
               styles.input,
               focusedField === 'income' && styles.inputFocused,
             ]}
-            placeholder="Ex: 2500"
+            placeholder={i18n.t('configWizard.monthlyIncomePlaceholder')}
             placeholderTextColor={colors.textDisabled}
             keyboardType="decimal-pad"
             value={monthlyIncome}
@@ -90,13 +91,13 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
         </View>
 
         <View style={styles.formSection}>
-          <Text style={styles.label}>Charges fixes totales (€)</Text>
+          <Text style={styles.label}>{i18n.t('configWizard.fixedCharges')}</Text>
           <TextInput
             style={[
               styles.input,
               focusedField === 'charges' && styles.inputFocused,
             ]}
-            placeholder="Ex: 1200"
+            placeholder={i18n.t('configWizard.fixedChargesPlaceholder')}
             placeholderTextColor={colors.textDisabled}
             keyboardType="decimal-pad"
             value={fixedCharges}
@@ -107,13 +108,13 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
         </View>
 
         <View style={styles.formSection}>
-          <Text style={styles.label}>Objectif d'épargne (€)</Text>
+          <Text style={styles.label}>{i18n.t('configWizard.savingsGoal')}</Text>
           <TextInput
             style={[
               styles.input,
               focusedField === 'savings' && styles.inputFocused,
             ]}
-            placeholder="Ex: 300"
+            placeholder={i18n.t('configWizard.savingsGoalPlaceholder')}
             placeholderTextColor={colors.textDisabled}
             keyboardType="decimal-pad"
             value={savingsGoal}
@@ -125,17 +126,17 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
 
         <View style={styles.formSection}>
           <Text style={styles.label}>
-            Jour de début du cycle budgétaire (1-31)
+            {i18n.t('configWizard.cycleStartDay')}
           </Text>
           <Text style={styles.hint}>
-            Le jour du mois où vous recevez votre salaire
+            {i18n.t('configWizard.cycleStartDayHint')}
           </Text>
           <TextInput
             style={[
               styles.input,
               focusedField === 'cycle' && styles.inputFocused,
             ]}
-            placeholder="Ex: 5"
+            placeholder={i18n.t('configWizard.cycleStartDayPlaceholder')}
             placeholderTextColor={colors.textDisabled}
             keyboardType="number-pad"
             value={cycleStartDay}
@@ -151,7 +152,7 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
           onPress={handleSubmit}
           activeOpacity={0.7}
         >
-          <Text style={styles.buttonText}>Enregistrer</Text>
+          <Text style={styles.buttonText}>{i18n.t('configWizard.saveButton')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

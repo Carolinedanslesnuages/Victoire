@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Transaction } from '../types';
 import { colors, typography, spacing, borderRadius } from '../constants/theme';
+import i18n from '../utils/i18n';
 
 interface AddExpenseModalProps {
   visible: boolean;
@@ -28,12 +29,12 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
     const expenseAmount = parseFloat(amount);
 
     if (isNaN(expenseAmount) || expenseAmount <= 0) {
-      Alert.alert('Erreur', 'Veuillez saisir un montant valide');
+      Alert.alert(i18n.t('addExpense.errors.title'), i18n.t('addExpense.errors.invalidAmount'));
       return;
     }
 
     if (!description.trim()) {
-      Alert.alert('Erreur', 'Veuillez saisir une description');
+      Alert.alert(i18n.t('addExpense.errors.title'), i18n.t('addExpense.errors.missingDescription'));
       return;
     }
 
@@ -67,16 +68,16 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
         style={styles.modalContainer}
       >
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Ajouter une dépense</Text>
+          <Text style={styles.modalTitle}>{i18n.t('addExpense.title')}</Text>
 
           <View style={styles.formSection}>
-            <Text style={styles.label}>Montant (€)</Text>
+            <Text style={styles.label}>{i18n.t('addExpense.amount')}</Text>
             <TextInput
               style={[
                 styles.input,
                 focusedField === 'amount' && styles.inputFocused,
               ]}
-              placeholder="Ex: 15.50"
+              placeholder={i18n.t('addExpense.amountPlaceholder')}
               placeholderTextColor={colors.textDisabled}
               keyboardType="decimal-pad"
               value={amount}
@@ -88,13 +89,13 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
           </View>
 
           <View style={styles.formSection}>
-            <Text style={styles.label}>Description</Text>
+            <Text style={styles.label}>{i18n.t('addExpense.description')}</Text>
             <TextInput
               style={[
                 styles.input,
                 focusedField === 'description' && styles.inputFocused,
               ]}
-              placeholder="Ex: Courses, Restaurant..."
+              placeholder={i18n.t('addExpense.descriptionPlaceholder')}
               placeholderTextColor={colors.textDisabled}
               value={description}
               onChangeText={setDescription}
@@ -109,7 +110,7 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
               onPress={handleCancel}
               activeOpacity={0.7}
             >
-              <Text style={styles.cancelButtonText}>Annuler</Text>
+              <Text style={styles.cancelButtonText}>{i18n.t('addExpense.cancelButton')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -117,7 +118,7 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
               onPress={handleSubmit}
               activeOpacity={0.7}
             >
-              <Text style={styles.submitButtonText}>Ajouter</Text>
+              <Text style={styles.submitButtonText}>{i18n.t('addExpense.addButton')}</Text>
             </TouchableOpacity>
           </View>
         </View>

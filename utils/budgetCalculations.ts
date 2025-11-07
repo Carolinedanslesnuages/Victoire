@@ -4,6 +4,7 @@
 
 import { BudgetCycle, BudgetStatus } from '../types';
 import { colors } from '../constants/theme';
+import i18n from './i18n';
 
 /**
  * Get the current budget cycle dates
@@ -125,7 +126,7 @@ export const calculateBudgetStatus = (
   if (budgetSpentPercent < timeElapsedPercent - 10) {
     return {
       type: 'ahead',
-      label: 'En Avance',
+      label: i18n.t('dashboard.budgetStatus.ahead'),
       color: colors.success,
     };
   }
@@ -134,7 +135,7 @@ export const calculateBudgetStatus = (
   if (budgetSpentPercent > timeElapsedPercent + 10) {
     return {
       type: 'behind',
-      label: 'En Retard',
+      label: i18n.t('dashboard.budgetStatus.behind'),
       color: colors.error,
     };
   }
@@ -142,7 +143,7 @@ export const calculateBudgetStatus = (
   // Otherwise, user is on track but needs attention
   return {
     type: 'attention',
-    label: 'Attention',
+    label: i18n.t('dashboard.budgetStatus.attention'),
     color: colors.warning,
   };
 };

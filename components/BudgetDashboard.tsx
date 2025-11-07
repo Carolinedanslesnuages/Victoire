@@ -14,6 +14,7 @@ import {
 } from '../utils/storage';
 import { BudgetConfig, Transaction } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
+import i18n from '../utils/i18n';
 
 interface BudgetDashboardProps {
   config: BudgetConfig;
@@ -73,13 +74,23 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
   );
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', {
+    // Get current locale from i18n, default to 'fr-FR'
+    const locale = i18n.locale.startsWith('en') ? 'en-US' : 'fr-FR';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'EUR',
     }).format(amount);
   };
 
   const isDailyBudgetNegative = dailyBudget < 0;
+
+  // Helper function for pluralization of "days remaining"
+  const getDaysRemainingText = (days: number) => {
+    if (days > 1) {
+      return `${days} ${i18n.t('dashboard.monthlyHealth.daysRemainingPlural')} ${i18n.t('dashboard.monthlyHealth.remainingPlural')}`;
+    }
+    return `${days} ${i18n.t('dashboard.monthlyHealth.daysRemaining')} ${i18n.t('dashboard.monthlyHealth.remaining')}`;
+  };
 
   return (
     <View style={styles.container}>
@@ -90,9 +101,9 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Mon Budget PACE</Text>
+          <Text style={styles.headerTitle}>{i18n.t('dashboard.title')}</Text>
           <Text style={styles.headerSubtitle}>
-            Cycle du {config.cycleStartDay} de chaque mois
+            {i18n.t('dashboard.cycleSubtitle', { day: config.cycleStartDay })}
           </Text>
         </View>
 
@@ -103,7 +114,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
             isDailyBudgetNegative && styles.dailyBudgetCardNegative,
           ]}
         >
-          <Text style={styles.dailyBudgetLabel}>Budget du Jour</Text>
+          <Text style={styles.dailyBudgetLabel}>{i18n.t('dashboard.dailyBudget.label')}</Text>
           <Text
             style={[
               styles.dailyBudgetAmount,
@@ -114,23 +125,23 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
           </Text>
           {isDailyBudgetNegative && (
             <Text style={styles.dailyBudgetWarning}>
-              ⚠️ Vous devez réduire vos dépenses
+              {i18n.t('dashboard.dailyBudget.warning')}
             </Text>
           )}
           <Text style={styles.dailyBudgetHint}>
-            Ce que vous pouvez dépenser aujourd'hui
+            {i18n.t('dashboard.dailyBudget.hint')}
           </Text>
         </View>
 
         {/* Feature 2.2: Monthly Health Indicator */}
         <View style={styles.monthlyHealthCard}>
-          <Text style={styles.cardTitle}>Santé du Mois</Text>
+          <Text style={styles.cardTitle}>{i18n.t('dashboard.monthlyHealth.title')}</Text>
 
           {/* Feature 2.2.1: Days Remaining */}
           <View style={styles.daysRemainingContainer}>
             <Text style={styles.daysRemainingNumber}>{daysRemaining}</Text>
             <Text style={styles.daysRemainingLabel}>
-              jour{daysRemaining > 1 ? 's' : ''} restant{daysRemaining > 1 ? 's' : ''}
+              {getDaysRemainingText(daysRemaining)}
             </Text>
           </View>
 
@@ -147,19 +158,19 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
               <Text style={styles.ringChartPercentage}>
                 {Math.round(spentPercentage)}%
               </Text>
-              <Text style={styles.ringChartLabel}>dépensé</Text>
+              <Text style={styles.ringChartLabel}>{i18n.t('dashboard.monthlyHealth.spent')}</Text>
             </View>
           </View>
 
           <View style={styles.budgetSummary}>
             <View style={styles.budgetSummaryItem}>
-              <Text style={styles.budgetSummaryLabel}>Dépensé</Text>
+              <Text style={styles.budgetSummaryLabel}>{i18n.t('dashboard.monthlyHealth.spentLabel')}</Text>
               <Text style={[styles.budgetSummaryAmount, { color: colors.error }]}>
                 {formatCurrency(totalSpent)}
               </Text>
             </View>
             <View style={styles.budgetSummaryItem}>
-              <Text style={styles.budgetSummaryLabel}>Restant</Text>
+              <Text style={styles.budgetSummaryLabel}>{i18n.t('dashboard.monthlyHealth.remainingLabel')}</Text>
               <Text style={[styles.budgetSummaryAmount, { color: colors.success }]}>
                 {formatCurrency(Math.max(0, resteAVivre - totalSpent))}
               </Text>
@@ -179,10 +190,10 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
 
         {/* Recent Transactions */}
         <View style={styles.transactionsCard}>
-          <Text style={styles.cardTitle}>Dépenses récentes</Text>
+          <Text style={styles.cardTitle}>{i18n.t('dashboard.transactions.title')}</Text>
           {transactions.length === 0 ? (
             <Text style={styles.noTransactions}>
-              Aucune dépense enregistrée ce mois-ci
+              {i18n.t('dashboard.transactions.noTransactions')}
             </Text>
           ) : (
             transactions.slice(-5).reverse().map((transaction) => (
@@ -192,7 +203,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
                     {transaction.description}
                   </Text>
                   <Text style={styles.transactionDate}>
-                    {new Date(transaction.date).toLocaleDateString('fr-FR')}
+                    {new Date(transaction.date).toLocaleDateString(i18n.locale)}
                   </Text>
                 </View>
                 <Text style={styles.transactionAmount}>
@@ -209,7 +220,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
           onPress={onReconfigure}
           activeOpacity={0.7}
         >
-          <Text style={styles.configButtonText}>⚙️ Modifier la configuration</Text>
+          <Text style={styles.configButtonText}>{i18n.t('dashboard.configButton')}</Text>
         </TouchableOpacity>
 
         <View style={{ height: 100 }} />
