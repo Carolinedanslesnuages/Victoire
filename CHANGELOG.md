@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.8.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.7.0...v1.8.0) (2025-11-08)
+
+
+### Features
+
+* add budget profiles management in settings ([c01f4d9](https://github.com/Carolinedanslesnuages/PACE/commit/c01f4d91c7496401b62cf389c5e04399ecf78ec2))
+* add multi-budget infrastructure and storage layer ([8032fe3](https://github.com/Carolinedanslesnuages/PACE/commit/8032fe3657b7ac95c49946e299accd7bcfd530e2))
+* implement multi-budget management (Personal & Household) ([4925564](https://github.com/Carolinedanslesnuages/PACE/commit/492556452f9520066932b2004e9e3e3e648e6c0c))
+
+
+### Bug Fixes
+
+* add missing styles for budget profiles section ([ffc85f9](https://github.com/Carolinedanslesnuages/PACE/commit/ffc85f9dc09e80b63775f234e561f3503a82c0b0))
+* correct theme constants and remove unused imports ([10c2bc7](https://github.com/Carolinedanslesnuages/PACE/commit/10c2bc7b1e95a04754611261b8162a2be48e3da8))
+
 ## [1.7.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.6.0...v1.7.0) (2025-11-08)
 
 
