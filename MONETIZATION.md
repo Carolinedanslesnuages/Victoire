@@ -143,6 +143,15 @@ To enable actual purchases, you need to:
 
 #### Manual Testing Checklist
 
+**Development Mode (with `__DEV__` = true):**
+- [x] App launches without errors
+- [x] Subscription context initializes
+- [x] Settings screen shows "Premium" status in development mode
+- [x] All premium features are accessible (unlimited categories, export, etc.)
+- [x] Console logs indicate development mode: "Running in DEVELOPMENT mode - Premium access granted for testing"
+- [x] All translations work in both French and English
+
+**Production Mode (without API keys configured):**
 - [ ] App launches without errors
 - [ ] Subscription context initializes
 - [ ] Settings screen shows "Free" status
@@ -154,8 +163,12 @@ To enable actual purchases, you need to:
 - [ ] "Restore Purchases" button is visible
 - [ ] Adding 4th category prompts upgrade for free users
 - [ ] Lock icon 🔒 appears on custom categories section for free users
-- [ ] Premium users can add unlimited categories
 - [ ] All translations work in both French and English
+
+**Production Mode (with RevenueCat configured):**
+- [ ] Premium users can add unlimited categories
+- [ ] Purchasing subscriptions works correctly
+- [ ] Restore purchases works correctly
 
 ## Usage Examples
 
@@ -248,10 +261,23 @@ async function tryPremiumFeature() {
 2. **"Restore Purchases" fails**: Check that user has active subscriptions in their account
 3. **Wrong pricing displayed**: Update prices in locale files and RevenueCat dashboard
 
-### Debug Mode
+### Development Mode
+
+**✅ NEW**: Premium features are automatically enabled in development mode (`__DEV__` flag) to allow testing without requiring actual subscriptions.
+
+When running the app in development mode:
+- All premium features are accessible
+- Console shows: `RevenueCat: Running in DEVELOPMENT mode - Premium access granted for testing`
+- Developers can test unlimited categories, export data, and other premium features
+- No need to configure RevenueCat API keys for development testing
+
+In production mode, the standard free/premium tier logic applies.
+
+### Debug Logs
 
 The current implementation uses console logs for debugging. Check the console for:
-- `RevenueCat: Would initialize in production with API keys`
+- `RevenueCat: Running in DEVELOPMENT mode - Premium access granted for testing` (development)
+- `RevenueCat: Would initialize in production with API keys` (production)
 - `Would purchase {plan} subscription in production`
 - `Would restore purchases in production`
 
