@@ -37,6 +37,12 @@
   "dashboard": {
     "title": "Mon Budget PACE",
     "cycleSubtitle": "Cycle du {{day}} de chaque mois",
+    "header": {
+      "defaultBudgetName": "Mon Budget PACE",
+      "householdBudgetPrefix": "Mon'Day Foyer",
+      "streak": "{{count}} jours",
+      "streakTooltip": "Série de jours consécutifs"
+    },
     "dailyBudget": {
       "label": "Budget du Jour",
       "hint": "Ce que vous pouvez dépenser aujourd'hui",

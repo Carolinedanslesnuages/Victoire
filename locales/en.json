@@ -37,6 +37,12 @@
   "dashboard": {
     "title": "My PACE Budget",
     "cycleSubtitle": "Cycle from the {{day}} of each month",
+    "header": {
+      "defaultBudgetName": "My PACE Budget",
+      "householdBudgetPrefix": "Mon'Day Household",
+      "streak": "{{count}} days",
+      "streakTooltip": "Consecutive days streak"
+    },
     "dailyBudget": {
       "label": "Daily Budget",
       "hint": "What you can spend today",
