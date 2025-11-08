@@ -8,15 +8,15 @@ import AddExpenseModal from './components/AddExpenseModal';
 import StreakCelebration from './components/StreakCelebration';
 import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreferences, getTransactionsForCurrentCycle } from './utils/storage';
 import { BudgetConfig, Transaction, UserPreferences } from './types';
-import { colors } from './constants/theme';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { initializeNotifications, sendBudgetAlertNotification } from './utils/notifications';
 import { calculateDailyBudget } from './utils/budgetCalculations';
 import { updateStreakAfterActivity } from './utils/streaks';
 import { triggerSuccessHaptic, triggerWarningHaptic } from './utils/haptics';
 
-export default function App() {
+function AppContent() {
+  const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [budgetConfig, setBudgetConfig] = useState<BudgetConfig | null>(null);
   const [isAddExpenseVisible, setIsAddExpenseVisible] = useState(false);
@@ -97,43 +97,49 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   return (
+    <SubscriptionProvider>
+      <NavigationContainer>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+          {budgetConfig ? (
+            <>
+              <MainTabNavigator
+                budgetConfig={budgetConfig}
+                onReconfigure={handleReconfigure}
+                onAddExpense={() => setIsAddExpenseVisible(true)}
+              />
+              <AddExpenseModal
+                visible={isAddExpenseVisible}
+                onClose={() => setIsAddExpenseVisible(false)}
+                onAddExpense={handleAddExpense}
+                customCategories={userPreferences.customCategories}
+              />
+              <StreakCelebration
+                visible={showStreakCelebration}
+                streakCount={currentStreak}
+                onComplete={() => setShowStreakCelebration(false)}
+              />
+            </>
+          ) : (
+            <ConfigWizard onComplete={handleConfigComplete} />
+          )}
+          <StatusBar style={colors.textPrimary === '#212121' ? 'dark' : 'light'} />
+        </View>
+      </NavigationContainer>
+    </SubscriptionProvider>
+  );
+}
+
+export default function App() {
+  return (
     <ThemeProvider>
-      <SubscriptionProvider>
-        <NavigationContainer>
-          <View style={styles.container}>
-            {budgetConfig ? (
-              <>
-                <MainTabNavigator
-                  budgetConfig={budgetConfig}
-                  onReconfigure={handleReconfigure}
-                  onAddExpense={() => setIsAddExpenseVisible(true)}
-                />
-                <AddExpenseModal
-                  visible={isAddExpenseVisible}
-                  onClose={() => setIsAddExpenseVisible(false)}
-                  onAddExpense={handleAddExpense}
-                  customCategories={userPreferences.customCategories}
-                />
-                <StreakCelebration
-                  visible={showStreakCelebration}
-                  streakCount={currentStreak}
-                  onComplete={() => setShowStreakCelebration(false)}
-                />
-              </>
-            ) : (
-              <ConfigWizard onComplete={handleConfigComplete} />
-            )}
-            <StatusBar style="auto" />
-          </View>
-        </NavigationContainer>
-      </SubscriptionProvider>
+      <AppContent />
     </ThemeProvider>
   );
 }
@@ -141,6 +147,5 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
 });
