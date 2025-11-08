@@ -10,7 +10,6 @@ import {
   Modal,
   Linking,
   Switch,
-  Platform,
 } from 'react-native';
 import { UserPreferences, NotificationSettings } from '../types';
 import { colors, typography, spacing, borderRadius, elevation } from '../constants/theme';

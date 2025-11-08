@@ -11,6 +11,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -89,6 +91,7 @@ export const scheduleEveningReminder = async (settings: NotificationSettings): P
         sound: true,
       },
       trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
         hour: hours,
         minute: minutes,
         repeats: true,
@@ -123,6 +126,7 @@ export const scheduleMorningBudgetNotification = async (settings: NotificationSe
         sound: true,
       },
       trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
         hour: hours,
         minute: minutes,
         repeats: true,
@@ -177,7 +181,14 @@ export const updateMorningBudgetContent = async (): Promise<void> => {
     }
 
     const transactions = await getTransactionsForCurrentCycle(budgetConfig.cycleStartDay);
-    const dailyBudget = calculateDailyBudget(budgetConfig, transactions);
+    const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const dailyBudget = calculateDailyBudget(
+      budgetConfig.monthlyIncome,
+      budgetConfig.fixedCharges,
+      budgetConfig.savingsGoal,
+      totalSpent,
+      budgetConfig.cycleStartDay
+    );
 
     const [hours, minutes] = preferences.notificationSettings.morningBudgetTime.split(':').map(Number);
 
@@ -194,6 +205,7 @@ export const updateMorningBudgetContent = async (): Promise<void> => {
         sound: true,
       },
       trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
         hour: hours,
         minute: minutes,
         repeats: true,
