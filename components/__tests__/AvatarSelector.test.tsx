@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import AvatarSelector from '../AvatarSelector';
-import { AvatarId } from '../../constants/avatars';
 
 describe('AvatarSelector', () => {
   it('renders all 8 avatars', () => {
