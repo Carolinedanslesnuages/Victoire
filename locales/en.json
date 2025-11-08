@@ -101,6 +101,13 @@
       "body": "You haven't opened the app today yet. Don't lose your {{streak}} day streak!"
     }
   },
+  "streakCelebration": {
+    "streak": "Active Streak!",
+    "dayOne": "First Day!",
+    "day": "day",
+    "days": "days",
+    "keepGoing": "Keep it up!"
+  },
   "configWizard": {
     "title": "Budget Configuration",
     "subtitle": "Define your budget framework to get started",

@@ -101,6 +101,13 @@
       "body": "Vous n'avez pas encore ouvert l'application aujourd'hui. Ne perdez pas votre série de {{streak}} jours !"
     }
   },
+  "streakCelebration": {
+    "streak": "Série Active !",
+    "dayOne": "Première Journée !",
+    "day": "jour",
+    "days": "jours",
+    "keepGoing": "Continuez comme ça !"
+  },
   "configWizard": {
     "title": "Configuration Budgétaire",
     "subtitle": "Définissez votre cadre budgétaire pour commencer",
