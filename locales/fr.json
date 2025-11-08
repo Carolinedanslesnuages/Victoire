@@ -160,7 +160,8 @@
     },
     "transactions": {
       "title": "Dépenses récentes",
-      "noTransactions": "Aucune dépense enregistrée ce mois-ci"
+      "noTransactions": "Aucune dépense enregistrée ce mois-ci",
+      "recurring": "Récurrent"
     },
     "deleteExpense": {
       "title": "Supprimer la dépense",
@@ -194,18 +195,29 @@
   },
   "addExpense": {
     "title": "Ajouter une dépense",
+    "titleIncome": "Ajouter une entrée d'argent",
+    "transactionType": "Type de transaction",
+    "typeExpense": "Dépense",
+    "typeIncome": "Entrée d'argent",
     "amount": "Montant (€)",
     "amountPlaceholder": "Ex: 15.50",
     "description": "Description",
     "descriptionPlaceholder": "Ex: Courses, Restaurant...",
+    "descriptionPlaceholderIncome": "Ex: Cadeau, Vente...",
     "category": "Catégorie (optionnel)",
     "categoryPlaceholder": "Ex: Alimentation, Transport...",
+    "categoryPlaceholderIncome": "Ex: Cadeau, Vente...",
+    "isRecurring": "Transaction récurrente",
+    "recurringDay": "Jour du mois (1-31)",
+    "recurringDayPlaceholder": "Ex: 5",
+    "recurringHint": "Cette transaction sera automatiquement créée chaque mois",
     "cancelButton": "Annuler",
     "addButton": "Ajouter",
     "errors": {
       "title": "Erreur",
       "invalidAmount": "Veuillez saisir un montant valide",
-      "missingDescription": "Veuillez saisir une description"
+      "missingDescription": "Veuillez saisir une description",
+      "invalidRecurringDay": "Veuillez saisir un jour entre 1 et 31"
     }
   },
   "settings": {

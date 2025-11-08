@@ -199,13 +199,19 @@ export const useJoker = async (): Promise<boolean> => {
     if (!config) return false;
 
     const transactions = await getTransactionsForCurrentCycle(config.cycleStartDay);
-    const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const totalSpent = transactions
+      .filter(t => t.type !== 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+    const totalIncome = transactions
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
     const dailyBudget = calculateDailyBudget(
       config.monthlyIncome,
       config.fixedCharges,
       config.savingsGoal,
       totalSpent,
-      config.cycleStartDay
+      config.cycleStartDay,
+      totalIncome
     );
 
     // Only allow joker if budget is negative but by less than 5€
@@ -243,13 +249,19 @@ export const canUseJoker = async (): Promise<boolean> => {
     if (!config) return false;
 
     const transactions = await getTransactionsForCurrentCycle(config.cycleStartDay);
-    const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const totalSpent = transactions
+      .filter(t => t.type !== 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+    const totalIncome = transactions
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
     const dailyBudget = calculateDailyBudget(
       config.monthlyIncome,
       config.fixedCharges,
       config.savingsGoal,
       totalSpent,
-      config.cycleStartDay
+      config.cycleStartDay,
+      totalIncome
     );
 
     // Can use joker if budget is negative but by less than 5€

@@ -46,17 +46,23 @@ export const calculateCategorySpending = (transactions: Transaction[]): Category
     return [];
   }
 
-  // Group transactions by category
+  // Group transactions by category (only expenses, not income)
   const categoryMap = new Map<string, number>();
   
   transactions.forEach(transaction => {
+    // Skip income transactions
+    if (transaction.type === 'income') {
+      return;
+    }
     const category = transaction.category || 'Uncategorized';
     const currentAmount = categoryMap.get(category) || 0;
     categoryMap.set(category, currentAmount + transaction.amount);
   });
 
-  // Calculate total spending
-  const totalSpending = transactions.reduce((sum, t) => sum + t.amount, 0);
+  // Calculate total spending (expenses only)
+  const totalSpending = transactions
+    .filter(t => t.type !== 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
 
   // Convert to array and calculate percentages
   const categorySpending: CategorySpending[] = [];
@@ -99,8 +105,13 @@ export const compareMonthlySpending = (
   currentMonthTransactions: Transaction[],
   previousMonthTransactions: Transaction[]
 ): MonthlyComparison => {
-  const currentTotal = currentMonthTransactions.reduce((sum, t) => sum + t.amount, 0);
-  const previousTotal = previousMonthTransactions.reduce((sum, t) => sum + t.amount, 0);
+  // Only count expenses, not income
+  const currentTotal = currentMonthTransactions
+    .filter(t => t.type !== 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+  const previousTotal = previousMonthTransactions
+    .filter(t => t.type !== 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
   
   const difference = currentTotal - previousTotal;
   const differencePercentage = previousTotal > 0 
