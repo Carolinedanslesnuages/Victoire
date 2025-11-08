@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.8.0...v1.9.0) (2025-11-08)
+
+
+### Features
+
+* enable premium features in development mode ([84ccb25](https://github.com/Carolinedanslesnuages/PACE/commit/84ccb254b835e3c4a0b72bb1ab3d970d4601d470))
+* enable premium features in development mode ([dd441ce](https://github.com/Carolinedanslesnuages/PACE/commit/dd441ce042da6b09fefc52fc0f24730a6696507f))
+
 ## [1.8.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.7.0...v1.8.0) (2025-11-08)
 
 
