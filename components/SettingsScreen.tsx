@@ -8,6 +8,7 @@ import {
   TextInput,
   Alert,
   Modal,
+  Linking,
 } from 'react-native';
 import { UserPreferences } from '../types';
 import { colors, typography, spacing, borderRadius, elevation } from '../constants/theme';
@@ -163,6 +164,20 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
     );
   };
 
+  const handleOpenLegalDocument = async (documentType: 'privacy' | 'terms') => {
+    const baseUrl = 'https://github.com/Carolinedanslesnuages/PACE/blob/main/';
+    const url = documentType === 'privacy' 
+      ? `${baseUrl}PRIVACY_POLICY.md`
+      : `${baseUrl}TERMS_OF_SERVICE.md`;
+    
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(i18n.t('settings.errors.title'), `Cannot open URL: ${url}`);
+    }
+  };
+
   const selectedCurrency = CURRENCY_OPTIONS.find(c => c.code === preferences.currency);
 
   return (
@@ -287,6 +302,33 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
                 ))}
               </View>
             )}
+          </View>
+
+          {/* Legal Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{i18n.t('settings.legal.title')}</Text>
+            
+            <TouchableOpacity
+              style={styles.legalButton}
+              onPress={() => handleOpenLegalDocument('privacy')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.legalButtonText}>
+                📄 {i18n.t('settings.legal.privacyPolicy')}
+              </Text>
+              <Text style={styles.legalButtonArrow}>›</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.legalButton}
+              onPress={() => handleOpenLegalDocument('terms')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.legalButtonText}>
+                📄 {i18n.t('settings.legal.termsOfService')}
+              </Text>
+              <Text style={styles.legalButtonArrow}>›</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Danger Zone Section */}
@@ -597,5 +639,26 @@ const styles = StyleSheet.create({
   },
   premiumBadge: {
     fontSize: 20,
+  },
+  // Legal section styles
+  legalButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  legalButtonText: {
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+    fontWeight: typography.fontWeight.medium,
+  },
+  legalButtonArrow: {
+    fontSize: 24,
+    color: colors.textSecondary,
   },
 });
