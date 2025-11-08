@@ -1,10 +1,11 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, View, Text } from 'react-native';
+import { Text } from 'react-native';
 import BudgetDashboard from '../components/BudgetDashboard';
 import HistoryScreen from '../components/HistoryScreen';
+import ProfileScreen from '../components/ProfileScreen';
 import SettingsScreen from '../components/SettingsScreen';
-import { colors, typography, borderRadius, elevation } from '../constants/theme';
+import { colors, typography } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { BudgetConfig } from '../types';
 
@@ -69,18 +70,14 @@ export default function MainTabNavigator({ budgetConfig, onReconfigure, onAddExp
           }}
         />
 
-        {/* Central FAB as a Tab */}
+        {/* Central Add Expense Tab - No Label, Regular Icon Style */}
         <Tab.Screen
           name="AddExpense"
           component={EmptyComponent}
           options={{
             tabBarLabel: '',
-            tabBarIcon: () => (
-              <View style={styles.fabContainer}>
-                <View style={styles.fab}>
-                  <Text style={styles.fabText}>+</Text>
-                </View>
-              </View>
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ fontSize: size, color }}>➕</Text>
             ),
           }}
           listeners={{
@@ -88,6 +85,17 @@ export default function MainTabNavigator({ budgetConfig, onReconfigure, onAddExp
               e.preventDefault();
               onAddExpense();
             },
+          }}
+        />
+
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: i18n.t('navigation.profile'),
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ fontSize: size, color }}>👤</Text>
+            ),
           }}
         />
 
@@ -121,26 +129,3 @@ export default function MainTabNavigator({ budgetConfig, onReconfigure, onAddExp
 
 // Empty component for tabs that don't have a screen
 const EmptyComponent = () => null;
-
-const styles = StyleSheet.create({
-  fabContainer: {
-    position: 'absolute',
-    top: -30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fab: {
-    width: 64,
-    height: 64,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...elevation.medium,
-  },
-  fabText: {
-    fontSize: 36,
-    color: colors.textInverse,
-    fontWeight: typography.fontWeight.regular,
-  },
-});

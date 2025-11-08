@@ -2,11 +2,16 @@
   "navigation": {
     "home": "Home",
     "history": "History",
+    "profile": "Profile",
     "settings": "Settings"
   },
   "history": {
     "title": "History",
     "comingSoon": "Transaction history coming soon!"
+  },
+  "profile": {
+    "title": "Profile & Stats",
+    "comingSoon": "Profile and statistics coming soon!"
   },
   "configWizard": {
     "title": "Budget Configuration",
