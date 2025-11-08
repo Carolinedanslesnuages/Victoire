@@ -39,3 +39,20 @@ export interface BudgetStatus {
   label: string;
   color: string;
 }
+
+/**
+ * User preferences interface
+ */
+export interface UserPreferences {
+  currency: string;
+  customCategories: string[];
+}
+
+/**
+ * Currency option interface
+ */
+export interface CurrencyOption {
+  code: string;
+  symbol: string;
+  name: string;
+}

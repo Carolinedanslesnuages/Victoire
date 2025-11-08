@@ -18,9 +18,10 @@ interface AddExpenseModalProps {
   visible: boolean;
   onClose: () => void;
   onAddExpense: (expense: Omit<Transaction, 'id'>) => void;
+  customCategories?: string[];
 }
 
-export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddExpenseModalProps) {
+export default function AddExpenseModal({ visible, onClose, onAddExpense, customCategories = [] }: AddExpenseModalProps) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -122,6 +123,20 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
               onFocus={() => setFocusedField('category')}
               onBlur={() => setFocusedField(null)}
             />
+            {customCategories.length > 0 && (
+              <View style={styles.suggestedCategories}>
+                {customCategories.map((cat, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.categoryChip}
+                    onPress={() => setCategory(cat)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.categoryChipText}>{cat}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </View>
 
           <View style={styles.buttonContainer}>
@@ -218,5 +233,23 @@ const styles = StyleSheet.create({
     color: colors.textInverse,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.semibold,
+  },
+  suggestedCategories: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: spacing.sm,
+  },
+  categoryChip: {
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.full,
+    marginRight: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  categoryChipText: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.bodySmall,
+    fontWeight: typography.fontWeight.medium,
   },
 });

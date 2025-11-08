@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BudgetConfig, Transaction } from '../types';
+import { BudgetConfig, Transaction, UserPreferences } from '../types';
 
 const BUDGET_CONFIG_KEY = '@pace_budget_config';
 const TRANSACTIONS_KEY = '@pace_transactions';
+const USER_PREFERENCES_KEY = '@pace_user_preferences';
 
 /**
  * Save budget configuration to local storage
@@ -133,6 +134,64 @@ export const deleteTransaction = async (id: string): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error('Error deleting transaction:', error);
+    return false;
+  }
+};
+
+/**
+ * Load user preferences from local storage
+ * @returns User preferences or default values if not found
+ */
+export const loadUserPreferences = async (): Promise<UserPreferences> => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(USER_PREFERENCES_KEY);
+    if (jsonValue != null) {
+      return JSON.parse(jsonValue);
+    }
+    // Return default preferences
+    return {
+      currency: 'EUR',
+      customCategories: [],
+    };
+  } catch (error) {
+    console.error('Error loading user preferences:', error);
+    return {
+      currency: 'EUR',
+      customCategories: [],
+    };
+  }
+};
+
+/**
+ * Save user preferences to local storage
+ * @param preferences - User preferences object
+ * @returns Success status
+ */
+export const saveUserPreferences = async (preferences: UserPreferences): Promise<boolean> => {
+  try {
+    const jsonValue = JSON.stringify(preferences);
+    await AsyncStorage.setItem(USER_PREFERENCES_KEY, jsonValue);
+    return true;
+  } catch (error) {
+    console.error('Error saving user preferences:', error);
+    return false;
+  }
+};
+
+/**
+ * Reset all application data (budget config, transactions, and preferences)
+ * @returns Success status
+ */
+export const resetAllData = async (): Promise<boolean> => {
+  try {
+    await AsyncStorage.multiRemove([
+      BUDGET_CONFIG_KEY,
+      TRANSACTIONS_KEY,
+      USER_PREFERENCES_KEY,
+    ]);
+    return true;
+  } catch (error) {
+    console.error('Error resetting all data:', error);
     return false;
   }
 };

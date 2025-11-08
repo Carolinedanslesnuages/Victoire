@@ -53,7 +53,8 @@
       "confirm": "Supprimer",
       "cancel": "Annuler"
     },
-    "configButton": "⚙️ Modifier la configuration"
+    "settingsButton": "⚙️ Paramètres",
+    "configButton": "🔧 Modifier la configuration"
   },
   "addExpense": {
     "title": "Ajouter une dépense",
@@ -69,6 +70,41 @@
       "title": "Erreur",
       "invalidAmount": "Veuillez saisir un montant valide",
       "missingDescription": "Veuillez saisir une description"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "personalization": "Personnalisation",
+    "currency": "Devise",
+    "selectCurrency": "Sélectionner la devise",
+    "customCategories": "Catégories personnalisées",
+    "categoryPlaceholder": "Ex: Loisirs, Santé...",
+    "noCustomCategories": "Aucune catégorie personnalisée. Ajoutez-en une ci-dessus !",
+    "dangerZone": "⚠️ Zone Dangereuse",
+    "dangerZoneDescription": "Les actions suivantes sont irréversibles. Soyez prudent !",
+    "success": "Succès",
+    "currencyUpdated": "La devise a été mise à jour",
+    "categoryAdded": "Catégorie ajoutée avec succès",
+    "errors": {
+      "title": "Erreur",
+      "emptyCategoryName": "Le nom de la catégorie ne peut pas être vide",
+      "duplicateCategory": "Cette catégorie existe déjà"
+    },
+    "deleteCategory": {
+      "title": "Supprimer la catégorie",
+      "message": "Voulez-vous vraiment supprimer la catégorie \"{{category}}\" ?",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "resetApp": {
+      "title": "⚠️ Réinitialiser l'application",
+      "message": "Êtes-vous sûr de vouloir réinitialiser l'application ? Toutes vos données seront définitivement supprimées (configuration, dépenses, préférences).",
+      "confirmTitle": "⚠️ CONFIRMATION FINALE",
+      "confirmMessage": "Cette action est IRRÉVERSIBLE. Toutes vos données seront perdues. Continuer ?",
+      "confirm": "Oui, réinitialiser",
+      "confirmFinal": "Confirmer la réinitialisation",
+      "cancel": "Annuler",
+      "button": "🗑️ Réinitialiser l'application"
     }
   }
 }
