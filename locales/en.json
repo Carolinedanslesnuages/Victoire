@@ -263,6 +263,13 @@
       "upgradeToPremium": "🔓 Upgrade to Premium",
       "manageSubscription": "Manage subscription"
     },
+    "budgetProfiles": {
+      "title": "Budgets",
+      "description": "Manage your different budget profiles (Personal, Household)",
+      "manageBudgets": "Manage budgets",
+      "editTitle": "Budget Management",
+      "editMessage": "Use the budget selector at the top of the screen to create a new Household budget or switch between your existing budgets."
+    },
     "premiumFeature": {
       "locked": "🔒 Premium Feature",
       "message": "This feature requires a Premium subscription.",

@@ -263,6 +263,13 @@
       "upgradeToPremium": "🔓 Passer à Premium",
       "manageSubscription": "Gérer l'abonnement"
     },
+    "budgetProfiles": {
+      "title": "Budgets",
+      "description": "Gérez vos différents profils budgétaires (Personnel, Foyer)",
+      "manageBudgets": "Gérer les budgets",
+      "editTitle": "Gestion des budgets",
+      "editMessage": "Utilisez le sélecteur de budget en haut de l'écran pour créer un nouveau budget Foyer ou basculer entre vos budgets existants."
+    },
     "premiumFeature": {
       "locked": "🔒 Fonctionnalité Premium",
       "message": "Cette fonctionnalité nécessite un abonnement Premium.",
