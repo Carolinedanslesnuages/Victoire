@@ -11,7 +11,6 @@ import {
   calculateSpentPercentage,
 } from '../utils/budgetCalculations';
 import {
-  getTransactionsForCurrentCycle,
   getTransactionsForPreviousCycleSameDay,
   deleteTransaction,
   loadUserPreferences,
@@ -23,7 +22,7 @@ import {
   compareMonthlySpending,
 } from '../utils/analytics';
 import { getMascotState } from '../utils/mascot';
-import { BudgetConfig, BudgetProfile, Transaction, UserPreferences, StreakInfo, Badge } from '../types';
+import { BudgetProfile, Transaction, UserPreferences, StreakInfo, Badge } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';

@@ -15,7 +15,7 @@ import {
   setActiveBudgetId,
   createBudgetProfile,
 } from '../utils/storage';
-import { colors, typography, spacing, borderRadius, elevation } from '../constants/theme';
+import { lightColors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import { useTheme } from '../contexts/ThemeContext';
 import i18n from '../utils/i18n';
 
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.lg,
-    ...elevation.small,
+    ...elevation.low,
     maxWidth: 200,
   },
   icon: {
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     borderRadius: borderRadius.xl,
     padding: spacing.lg,
-    ...elevation.large,
+    ...elevation.high,
   },
   modalTitle: {
     fontSize: typography.fontSize.h3,
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   createButtonText: {
-    color: colors.white,
+    color: lightColors.textInverse,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.semibold,
   },
