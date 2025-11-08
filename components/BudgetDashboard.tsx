@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
 import BudgetRing from './BudgetRing';
+import PieChart from './PieChart';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -9,9 +10,15 @@ import {
 } from '../utils/budgetCalculations';
 import {
   getTransactionsForCurrentCycle,
+  getTransactionsForPreviousCycleSameDay,
   deleteTransaction,
   loadUserPreferences,
 } from '../utils/storage';
+import {
+  calculateCategorySpending,
+  getTopCategories,
+  compareMonthlySpending,
+} from '../utils/analytics';
 import { BudgetConfig, Transaction, UserPreferences } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 import i18n from '../utils/i18n';
@@ -24,6 +31,7 @@ interface BudgetDashboardProps {
 
 export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboardProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [previousTransactions, setPreviousTransactions] = useState<Transaction[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     currency: 'EUR',
@@ -43,6 +51,10 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
   const loadTransactions = async () => {
     const txns = await getTransactionsForCurrentCycle(config.cycleStartDay);
     setTransactions(txns);
+    
+    // Load previous month transactions for comparison
+    const prevTxns = await getTransactionsForPreviousCycleSameDay(config.cycleStartDay);
+    setPreviousTransactions(prevTxns);
   };
 
   const handleRefresh = async () => {
@@ -110,6 +122,11 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
   );
 
   const isDailyBudgetNegative = dailyBudget < 0;
+
+  // Analytics calculations for Epic 6
+  const categorySpending = calculateCategorySpending(transactions);
+  const topCategories = getTopCategories(categorySpending, 3);
+  const monthlyComparison = compareMonthlySpending(transactions, previousTransactions);
 
   // Helper function for pluralization of "days remaining"
   const getDaysRemainingText = (days: number) => {
@@ -214,6 +231,123 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
             <Text style={styles.statusBadgeText}>{budgetStatus.label}</Text>
           </View>
         </View>
+
+        {/* Epic 6: Analyse & Insights */}
+        {transactions.length > 0 && (
+          <>
+            {/* Feature 6.1: Category Breakdown */}
+            <View style={styles.insightsCard}>
+              <Text style={styles.cardTitle}>{i18n.t('dashboard.insights.categoryBreakdown.title')}</Text>
+              
+              {categorySpending.length > 0 ? (
+                <>
+                  {/* US 6.1.1: Pie Chart */}
+                  <View style={styles.pieChartContainer}>
+                    <PieChart data={categorySpending} size={200} />
+                  </View>
+
+                  {/* US 6.1.2: Top 3 Categories */}
+                  <View style={styles.topCategoriesContainer}>
+                    <Text style={styles.topCategoriesTitle}>
+                      {i18n.t('dashboard.insights.categoryBreakdown.topCategories')}
+                    </Text>
+                    {topCategories.map((item) => (
+                      <View key={item.category} style={styles.categoryItem}>
+                        <View style={styles.categoryLeft}>
+                          <View
+                            style={[
+                              styles.categoryColorDot,
+                              { backgroundColor: item.color },
+                            ]}
+                          />
+                          <Text style={styles.categoryName}>{item.category}</Text>
+                        </View>
+                        <View style={styles.categoryRight}>
+                          <Text style={styles.categoryAmount}>
+                            {formatCurrency(item.amount)}
+                          </Text>
+                          <Text style={styles.categoryPercentage}>
+                            {item.percentage.toFixed(0)}%
+                          </Text>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                </>
+              ) : (
+                <Text style={styles.noData}>
+                  {i18n.t('dashboard.insights.categoryBreakdown.noData')}
+                </Text>
+              )}
+            </View>
+
+            {/* Feature 6.2: Trends - Monthly Comparison */}
+            {previousTransactions.length > 0 && (
+              <View style={styles.insightsCard}>
+                <Text style={styles.cardTitle}>{i18n.t('dashboard.insights.trends.title')}</Text>
+                <Text style={styles.insightsSubtitle}>
+                  {i18n.t('dashboard.insights.trends.comparison')}
+                </Text>
+
+                {/* US 6.2.1: Comparison Chart */}
+                <View style={styles.comparisonContainer}>
+                  <View style={styles.comparisonItem}>
+                    <Text style={styles.comparisonLabel}>
+                      {i18n.t('dashboard.insights.trends.currentMonth')}
+                    </Text>
+                    <Text style={styles.comparisonSubLabel}>
+                      {i18n.t('dashboard.insights.trends.sameDate')}
+                    </Text>
+                    <Text style={[styles.comparisonAmount, { color: colors.primary }]}>
+                      {formatCurrency(monthlyComparison.currentMonth)}
+                    </Text>
+                  </View>
+
+                  <View style={styles.comparisonDivider} />
+
+                  <View style={styles.comparisonItem}>
+                    <Text style={styles.comparisonLabel}>
+                      {i18n.t('dashboard.insights.trends.previousMonth')}
+                    </Text>
+                    <Text style={styles.comparisonSubLabel}>
+                      {i18n.t('dashboard.insights.trends.sameDate')}
+                    </Text>
+                    <Text style={[styles.comparisonAmount, { color: colors.textSecondary }]}>
+                      {formatCurrency(monthlyComparison.previousMonth)}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Comparison indicator */}
+                <View
+                  style={[
+                    styles.comparisonBadge,
+                    {
+                      backgroundColor:
+                        monthlyComparison.difference < 0
+                          ? colors.success
+                          : monthlyComparison.difference > 0
+                          ? colors.warning
+                          : colors.info,
+                    },
+                  ]}
+                >
+                  <Text style={styles.comparisonBadgeText}>
+                    {monthlyComparison.difference < 0
+                      ? `${i18n.t('dashboard.insights.trends.better')} ${formatCurrency(
+                          Math.abs(monthlyComparison.difference)
+                        )} (${Math.abs(monthlyComparison.differencePercentage).toFixed(0)}%)`
+                      : monthlyComparison.difference > 0
+                      ? `${i18n.t('dashboard.insights.trends.worse')} +${formatCurrency(
+                          monthlyComparison.difference
+                        )} (+${monthlyComparison.differencePercentage.toFixed(0)}%)`
+                      : i18n.t('dashboard.insights.trends.equal')}
+                  </Text>
+                </View>
+              </View>
+            )}
+          </>
+        )}
 
         {/* Feature 3.2.1: Transaction History - All transactions for current cycle */}
         <View style={styles.transactionsCard}>
@@ -475,6 +609,125 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     fontSize: typography.fontSize.body,
+  },
+  // Epic 6: Insights - Flat design cards
+  insightsCard: {
+    backgroundColor: colors.surface,
+    margin: spacing.md,
+    marginTop: spacing.sm,
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    ...elevation.low,
+  },
+  insightsSubtitle: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginBottom: spacing.md,
+  },
+  noData: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    paddingVertical: spacing.lg,
+  },
+  // Feature 6.1: Category Breakdown
+  pieChartContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: spacing.lg,
+  },
+  topCategoriesContainer: {
+    marginTop: spacing.md,
+  },
+  topCategoriesTitle: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
+  },
+  categoryItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+  },
+  categoryLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  categoryColorDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: spacing.sm,
+  },
+  categoryName: {
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+    fontWeight: typography.fontWeight.medium,
+  },
+  categoryRight: {
+    alignItems: 'flex-end',
+    marginLeft: spacing.sm,
+  },
+  categoryAmount: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: 2,
+  },
+  categoryPercentage: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+  },
+  // Feature 6.2: Trends
+  comparisonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: spacing.lg,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.gray50,
+    borderRadius: borderRadius.md,
+  },
+  comparisonItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  comparisonLabel: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  comparisonSubLabel: {
+    fontSize: typography.fontSize.caption,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
+  },
+  comparisonAmount: {
+    fontSize: typography.fontSize.h3,
+    fontWeight: typography.fontWeight.bold,
+  },
+  comparisonDivider: {
+    width: 1,
+    backgroundColor: colors.border,
+    marginHorizontal: spacing.md,
+  },
+  comparisonBadge: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  comparisonBadgeText: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textInverse,
+    textAlign: 'center',
   },
   // Buttons - Flat design with opacity feedback
   reconfigButton: {

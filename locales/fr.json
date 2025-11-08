@@ -68,7 +68,28 @@
       "cancel": "Annuler"
     },
     "settingsButton": "⚙️ Paramètres",
-    "configButton": "🔧 Modifier la configuration"
+    "configButton": "🔧 Modifier la configuration",
+    "insights": {
+      "title": "📊 Analyse & Insights",
+      "categoryBreakdown": {
+        "title": "Répartition par Catégorie",
+        "noData": "Aucune dépense catégorisée ce mois-ci",
+        "topCategories": "Top 3 des catégories",
+        "uncategorized": "Non catégorisé"
+      },
+      "trends": {
+        "title": "Tendances",
+        "comparison": "Comparaison avec le mois dernier",
+        "currentMonth": "Ce mois",
+        "previousMonth": "Mois dernier",
+        "sameDate": "À la même date",
+        "spending": "Dépensé",
+        "better": "Vous faites mieux !",
+        "worse": "Attention, dépenses en hausse",
+        "equal": "Dépenses similaires",
+        "noData": "Pas de données du mois dernier pour comparaison"
+      }
+    }
   },
   "addExpense": {
     "title": "Ajouter une dépense",
