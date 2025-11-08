@@ -125,6 +125,12 @@
       "message": "Free users are limited to 3 custom categories. Upgrade to Premium for unlimited categories.",
       "upgrade": "Upgrade to Premium",
       "cancel": "Cancel"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "openInBrowser": "Open in browser"
     }
   },
   "paywall": {

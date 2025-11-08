@@ -234,6 +234,33 @@ Pour plus d'informations sur les conventions de commit et le processus de releas
 
 ---
 
+## Epic 13 : Conformité & Légal
+
+L'application respecte toutes les exigences des stores (App Store et Google Play) en matière de conformité légale :
+
+### Documents Légaux
+
+- **[Politique de Confidentialité](PRIVACY_POLICY.md)** : Disponible dans l'application et sur le repository GitHub
+- **[Conditions d'Utilisation](TERMS_OF_SERVICE.md)** : Inclut l'EULA standard d'Apple et les termes d'abonnement
+
+Ces documents sont accessibles depuis l'écran Paramètres de l'application et peuvent être consultés avant la soumission aux stores.
+
+### Transparence des Données (iOS)
+
+L'application inclut la configuration App Tracking Transparency (ATT) pour iOS :
+- Un message explicatif est configuré dans `app.json`
+- L'application ne collecte **aucune donnée de tracking**
+- Toutes les données sont stockées localement sur l'appareil de l'utilisateur
+
+### Conformité GDPR & CCPA
+
+- Les données sont stockées localement uniquement
+- Aucune transmission de données personnelles vers des serveurs externes
+- L'utilisateur a un contrôle total sur ses données
+- Option de réinitialisation complète disponible
+
+---
+
 ## Prochaines Étapes
 
 Maintenant que votre environnement est configuré et que l'application "Hello World" fonctionne, vous êtes prêt à :

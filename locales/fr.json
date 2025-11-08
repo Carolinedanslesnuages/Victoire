@@ -125,6 +125,12 @@
       "message": "Les utilisateurs gratuits sont limités à 3 catégories personnalisées. Passez à Premium pour des catégories illimitées.",
       "upgrade": "Passer à Premium",
       "cancel": "Annuler"
+    },
+    "legal": {
+      "title": "Mentions Légales",
+      "privacyPolicy": "Politique de Confidentialité",
+      "termsOfService": "Conditions d'Utilisation",
+      "openInBrowser": "Ouvrir dans le navigateur"
     }
   },
   "paywall": {
