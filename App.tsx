@@ -5,10 +5,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import ConfigWizard from './components/ConfigWizard';
 import MainTabNavigator from './navigation/MainTabNavigator';
 import AddExpenseModal from './components/AddExpenseModal';
-import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreferences } from './utils/storage';
+import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreferences, getTransactionsForCurrentCycle } from './utils/storage';
 import { BudgetConfig, Transaction, UserPreferences } from './types';
 import { colors } from './constants/theme';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import { initializeNotifications, sendBudgetAlertNotification } from './utils/notifications';
+import { calculateDailyBudget } from './utils/budgetCalculations';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -22,6 +24,7 @@ export default function App() {
   useEffect(() => {
     loadConfig();
     loadPreferences();
+    initializeNotifications();
   }, []);
 
   const loadConfig = async () => {
@@ -50,6 +53,23 @@ export default function App() {
     const success = await saveTransaction(expense);
     if (success) {
       setIsAddExpenseVisible(false);
+      
+      // Check if budget went negative and send alert
+      if (budgetConfig) {
+        const transactions = await getTransactionsForCurrentCycle(budgetConfig.cycleStartDay);
+        const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+        const dailyBudget = calculateDailyBudget(
+          budgetConfig.monthlyIncome,
+          budgetConfig.fixedCharges,
+          budgetConfig.savingsGoal,
+          totalSpent,
+          budgetConfig.cycleStartDay
+        );
+        
+        if (dailyBudget < 0) {
+          await sendBudgetAlertNotification(dailyBudget, userPreferences.currency);
+        }
+      }
     }
   };
 

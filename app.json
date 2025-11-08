@@ -25,7 +25,10 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.carolinedanslesnuages.pace"
+      "package": "com.carolinedanslesnuages.pace",
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +36,15 @@
     "extra": {
       "privacyPolicyUrl": "https://github.com/Carolinedanslesnuages/PACE/blob/main/PRIVACY_POLICY.md",
       "termsOfServiceUrl": "https://github.com/Carolinedanslesnuages/PACE/blob/main/TERMS_OF_SERVICE.md"
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff"
+        }
+      ]
+    ]
   }
 }

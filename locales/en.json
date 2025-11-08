@@ -145,6 +145,42 @@
       "privacyPolicy": "Privacy Policy",
       "termsOfService": "Terms of Service",
       "openInBrowser": "Open in browser"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "eveningReminder": {
+        "label": "Evening Reminder",
+        "description": "Get a reminder if you haven't logged any expenses today",
+        "time": "Reminder time"
+      },
+      "morningBudget": {
+        "label": "Morning Budget",
+        "description": "See your daily budget each morning without opening the app",
+        "time": "Notification time"
+      },
+      "budgetAlert": {
+        "label": "Budget Alerts",
+        "description": "Instant alert when an expense makes your daily budget negative"
+      },
+      "permissionRequired": "Permission Required",
+      "permissionMessage": "PACE needs notification permissions to send you reminders and alerts.",
+      "enablePermission": "Enable Notifications",
+      "updated": "Notification settings updated"
+    }
+  },
+  "notifications": {
+    "eveningReminder": {
+      "title": "Don't forget your expenses! 📝",
+      "body": "You haven't logged any expenses today. Take a moment to record them."
+    },
+    "morningBudget": {
+      "title": "Your daily budget 💰",
+      "body": "Good morning! Check your daily budget for today.",
+      "bodyWithAmount": "Good morning! Today you can spend {{amount}} {{currency}}."
+    },
+    "budgetAlert": {
+      "title": "⚠️ Budget Alert",
+      "body": "Your daily budget is now negative by {{amount}} {{currency}}. Consider reducing your spending."
     }
   },
   "paywall": {

@@ -145,6 +145,42 @@
       "privacyPolicy": "Politique de Confidentialité",
       "termsOfService": "Conditions d'Utilisation",
       "openInBrowser": "Ouvrir dans le navigateur"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "eveningReminder": {
+        "label": "Rappel du Soir",
+        "description": "Recevez un rappel si vous n'avez rien saisi aujourd'hui",
+        "time": "Heure du rappel"
+      },
+      "morningBudget": {
+        "label": "Budget du Matin",
+        "description": "Découvrez votre budget du jour chaque matin sans ouvrir l'app",
+        "time": "Heure de la notification"
+      },
+      "budgetAlert": {
+        "label": "Alertes Budgétaires",
+        "description": "Alerte immédiate quand une dépense fait passer votre budget en négatif"
+      },
+      "permissionRequired": "Permission Requise",
+      "permissionMessage": "PACE a besoin de la permission pour les notifications afin de vous envoyer des rappels et des alertes.",
+      "enablePermission": "Activer les Notifications",
+      "updated": "Paramètres de notification mis à jour"
+    }
+  },
+  "notifications": {
+    "eveningReminder": {
+      "title": "N'oubliez pas vos dépenses ! 📝",
+      "body": "Vous n'avez rien saisi aujourd'hui. Prenez un moment pour noter vos dépenses."
+    },
+    "morningBudget": {
+      "title": "Votre budget du jour 💰",
+      "body": "Bonjour ! Consultez votre budget du jour.",
+      "bodyWithAmount": "Bonjour ! Aujourd'hui vous pouvez dépenser {{amount}} {{currency}}."
+    },
+    "budgetAlert": {
+      "title": "⚠️ Alerte Budget",
+      "body": "Votre budget du jour est maintenant négatif de {{amount}} {{currency}}. Pensez à réduire vos dépenses."
     }
   },
   "paywall": {
