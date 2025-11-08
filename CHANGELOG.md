@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.7.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.6.0...v1.7.0) (2025-11-08)
+
+
+### Features
+
+* add avatar selection feature for user customization ([77e8d18](https://github.com/Carolinedanslesnuages/PACE/commit/77e8d18538d301afbf567bc94706915e7c847e34))
+* add customizable avatar selection for user profiles ([144a12a](https://github.com/Carolinedanslesnuages/PACE/commit/144a12ac01ec12dd821ae9ce93eb5b3551eb2693))
+
+
+### Bug Fixes
+
+* badge persistence - prevent modal loop on AsyncStorage save failures ([496d4d7](https://github.com/Carolinedanslesnuages/PACE/commit/496d4d7db749883a3c53cbdd988bceb257e20a50))
+* improve badge persistence error handling ([bf69fcb](https://github.com/Carolinedanslesnuages/PACE/commit/bf69fcb5202c68012ede80f55df05016b6432df2))
+* remove unused import in AvatarSelector test ([581d315](https://github.com/Carolinedanslesnuages/PACE/commit/581d315f736b20dfea32bc766c9d33f9efe41155))
+
 ## [1.6.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.5.0...v1.6.0) (2025-11-08)
 
 
