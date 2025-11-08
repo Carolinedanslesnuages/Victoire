@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.2.0...v1.3.0) (2025-11-08)
+
+
+### Features
+
+* implement notification system for budget tracking engagement (Epic 5) ([e6160a4](https://github.com/Carolinedanslesnuages/PACE/commit/e6160a48918875f012a3d35eef9668b77decbedb))
+* implement notifications and engagement features ([d99e585](https://github.com/Carolinedanslesnuages/PACE/commit/d99e585d53a3e1660885c99d4c3560431d99c697))
+* integrate add expense button into tab bar with consistent styling ([59b3063](https://github.com/Carolinedanslesnuages/PACE/commit/59b3063bf252232a9cfcc10beeb57316fa97f188))
+* integrate add expense button into tab bar with symmetric 5-tab layout ([598fde5](https://github.com/Carolinedanslesnuages/PACE/commit/598fde516c9a01204dff2a2546f73f23788a4b6f))
+
+
+### Bug Fixes
+
+* resolve TypeScript compilation errors in notifications ([f8862e1](https://github.com/Carolinedanslesnuages/PACE/commit/f8862e1b4284bc1332521b226bb6e6155fdf83e7))
+
 ## [1.2.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.1.0...v1.2.0) (2025-11-08)
 
 
