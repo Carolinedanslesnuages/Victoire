@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.1.0...v1.2.0) (2025-11-08)
+
+
+### Features
+
+* add comprehensive store presence documentation for Epic 14 ([4c886c7](https://github.com/Carolinedanslesnuages/PACE/commit/4c886c77c8aea3d668b75f4f9685546378731e30))
+* add Epic 14 store presence documentation (ASO-optimized assets & metadata) ([39af78c](https://github.com/Carolinedanslesnuages/PACE/commit/39af78cb0f1e919c9f4d78441e90d77b72a9ebfd))
+* implement bottom tab navigation with Duolingo-style flat design ([9f1e10a](https://github.com/Carolinedanslesnuages/PACE/commit/9f1e10ae07fd2203e41637afe8e1e7a9b6d76c77))
+* implement bottom tab navigation with Duolingo-style flat design ([0c0c9de](https://github.com/Carolinedanslesnuages/PACE/commit/0c0c9dec43b79a6cb20efabcbad16afd941e743e))
+
+
+### Bug Fixes
+
+* add History screen to tab navigation ([65f5c9b](https://github.com/Carolinedanslesnuages/PACE/commit/65f5c9b5576078eacff1a1ab7430df29064fc7cd))
+
 ## [1.1.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.0.0...v1.1.0) (2025-11-08)
 
 
