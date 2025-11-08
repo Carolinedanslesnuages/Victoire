@@ -3,8 +3,8 @@
  * Modern, minimalist flat design with Teal primary color
  */
 
-// Feature UI.1.1: Color Palette
-export const colors = {
+// Feature UI.1.1: Color Palette - Light Mode
+export const lightColors = {
   // Primary colors
   primary: '#00897B', // Teal primary
   primaryLight: '#4DB6AC',
@@ -57,6 +57,64 @@ export const colors = {
   // Dashboard background (from spec)
   dashboardBackground: '#E0F4E8',  // Fond Dashboard - Vert d'Eau Pâle
 };
+
+// Feature 11.1: Dark Mode Color Palette (desaturated teal to avoid eye strain)
+export const darkColors = {
+  // Primary colors - desaturated teal for dark mode
+  primary: '#4DB6AC', // Lighter, less saturated teal
+  primaryLight: '#80CBC4',
+  primaryDark: '#26A69A',
+
+  // Neutral colors (dark theme)
+  gray50: '#121212',
+  gray100: '#1E1E1E',
+  gray200: '#2C2C2C',
+  gray300: '#383838',
+  gray400: '#4F4F4F',
+  gray500: '#757575',
+  gray600: '#9E9E9E',
+  gray700: '#BDBDBD',
+  gray800: '#E0E0E0',
+  gray900: '#F5F5F5',
+
+  // Semantic colors (adjusted for dark mode visibility)
+  success: '#66BB6A',
+  warning: '#FFA726',
+  error: '#EF5350',
+  info: '#42A5F5',
+
+  // Text colors (inverted)
+  textPrimary: '#E0E0E0',
+  textSecondary: '#BDBDBD',
+  textDisabled: '#757575',
+  textInverse: '#121212',
+
+  // Background colors
+  background: '#121212',
+  surface: '#1E1E1E',
+  surfaceElevated: '#2C2C2C',
+
+  // Border colors
+  border: '#383838',
+  borderLight: '#2C2C2C',
+  borderDark: '#4F4F4F',
+
+  // Epic UI 3: Mascot color palette (adjusted for dark mode)
+  mascot: {
+    orangeEcureuil: '#E89B7D',  // Lighter orange for dark mode
+    brunNoisette: '#B8876D',     // Lighter brown for dark mode
+    roseKawaii: '#FFCAC9',       // Lighter pink for dark mode
+    vertSucces: '#66BB6A',       // Adjusted green for dark mode
+    jauneVigilance: '#FFD97D',   // Lighter yellow for dark mode
+    rougeDanger: '#EF8A8A',      // Lighter red for dark mode
+  },
+
+  // Dashboard background (dark mode variant)
+  dashboardBackground: '#1A2E23',  // Dark green tint
+};
+
+// Default export for backward compatibility
+export const colors = lightColors;
 
 // Feature UI.1.2: Typography Scale
 export const typography = {

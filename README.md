@@ -234,6 +234,33 @@ Pour plus d'informations sur les conventions de commit et le processus de releas
 
 ---
 
+## Epic 26 : DevOps & CI/CD - Build Automatisé
+
+Ce projet dispose d'un système de **build automatisé** pour les applications iOS et Android.
+
+### 🚀 Qu'est-ce que c'est ?
+
+Chaque fois que du code est poussé sur la branche `main`, un service (EAS Build d'Expo via GitHub Actions) lance automatiquement la compilation des applications iOS et Android.
+
+### 💡 Avantages
+
+- **Gain de temps** : Plus besoin de passer 2 heures à chaque mise à jour des stores
+- **Automatisation** : Les builds se lancent automatiquement
+- **Cohérence** : Même processus de build à chaque fois
+- **Builds parallèles** : iOS et Android compilent simultanément
+
+### 📚 Documentation
+
+Pour configurer et utiliser le système de build automatisé, consultez la [documentation complète CI/CD](EPIC_26_CICD_SETUP.md).
+
+### Configuration requise
+
+1. Compte Expo configuré
+2. Token Expo ajouté aux secrets GitHub (`EXPO_TOKEN`)
+3. Credentials iOS et Android configurés via EAS
+
+---
+
 ## Epic 13 : Conformité & Légal
 
 L'application respecte toutes les exigences des stores (App Store et Google Play) en matière de conformité légale :
