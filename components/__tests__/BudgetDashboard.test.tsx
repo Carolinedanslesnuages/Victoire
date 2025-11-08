@@ -6,11 +6,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import BudgetDashboard from '../BudgetDashboard';
-import { BudgetConfig } from '../../types';
+import { BudgetProfile } from '../../types';
 
 // Mock the storage module
 jest.mock('../../utils/storage', () => ({
-  getTransactionsForCurrentCycle: jest.fn(() => Promise.resolve([])),
+  getTransactionsForBudget: jest.fn(() => Promise.resolve([])),
   getTransactionsForPreviousCycleSameDay: jest.fn(() => Promise.resolve([])),
   deleteTransaction: jest.fn(() => Promise.resolve(true)),
   loadUserPreferences: jest.fn(() => Promise.resolve({
@@ -60,11 +60,15 @@ jest.mock('../../utils/gamification', () => ({
 describe('BudgetDashboard Component Tests', () => {
   const mockOnReconfigure = jest.fn();
 
-  const positiveConfig: BudgetConfig = {
+  const positiveProfile: BudgetProfile = {
+    id: 'test-budget-1',
+    type: 'personal',
+    name: 'Personnel',
     monthlyIncome: 3000,
     fixedCharges: 1000,
     savingsGoal: 500,
     cycleStartDay: 1,
+    createdAt: new Date().toISOString(),
   };
 
   beforeEach(() => {
@@ -81,7 +85,7 @@ describe('BudgetDashboard Component Tests', () => {
   describe('Daily Budget Indicator Display', () => {
     it('should display positive daily budget with green/success color', async () => {
       const { getByText } = render(
-        <BudgetDashboard config={positiveConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
       // Wait for the component to render
@@ -94,8 +98,8 @@ describe('BudgetDashboard Component Tests', () => {
     });
 
     it('should render with correct structure for positive budget', async () => {
-      const { getByText, queryByText } = render(
-        <BudgetDashboard config={positiveConfig} onReconfigure={mockOnReconfigure} />
+      const { queryByText } = render(
+        <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
@@ -106,22 +110,26 @@ describe('BudgetDashboard Component Tests', () => {
     });
 
     it('should display negative daily budget with red/error color when overspent', async () => {
-      const overspentConfig: BudgetConfig = {
+      const overspentProfile: BudgetProfile = {
+        id: 'test-budget-2',
+        type: 'personal',
+        name: 'Personnel',
         monthlyIncome: 1000,
         fixedCharges: 500,
         savingsGoal: 300,
         cycleStartDay: 1,
+        createdAt: new Date().toISOString(),
       };
 
       // Mock transactions showing overspending
       const storage = require('../../utils/storage');
-      storage.getTransactionsForCurrentCycle.mockResolvedValue([
+      storage.getTransactionsForBudget.mockResolvedValue([
         { id: '1', amount: 250, description: 'Expense 1', date: new Date().toISOString() },
         { id: '2', amount: 100, description: 'Expense 2', date: new Date().toISOString() },
       ]);
 
       const { getByText } = render(
-        <BudgetDashboard config={overspentConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={overspentProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
@@ -135,7 +143,7 @@ describe('BudgetDashboard Component Tests', () => {
   describe('Transaction List Display', () => {
     it('should display "no transactions" message when list is empty', async () => {
       const { getByText } = render(
-        <BudgetDashboard config={positiveConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
@@ -172,10 +180,10 @@ describe('BudgetDashboard Component Tests', () => {
       ];
 
       const storage = require('../../utils/storage');
-      storage.getTransactionsForCurrentCycle.mockResolvedValue(mockTransactions);
+      storage.getTransactionsForBudget.mockResolvedValue(mockTransactions);
 
       const { getByText } = render(
-        <BudgetDashboard config={positiveConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
@@ -210,10 +218,10 @@ describe('BudgetDashboard Component Tests', () => {
       ];
 
       const storage = require('../../utils/storage');
-      storage.getTransactionsForCurrentCycle.mockResolvedValue(mockTransactions);
+      storage.getTransactionsForBudget.mockResolvedValue(mockTransactions);
 
       const { getByText } = render(
-        <BudgetDashboard config={positiveConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
@@ -232,7 +240,7 @@ describe('BudgetDashboard Component Tests', () => {
   describe('Budget Status Rendering', () => {
     it('should render monthly health card with cycle information', async () => {
       const { getByText } = render(
-        <BudgetDashboard config={positiveConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
@@ -253,10 +261,10 @@ describe('BudgetDashboard Component Tests', () => {
       ];
 
       const storage = require('../../utils/storage');
-      storage.getTransactionsForCurrentCycle.mockResolvedValue(mockTransactions);
+      storage.getTransactionsForBudget.mockResolvedValue(mockTransactions);
 
       const { getByText } = render(
-        <BudgetDashboard config={positiveConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
@@ -270,7 +278,7 @@ describe('BudgetDashboard Component Tests', () => {
   describe('Accessibility and Typography', () => {
     it('should use appropriate font sizes for the daily budget display', async () => {
       const { getByText } = render(
-        <BudgetDashboard config={positiveConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
@@ -282,13 +290,13 @@ describe('BudgetDashboard Component Tests', () => {
     });
 
     it('should render budget name if provided', async () => {
-      const namedConfig: BudgetConfig = {
-        ...positiveConfig,
-        budgetName: 'Mon Budget Personnel',
+      const namedProfile: BudgetProfile = {
+        ...positiveProfile,
+        name: 'Mon Budget Personnel',
       };
 
       const { getByText } = render(
-        <BudgetDashboard config={namedConfig} onReconfigure={mockOnReconfigure} />
+        <BudgetDashboard profile={namedProfile} onReconfigure={mockOnReconfigure} />
       );
 
       await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
