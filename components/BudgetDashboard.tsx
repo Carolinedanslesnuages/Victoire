@@ -11,10 +11,10 @@ import {
   calculateSpentPercentage,
 } from '../utils/budgetCalculations';
 import {
-  getTransactionsForCurrentCycle,
   getTransactionsForPreviousCycleSameDay,
   deleteTransaction,
   loadUserPreferences,
+  getTransactionsForBudget,
 } from '../utils/storage';
 import {
   calculateCategorySpending,
@@ -22,7 +22,7 @@ import {
   compareMonthlySpending,
 } from '../utils/analytics';
 import { getMascotState } from '../utils/mascot';
-import { BudgetConfig, Transaction, UserPreferences, StreakInfo, Badge } from '../types';
+import { BudgetProfile, Transaction, UserPreferences, StreakInfo, Badge } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
@@ -31,11 +31,12 @@ import { checkAndUnlockBadges, unlockBadge } from '../utils/gamification';
 import { getAvatarEmoji } from '../constants/avatars';
 
 interface BudgetDashboardProps {
-  config: BudgetConfig;
+  profile: BudgetProfile;
   onReconfigure: () => void;
+  refreshKey?: number;
 }
 
-export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboardProps) {
+export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: BudgetDashboardProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [previousTransactions, setPreviousTransactions] = useState<Transaction[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -58,7 +59,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     loadTransactions();
     loadPreferences();
     loadStreak();
-  }, [config.cycleStartDay]);
+  }, [profile.id, profile.cycleStartDay, refreshKey]);
 
   const loadPreferences = async () => {
     const prefs = await loadUserPreferences();
@@ -79,7 +80,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
   };
 
   const loadTransactions = async () => {
-    const txns = await getTransactionsForCurrentCycle(config.cycleStartDay);
+    const txns = await getTransactionsForBudget(profile.id, profile.cycleStartDay);
     setTransactions(txns);
     
     // Check for first step badge on first transaction
@@ -92,7 +93,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     }
     
     // Load previous month transactions for comparison
-    const prevTxns = await getTransactionsForPreviousCycleSameDay(config.cycleStartDay);
+    const prevTxns = await getTransactionsForPreviousCycleSameDay(profile.cycleStartDay);
     setPreviousTransactions(prevTxns);
   };
 
@@ -145,28 +146,28 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     return t.type === 'income' ? sum + t.amount : sum;
   }, 0);
   
-  const resteAVivre = config.monthlyIncome - config.fixedCharges - config.savingsGoal;
+  const resteAVivre = profile.monthlyIncome - profile.fixedCharges - profile.savingsGoal;
   const dailyBudget = calculateDailyBudget(
-    config.monthlyIncome,
-    config.fixedCharges,
-    config.savingsGoal,
+    profile.monthlyIncome,
+    profile.fixedCharges,
+    profile.savingsGoal,
     totalSpent,
-    config.cycleStartDay,
+    profile.cycleStartDay,
     totalIncome
   );
-  const daysRemaining = getDaysRemainingInCycle(config.cycleStartDay);
+  const daysRemaining = getDaysRemainingInCycle(profile.cycleStartDay);
   const budgetStatus = calculateBudgetStatus(
-    config.monthlyIncome,
-    config.fixedCharges,
-    config.savingsGoal,
+    profile.monthlyIncome,
+    profile.fixedCharges,
+    profile.savingsGoal,
     totalSpent,
-    config.cycleStartDay,
+    profile.cycleStartDay,
     totalIncome
   );
   const spentPercentage = calculateSpentPercentage(
-    config.monthlyIncome,
-    config.fixedCharges,
-    config.savingsGoal,
+    profile.monthlyIncome,
+    profile.fixedCharges,
+    profile.savingsGoal,
     totalSpent,
     totalIncome
   );
@@ -175,9 +176,9 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
 
   // Epic UI 3: Calculate mascot state based on "Reste à Vivre"
   const mascotState = getMascotState(
-    config.monthlyIncome,
-    config.fixedCharges,
-    config.savingsGoal,
+    profile.monthlyIncome,
+    profile.fixedCharges,
+    profile.savingsGoal,
     totalSpent,
     totalIncome
   );
@@ -197,13 +198,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
 
   // Get budget display name
   const getBudgetDisplayName = () => {
-    if (config.isHouseholdBudget && config.householdName) {
-      return `${i18n.t('dashboard.header.householdBudgetPrefix')} - ${config.householdName}`;
-    }
-    if (config.isHouseholdBudget) {
-      return i18n.t('dashboard.header.householdBudgetPrefix');
-    }
-    return config.budgetName || i18n.t('dashboard.header.defaultBudgetName');
+    return profile.name;
   };
 
   return (
@@ -253,7 +248,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
             </TouchableOpacity>
           </View>
           <Text style={styles.headerSubtitle}>
-            {i18n.t('dashboard.cycleSubtitle', { day: config.cycleStartDay })}
+            {i18n.t('dashboard.cycleSubtitle', { day: profile.cycleStartDay })}
           </Text>
         </View>
 

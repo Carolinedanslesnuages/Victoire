@@ -1,27 +1,41 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import BudgetDashboard from '../components/BudgetDashboard';
 import HistoryScreen from '../components/HistoryScreen';
 import ProfileScreen from '../components/ProfileScreen';
 import SettingsScreen from '../components/SettingsScreen';
-import { colors, typography } from '../constants/theme';
+import BudgetSwitcher from '../components/BudgetSwitcher';
+import { colors, typography, spacing } from '../constants/theme';
 import i18n from '../utils/i18n';
-import { BudgetConfig } from '../types';
+import { BudgetProfile } from '../types';
 
 const Tab = createBottomTabNavigator();
 
 interface MainTabNavigatorProps {
-  budgetConfig: BudgetConfig;
+  budgetProfile: BudgetProfile;
   onReconfigure: () => void;
   onAddExpense: () => void;
+  onBudgetChange: () => void;
+  refreshKey: number;
 }
 
-export default function MainTabNavigator({ budgetConfig, onReconfigure, onAddExpense }: MainTabNavigatorProps) {
+export default function MainTabNavigator({ 
+  budgetProfile, 
+  onReconfigure, 
+  onAddExpense, 
+  onBudgetChange,
+  refreshKey 
+}: MainTabNavigatorProps) {
   const [isSettingsVisible, setIsSettingsVisible] = React.useState(false);
 
   return (
     <>
+      {/* Budget Switcher Header */}
+      <View style={styles.headerContainer}>
+        <BudgetSwitcher onBudgetChange={onBudgetChange} />
+      </View>
+
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -56,7 +70,7 @@ export default function MainTabNavigator({ budgetConfig, onReconfigure, onAddExp
             ),
           }}
         >
-          {() => <BudgetDashboard config={budgetConfig} onReconfigure={onReconfigure} />}
+          {() => <BudgetDashboard profile={budgetProfile} onReconfigure={onReconfigure} refreshKey={refreshKey} />}
         </Tab.Screen>
 
         <Tab.Screen
@@ -129,3 +143,15 @@ export default function MainTabNavigator({ budgetConfig, onReconfigure, onAddExp
 
 // Empty component for tabs that don't have a screen
 const EmptyComponent = () => null;
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    backgroundColor: colors.surface,
+    paddingTop: spacing.lg + 40, // Add space for status bar
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+  },
+});

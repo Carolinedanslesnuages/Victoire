@@ -380,6 +380,29 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
             )}
           </View>
 
+          {/* Budget Profiles Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{i18n.t('settings.budgetProfiles.title')}</Text>
+            <Text style={styles.sectionDescription}>
+              {i18n.t('settings.budgetProfiles.description')}
+            </Text>
+            
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={() => {
+                Alert.alert(
+                  i18n.t('settings.budgetProfiles.editTitle'),
+                  i18n.t('settings.budgetProfiles.editMessage')
+                );
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.linkButtonText}>
+                {i18n.t('settings.budgetProfiles.manageBudgets')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Currency Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{i18n.t('settings.personalization')}</Text>
@@ -1109,5 +1132,23 @@ const styles = StyleSheet.create({
   avatarEmoji: {
     fontSize: 28,
     marginRight: spacing.sm,
+  },
+  // Budget profiles section styles
+  sectionDescription: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginBottom: spacing.md,
+    lineHeight: 20,
+  },
+  linkButton: {
+    backgroundColor: colors.primaryLight,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+  },
+  linkButtonText: {
+    color: colors.primary,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
   },
 });
