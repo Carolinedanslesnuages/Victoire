@@ -1133,4 +1133,22 @@ const styles = StyleSheet.create({
     fontSize: 28,
     marginRight: spacing.sm,
   },
+  // Budget profiles section styles
+  sectionDescription: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginBottom: spacing.md,
+    lineHeight: 20,
+  },
+  linkButton: {
+    backgroundColor: colors.primaryLight,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+  },
+  linkButtonText: {
+    color: colors.primary,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+  },
 });
