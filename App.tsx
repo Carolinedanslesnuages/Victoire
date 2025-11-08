@@ -6,8 +6,18 @@ import ConfigWizard from './components/ConfigWizard';
 import MainTabNavigator from './navigation/MainTabNavigator';
 import AddExpenseModal from './components/AddExpenseModal';
 import StreakCelebration from './components/StreakCelebration';
-import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreferences, getTransactionsForCurrentCycle, processRecurringTransactions } from './utils/storage';
-import { BudgetConfig, Transaction, UserPreferences } from './types';
+import { 
+  saveBudgetConfig, 
+  loadBudgetConfig, 
+  saveTransaction, 
+  loadUserPreferences, 
+  processRecurringTransactions,
+  loadBudgetProfiles,
+  getActiveBudgetProfile,
+  createBudgetProfile,
+  getTransactionsForBudget
+} from './utils/storage';
+import { BudgetConfig, BudgetProfile, Transaction, UserPreferences } from './types';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { initializeNotifications, sendBudgetAlertNotification } from './utils/notifications';
@@ -18,7 +28,7 @@ import { triggerSuccessHaptic, triggerWarningHaptic } from './utils/haptics';
 function AppContent() {
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
-  const [budgetConfig, setBudgetConfig] = useState<BudgetConfig | null>(null);
+  const [budgetProfile, setBudgetProfile] = useState<BudgetProfile | null>(null);
   const [isAddExpenseVisible, setIsAddExpenseVisible] = useState(false);
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     currency: 'EUR',
@@ -26,17 +36,33 @@ function AppContent() {
   });
   const [showStreakCelebration, setShowStreakCelebration] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    loadConfig();
+    loadProfile();
     loadPreferences();
     initializeNotifications();
     processRecurringTransactionsOnLoad();
   }, []);
 
-  const loadConfig = async () => {
-    const config = await loadBudgetConfig();
-    setBudgetConfig(config);
+  const loadProfile = async () => {
+    // Try to load the active budget profile
+    const profile = await getActiveBudgetProfile();
+    
+    if (profile) {
+      setBudgetProfile(profile);
+    } else {
+      // Check if there's an old config to migrate
+      const oldConfig = await loadBudgetConfig();
+      if (oldConfig) {
+        // Migration already handled in loadBudgetProfiles
+        const profiles = await loadBudgetProfiles();
+        if (profiles.length > 0) {
+          setBudgetProfile(profiles[0]);
+        }
+      }
+    }
+    
     setIsLoading(false);
   };
 
@@ -46,22 +72,40 @@ function AppContent() {
   };
 
   const processRecurringTransactionsOnLoad = async () => {
-    // Wait for budget config to load first
-    const config = await loadBudgetConfig();
-    if (config) {
-      await processRecurringTransactions(config.cycleStartDay);
+    const profile = await getActiveBudgetProfile();
+    if (profile) {
+      await processRecurringTransactions(profile.cycleStartDay);
     }
   };
 
   const handleConfigComplete = async (config: BudgetConfig) => {
-    const success = await saveBudgetConfig(config);
-    if (success) {
-      setBudgetConfig(config);
+    // Create a new personal budget profile from the config
+    const profile = await createBudgetProfile({
+      type: 'personal',
+      name: config.budgetName || 'Personnel',
+      monthlyIncome: config.monthlyIncome,
+      fixedCharges: config.fixedCharges,
+      savingsGoal: config.savingsGoal,
+      cycleStartDay: config.cycleStartDay,
+    });
+    
+    if (profile) {
+      setBudgetProfile(profile);
+      // Also save to old format for backward compatibility
+      await saveBudgetConfig(config);
     }
   };
 
   const handleReconfigure = () => {
-    setBudgetConfig(null);
+    setBudgetProfile(null);
+  };
+
+  const handleBudgetChange = async () => {
+    // Reload the active budget profile
+    const profile = await getActiveBudgetProfile();
+    setBudgetProfile(profile);
+    // Force refresh of all components
+    setRefreshKey(prev => prev + 1);
   };
 
   const handleAddExpense = async (expense: Omit<Transaction, 'id'>) => {
@@ -77,8 +121,11 @@ function AppContent() {
       }
       
       // Check if budget went negative and send alert
-      if (budgetConfig) {
-        const transactions = await getTransactionsForCurrentCycle(budgetConfig.cycleStartDay);
+      if (budgetProfile) {
+        const transactions = await getTransactionsForBudget(
+          budgetProfile.id,
+          budgetProfile.cycleStartDay
+        );
         const totalSpent = transactions.reduce((sum, t) => {
           return t.type === 'income' ? sum : sum + t.amount;
         }, 0);
@@ -86,11 +133,11 @@ function AppContent() {
           return t.type === 'income' ? sum + t.amount : sum;
         }, 0);
         const dailyBudget = calculateDailyBudget(
-          budgetConfig.monthlyIncome,
-          budgetConfig.fixedCharges,
-          budgetConfig.savingsGoal,
+          budgetProfile.monthlyIncome,
+          budgetProfile.fixedCharges,
+          budgetProfile.savingsGoal,
           totalSpent,
-          budgetConfig.cycleStartDay,
+          budgetProfile.cycleStartDay,
           totalIncome
         );
         
@@ -104,9 +151,12 @@ function AppContent() {
           await triggerSuccessHaptic();
         }
       } else {
-        // Success haptic if no budget config
+        // Success haptic if no budget profile
         await triggerSuccessHaptic();
       }
+      
+      // Force refresh
+      setRefreshKey(prev => prev + 1);
     }
   };
 
@@ -122,12 +172,14 @@ function AppContent() {
     <SubscriptionProvider>
       <NavigationContainer>
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-          {budgetConfig ? (
+          {budgetProfile ? (
             <>
               <MainTabNavigator
-                budgetConfig={budgetConfig}
+                budgetProfile={budgetProfile}
                 onReconfigure={handleReconfigure}
                 onAddExpense={() => setIsAddExpenseVisible(true)}
+                onBudgetChange={handleBudgetChange}
+                refreshKey={refreshKey}
               />
               <AddExpenseModal
                 visible={isAddExpenseVisible}

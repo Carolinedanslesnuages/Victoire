@@ -1,10 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BudgetConfig, Transaction, UserPreferences } from '../types';
+import { BudgetConfig, BudgetProfile, Transaction, UserPreferences } from '../types';
 import { getDefaultNotificationSettings } from './notifications';
 
 const BUDGET_CONFIG_KEY = '@pace_budget_config';
 const TRANSACTIONS_KEY = '@pace_transactions';
 const USER_PREFERENCES_KEY = '@pace_user_preferences';
+const BUDGET_PROFILES_KEY = '@pace_budget_profiles';
+const ACTIVE_BUDGET_ID_KEY = '@pace_active_budget_id';
 
 /**
  * Save budget configuration to local storage
@@ -53,17 +55,27 @@ export const clearBudgetConfig = async (): Promise<boolean> => {
 /**
  * Save a new transaction
  * @param transaction - Transaction object (without id)
+ * @param budgetId - Optional budget ID (if not provided, uses active budget)
  * @returns Success status
  */
 export const saveTransaction = async (
-  transaction: Omit<Transaction, 'id'>
+  transaction: Omit<Transaction, 'id'>,
+  budgetId?: string
 ): Promise<boolean> => {
   try {
     const transactions = await loadTransactions();
+    
+    // If no budgetId provided, use the active budget
+    let finalBudgetId = budgetId;
+    if (!finalBudgetId) {
+      finalBudgetId = await getActiveBudgetId() || undefined;
+    }
+    
     const newTransaction = {
       ...transaction,
       id: Date.now().toString(),
       date: transaction.date || new Date().toISOString(),
+      budgetId: finalBudgetId,
     };
     transactions.push(newTransaction);
     const jsonValue = JSON.stringify(transactions);
@@ -364,6 +376,242 @@ export const processRecurringTransactions = async (
     return newTransactionIds;
   } catch (error) {
     console.error('Error processing recurring transactions:', error);
+    return [];
+  }
+};
+
+// =============================================================================
+// Multi-Budget Profile Functions (Epic 25)
+// =============================================================================
+
+/**
+ * Save all budget profiles to local storage
+ * @param profiles - Array of budget profiles
+ * @returns Success status
+ */
+export const saveBudgetProfiles = async (profiles: BudgetProfile[]): Promise<boolean> => {
+  try {
+    const jsonValue = JSON.stringify(profiles);
+    await AsyncStorage.setItem(BUDGET_PROFILES_KEY, jsonValue);
+    return true;
+  } catch (error) {
+    console.error('Error saving budget profiles:', error);
+    return false;
+  }
+};
+
+/**
+ * Load all budget profiles from local storage
+ * @returns Array of budget profiles
+ */
+export const loadBudgetProfiles = async (): Promise<BudgetProfile[]> => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(BUDGET_PROFILES_KEY);
+    if (jsonValue != null) {
+      return JSON.parse(jsonValue);
+    }
+    
+    // Migration: Check if old budget config exists and convert it
+    const oldConfig = await loadBudgetConfig();
+    if (oldConfig) {
+      const profile: BudgetProfile = {
+        id: 'personal-default',
+        type: 'personal',
+        name: oldConfig.budgetName || 'Personnel',
+        monthlyIncome: oldConfig.monthlyIncome,
+        fixedCharges: oldConfig.fixedCharges,
+        savingsGoal: oldConfig.savingsGoal,
+        cycleStartDay: oldConfig.cycleStartDay,
+        createdAt: new Date().toISOString(),
+      };
+      await saveBudgetProfiles([profile]);
+      await setActiveBudgetId(profile.id);
+      return [profile];
+    }
+    
+    return [];
+  } catch (error) {
+    console.error('Error loading budget profiles:', error);
+    return [];
+  }
+};
+
+/**
+ * Get a specific budget profile by ID
+ * @param id - Budget profile ID
+ * @returns Budget profile or null if not found
+ */
+export const getBudgetProfile = async (id: string): Promise<BudgetProfile | null> => {
+  try {
+    const profiles = await loadBudgetProfiles();
+    return profiles.find(p => p.id === id) || null;
+  } catch (error) {
+    console.error('Error getting budget profile:', error);
+    return null;
+  }
+};
+
+/**
+ * Create a new budget profile
+ * @param profile - Budget profile to create (without id and createdAt)
+ * @returns Created budget profile or null on error
+ */
+export const createBudgetProfile = async (
+  profile: Omit<BudgetProfile, 'id' | 'createdAt'>
+): Promise<BudgetProfile | null> => {
+  try {
+    const profiles = await loadBudgetProfiles();
+    const newProfile: BudgetProfile = {
+      ...profile,
+      id: `${profile.type}-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+    profiles.push(newProfile);
+    const success = await saveBudgetProfiles(profiles);
+    return success ? newProfile : null;
+  } catch (error) {
+    console.error('Error creating budget profile:', error);
+    return null;
+  }
+};
+
+/**
+ * Update an existing budget profile
+ * @param id - Budget profile ID
+ * @param updates - Partial budget profile updates
+ * @returns Success status
+ */
+export const updateBudgetProfile = async (
+  id: string,
+  updates: Partial<Omit<BudgetProfile, 'id' | 'createdAt'>>
+): Promise<boolean> => {
+  try {
+    const profiles = await loadBudgetProfiles();
+    const index = profiles.findIndex(p => p.id === id);
+    if (index === -1) return false;
+    
+    profiles[index] = { ...profiles[index], ...updates };
+    return await saveBudgetProfiles(profiles);
+  } catch (error) {
+    console.error('Error updating budget profile:', error);
+    return false;
+  }
+};
+
+/**
+ * Delete a budget profile
+ * @param id - Budget profile ID
+ * @returns Success status
+ */
+export const deleteBudgetProfile = async (id: string): Promise<boolean> => {
+  try {
+    const profiles = await loadBudgetProfiles();
+    const filtered = profiles.filter(p => p.id !== id);
+    
+    // Don't allow deleting the last profile
+    if (filtered.length === 0) {
+      console.warn('Cannot delete the last budget profile');
+      return false;
+    }
+    
+    // If deleting the active profile, switch to first remaining profile
+    const activeId = await getActiveBudgetId();
+    if (activeId === id && filtered.length > 0) {
+      await setActiveBudgetId(filtered[0].id);
+    }
+    
+    return await saveBudgetProfiles(filtered);
+  } catch (error) {
+    console.error('Error deleting budget profile:', error);
+    return false;
+  }
+};
+
+/**
+ * Get the active budget profile ID
+ * @returns Active budget ID or null if not set
+ */
+export const getActiveBudgetId = async (): Promise<string | null> => {
+  try {
+    const id = await AsyncStorage.getItem(ACTIVE_BUDGET_ID_KEY);
+    
+    // If no active budget is set, try to set the first one
+    if (!id) {
+      const profiles = await loadBudgetProfiles();
+      if (profiles.length > 0) {
+        await setActiveBudgetId(profiles[0].id);
+        return profiles[0].id;
+      }
+    }
+    
+    return id;
+  } catch (error) {
+    console.error('Error getting active budget ID:', error);
+    return null;
+  }
+};
+
+/**
+ * Set the active budget profile ID
+ * @param id - Budget profile ID to set as active
+ * @returns Success status
+ */
+export const setActiveBudgetId = async (id: string): Promise<boolean> => {
+  try {
+    await AsyncStorage.setItem(ACTIVE_BUDGET_ID_KEY, id);
+    return true;
+  } catch (error) {
+    console.error('Error setting active budget ID:', error);
+    return false;
+  }
+};
+
+/**
+ * Get the active budget profile
+ * @returns Active budget profile or null if not found
+ */
+export const getActiveBudgetProfile = async (): Promise<BudgetProfile | null> => {
+  try {
+    const activeId = await getActiveBudgetId();
+    if (!activeId) return null;
+    return await getBudgetProfile(activeId);
+  } catch (error) {
+    console.error('Error getting active budget profile:', error);
+    return null;
+  }
+};
+
+/**
+ * Get transactions for a specific budget profile and cycle
+ * @param budgetId - Budget profile ID
+ * @param cycleStartDay - Day of month when cycle starts
+ * @returns Array of transactions
+ */
+export const getTransactionsForBudget = async (
+  budgetId: string,
+  cycleStartDay: number
+): Promise<Transaction[]> => {
+  try {
+    const transactions = await loadTransactions();
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const day = today.getDate();
+
+    let cycleStart;
+    if (day < cycleStartDay) {
+      cycleStart = new Date(year, month - 1, cycleStartDay);
+    } else {
+      cycleStart = new Date(year, month, cycleStartDay);
+    }
+
+    return transactions.filter(t => {
+      const transactionDate = new Date(t.date);
+      const matchesBudget = t.budgetId === budgetId || (!t.budgetId && budgetId === 'personal-default');
+      return matchesBudget && transactionDate >= cycleStart;
+    });
+  } catch (error) {
+    console.error('Error getting transactions for budget:', error);
     return [];
   }
 };

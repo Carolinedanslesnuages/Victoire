@@ -427,5 +427,24 @@
     "continue": "Continue",
     "save": "Save",
     "updated": "Avatar updated!"
+  },
+  "budgetSwitcher": {
+    "selectBudget": "Select a budget",
+    "personal": "Personal",
+    "household": "Household",
+    "createHousehold": "Create Household Budget",
+    "createHouseholdMessage": "Create a shared budget to manage your household expenses separately from your personal budget.",
+    "householdExists": "Household Budget Exists",
+    "householdExistsMessage": "You already have a Household budget.",
+    "created": "Budget Created",
+    "householdCreated": "Your Household budget has been successfully created! Configure it in Settings."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "create": "Create",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit"
   }
 }

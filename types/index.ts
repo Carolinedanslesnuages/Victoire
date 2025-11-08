@@ -5,7 +5,26 @@
 import { AvatarId } from '../constants/avatars';
 
 /**
- * Budget configuration interface
+ * Budget profile type - personal or household
+ */
+export type BudgetProfileType = 'personal' | 'household';
+
+/**
+ * Budget profile interface - represents a single budget (personal or household)
+ */
+export interface BudgetProfile {
+  id: string; // Unique identifier for the budget
+  type: BudgetProfileType; // Type of budget
+  name: string; // Display name (e.g., "Personnel", "Foyer")
+  monthlyIncome: number;
+  fixedCharges: number;
+  savingsGoal: number;
+  cycleStartDay: number;
+  createdAt: string; // ISO date string
+}
+
+/**
+ * Budget configuration interface (legacy - for backward compatibility)
  */
 export interface BudgetConfig {
   monthlyIncome: number;
@@ -34,6 +53,7 @@ export interface Transaction {
   type?: TransactionType; // Type of transaction (default: 'expense')
   isRecurring?: boolean; // Whether this is a recurring transaction
   recurringDay?: number; // Day of month when recurring transaction should be created (1-31)
+  budgetId?: string; // ID of the budget this transaction belongs to (optional for backward compatibility)
 }
 
 /**
