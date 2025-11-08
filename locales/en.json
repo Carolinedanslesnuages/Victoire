@@ -1,4 +1,13 @@
 {
+  "navigation": {
+    "home": "Home",
+    "history": "History",
+    "settings": "Settings"
+  },
+  "history": {
+    "title": "History",
+    "comingSoon": "Transaction history coming soon!"
+  },
   "configWizard": {
     "title": "Budget Configuration",
     "subtitle": "Define your budget framework to get started",
