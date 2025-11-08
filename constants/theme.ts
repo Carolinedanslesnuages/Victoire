@@ -43,6 +43,19 @@ export const colors = {
   border: '#E0E0E0',
   borderLight: '#F5F5F5',
   borderDark: '#BDBDBD',
+
+  // Epic UI 3: Mascot color palette (L'Écureuil Économe)
+  mascot: {
+    orangeEcureuil: '#D46F4D',  // Accent Principal, Éléments Interactifs
+    brunNoisette: '#9C5B3D',     // Textes Secondaires, Titres, Icônes
+    roseKawaii: '#FFB0AD',       // Éléments Graphiques, Touches Décoratives
+    vertSucces: '#47B28F',       // Zone Verte - Budget Confortable
+    jauneVigilance: '#FFC759',   // Zone Jaune - Gestion Stricte
+    rougeDanger: '#E55C5C',      // Zone Rouge - Budget Critique
+  },
+
+  // Dashboard background (from spec)
+  dashboardBackground: '#E0F4E8',  // Fond Dashboard - Vert d'Eau Pâle
 };
 
 // Feature UI.1.2: Typography Scale
