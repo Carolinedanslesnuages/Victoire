@@ -223,6 +223,7 @@
   "settings": {
     "title": "Settings",
     "personalization": "Personalization",
+    "avatar": "Avatar",
     "currency": "Currency",
     "selectCurrency": "Select currency",
     "customCategories": "Custom categories",
@@ -405,5 +406,26 @@
       "panique": "Budget about to go negative! 🚨",
       "detresse": "Budget in deficit, act now! 🆘"
     }
+  },
+  "avatars": {
+    "fox": "Fox",
+    "cat": "Cat",
+    "dog": "Dog",
+    "bear": "Bear",
+    "piggy_bank": "Piggy Bank",
+    "rocket": "Rocket",
+    "star": "Star",
+    "gem": "Gem"
+  },
+  "avatarSelection": {
+    "title": "Choose your avatar",
+    "subtitle": "Select a visual identity to customize your profile",
+    "onboardingTitle": "Customize your profile",
+    "onboardingSubtitle": "Choose an avatar that represents you",
+    "settingsTitle": "Change avatar",
+    "settingsSubtitle": "Change your visual identity at any time",
+    "continue": "Continue",
+    "save": "Save",
+    "updated": "Avatar updated!"
   }
 }

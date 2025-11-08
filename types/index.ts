@@ -2,6 +2,8 @@
  * Type definitions for the PACE budget app
  */
 
+import { AvatarId } from '../constants/avatars';
+
 /**
  * Budget configuration interface
  */
@@ -58,6 +60,7 @@ export interface UserPreferences {
   currency: string;
   customCategories: string[];
   notificationSettings?: NotificationSettings;
+  avatarId?: AvatarId; // Selected avatar for user profile
 }
 
 /**

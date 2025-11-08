@@ -223,6 +223,7 @@
   "settings": {
     "title": "Paramètres",
     "personalization": "Personnalisation",
+    "avatar": "Avatar",
     "currency": "Devise",
     "selectCurrency": "Sélectionner la devise",
     "customCategories": "Catégories personnalisées",
@@ -405,5 +406,26 @@
       "panique": "Budget sur le point de passer en négatif ! 🚨",
       "detresse": "Budget en déficit, agissez maintenant ! 🆘"
     }
+  },
+  "avatars": {
+    "fox": "Renard",
+    "cat": "Chat",
+    "dog": "Chien",
+    "bear": "Ours",
+    "piggy_bank": "Tirelire",
+    "rocket": "Fusée",
+    "star": "Étoile",
+    "gem": "Diamant"
+  },
+  "avatarSelection": {
+    "title": "Choisissez votre avatar",
+    "subtitle": "Sélectionnez une identité visuelle pour personnaliser votre profil",
+    "onboardingTitle": "Personnalisez votre profil",
+    "onboardingSubtitle": "Choisissez un avatar qui vous représente",
+    "settingsTitle": "Modifier l'avatar",
+    "settingsSubtitle": "Changez votre identité visuelle à tout moment",
+    "continue": "Continuer",
+    "save": "Enregistrer",
+    "updated": "Avatar mis à jour !"
   }
 }

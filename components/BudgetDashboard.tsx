@@ -28,6 +28,7 @@ import i18n from '../utils/i18n';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
 import { calculateStreak } from '../utils/streaks';
 import { checkAndUnlockBadges, unlockBadge } from '../utils/gamification';
+import { getAvatarEmoji } from '../constants/avatars';
 
 interface BudgetDashboardProps {
   config: BudgetConfig;
@@ -225,6 +226,10 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
         {/* Epic UI 4: Duolingo-style Header with Gamification */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
+            {/* Avatar display */}
+            <View style={styles.avatarContainer}>
+              <Text style={styles.avatarEmoji}>{getAvatarEmoji(userPreferences.avatarId)}</Text>
+            </View>
             {/* Feature UI 4.1.1 & UI 4.2: Budget name with streak indicator */}
             <View style={styles.headerLeft}>
               <Text style={styles.headerTitle}>{getBudgetDisplayName()}</Text>
@@ -540,6 +545,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.xs,
+  },
+  avatarContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.md,
+  },
+  avatarEmoji: {
+    fontSize: 32,
   },
   headerLeft: {
     flexDirection: 'row',
