@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.3.0...v1.4.0) (2025-11-08)
+
+
+### Features
+
+* add Epic 6 - Analyse & Insights with category breakdown and trends ([fc5f10a](https://github.com/Carolinedanslesnuages/PACE/commit/fc5f10aa3a0f12eae8a77a23859069805405bfe3))
+* Epic 6 - Analyse & Insights avec répartition catégories et tendances ([f230781](https://github.com/Carolinedanslesnuages/PACE/commit/f23078148cd35913ecf82ef069ead908342a430d))
+
 ## [1.3.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.2.0...v1.3.0) (2025-11-08)
 
 
