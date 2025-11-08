@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
 import BudgetRing from './BudgetRing';
 import PieChart from './PieChart';
+import MascotDisplay from './MascotDisplay';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -19,6 +20,7 @@ import {
   getTopCategories,
   compareMonthlySpending,
 } from '../utils/analytics';
+import { getMascotState } from '../utils/mascot';
 import { BudgetConfig, Transaction, UserPreferences, StreakInfo } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 import i18n from '../utils/i18n';
@@ -137,6 +139,14 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
 
   const isDailyBudgetNegative = dailyBudget < 0;
 
+  // Epic UI 3: Calculate mascot state based on "Reste à Vivre"
+  const mascotState = getMascotState(
+    config.monthlyIncome,
+    config.fixedCharges,
+    config.savingsGoal,
+    totalSpent
+  );
+
   // Analytics calculations for Epic 6
   const categorySpending = calculateCategorySpending(transactions);
   const topCategories = getTopCategories(categorySpending, 3);
@@ -195,6 +205,14 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
           </View>
           <Text style={styles.headerSubtitle}>
             {i18n.t('dashboard.cycleSubtitle', { day: config.cycleStartDay })}
+          </Text>
+        </View>
+
+        {/* Epic UI 3: Feature UI 3.1.1 - Reactive Mascot Display */}
+        <View style={styles.mascotCard}>
+          <MascotDisplay mascotState={mascotState} showDescription={true} size="medium" />
+          <Text style={styles.mascotDescription}>
+            {i18n.t(`mascot.descriptions.${mascotState.mood}`)}
           </Text>
         </View>
 
@@ -830,5 +848,23 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.medium,
+  },
+  // Epic UI 3: Mascot card styles
+  mascotCard: {
+    backgroundColor: colors.surface,
+    margin: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    alignItems: 'center',
+    ...elevation.low,
+  },
+  mascotDescription: {
+    fontSize: typography.fontSize.body,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.md,
   },
 });

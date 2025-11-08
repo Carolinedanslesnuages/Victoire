@@ -255,5 +255,37 @@
       "notFound": "Aucun achat trouvé",
       "notFoundMessage": "Aucun abonnement actif n'a été trouvé sur ce compte."
     }
+  },
+  "mascot": {
+    "title": "L'Écureuil Économe",
+    "moods": {
+      "serein": "Heureux & Serein",
+      "joyeux": "Content & Taquin",
+      "optimiste": "Soulagé & Optimiste",
+      "determine": "Déterminé & Concentré",
+      "vigilant": "Concentré & Vigilant",
+      "inquiet": "Légèrement Inquiet",
+      "nerveux": "Hésitant & Nerveux",
+      "fatigue": "Fatigué & Dépassé",
+      "panique": "Très Inquiet & Paniqué",
+      "detresse": "En Détresse"
+    },
+    "zones": {
+      "green": "Budget Confortable",
+      "yellow": "Gestion Stricte",
+      "red": "Budget Critique"
+    },
+    "descriptions": {
+      "serein": "Totalement détendu, vos réserves sont abondantes ! 🌟",
+      "joyeux": "Votre budget se porte bien, gardez le cap ! 😊",
+      "optimiste": "Le budget se maintient, restez optimiste ! 💪",
+      "determine": "En mode gestion, maintenez le cap ! 🎯",
+      "vigilant": "Surveillez vos dépenses, restez vigilant ! 👀",
+      "inquiet": "Attention, le budget se resserre... 🤔",
+      "nerveux": "Zone critique, faites attention ! ⚠️",
+      "fatigue": "Budget très serré, courage ! 😰",
+      "panique": "Budget sur le point de passer en négatif ! 🚨",
+      "detresse": "Budget en déficit, agissez maintenant ! 🆘"
+    }
   }
 }

@@ -255,5 +255,37 @@
       "notFound": "No purchases found",
       "notFoundMessage": "No active subscription was found on this account."
     }
+  },
+  "mascot": {
+    "title": "The Thrifty Squirrel",
+    "moods": {
+      "serein": "Happy & Serene",
+      "joyeux": "Content & Playful",
+      "optimiste": "Relieved & Optimistic",
+      "determine": "Determined & Focused",
+      "vigilant": "Focused & Vigilant",
+      "inquiet": "Slightly Worried",
+      "nerveux": "Hesitant & Nervous",
+      "fatigue": "Tired & Overwhelmed",
+      "panique": "Very Worried & Panicked",
+      "detresse": "In Distress"
+    },
+    "zones": {
+      "green": "Comfortable Budget",
+      "yellow": "Strict Management",
+      "red": "Critical Budget"
+    },
+    "descriptions": {
+      "serein": "Totally relaxed, your reserves are abundant! 🌟",
+      "joyeux": "Your budget is doing well, keep it up! 😊",
+      "optimiste": "The budget is holding, stay optimistic! 💪",
+      "determine": "In management mode, stay the course! 🎯",
+      "vigilant": "Watch your spending, stay vigilant! 👀",
+      "inquiet": "Caution, the budget is tightening... 🤔",
+      "nerveux": "Critical zone, be careful! ⚠️",
+      "fatigue": "Very tight budget, hang in there! 😰",
+      "panique": "Budget about to go negative! 🚨",
+      "detresse": "Budget in deficit, act now! 🆘"
+    }
   }
 }
