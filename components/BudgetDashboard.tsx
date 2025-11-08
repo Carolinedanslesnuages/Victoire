@@ -19,10 +19,11 @@ import {
   getTopCategories,
   compareMonthlySpending,
 } from '../utils/analytics';
-import { BudgetConfig, Transaction, UserPreferences } from '../types';
+import { BudgetConfig, Transaction, UserPreferences, StreakInfo } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
+import { calculateStreak } from '../utils/streaks';
 
 interface BudgetDashboardProps {
   config: BudgetConfig;
@@ -37,15 +38,27 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     currency: 'EUR',
     customCategories: [],
   });
+  const [streakInfo, setStreakInfo] = useState<StreakInfo>({
+    currentStreak: 0,
+    longestStreak: 0,
+    lastActivityDate: '',
+    isActive: false,
+  });
 
   useEffect(() => {
     loadTransactions();
     loadPreferences();
+    loadStreak();
   }, [config.cycleStartDay]);
 
   const loadPreferences = async () => {
     const prefs = await loadUserPreferences();
     setUserPreferences(prefs);
+  };
+
+  const loadStreak = async () => {
+    const streak = await calculateStreak();
+    setStreakInfo(streak);
   };
 
   const loadTransactions = async () => {
@@ -61,6 +74,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     setRefreshing(true);
     await loadTransactions();
     await loadPreferences();
+    await loadStreak();
     setRefreshing(false);
   };
 
@@ -136,6 +150,17 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     return `${days} ${i18n.t('dashboard.monthlyHealth.daysRemaining')} ${i18n.t('dashboard.monthlyHealth.remaining')}`;
   };
 
+  // Get budget display name
+  const getBudgetDisplayName = () => {
+    if (config.isHouseholdBudget && config.householdName) {
+      return `${i18n.t('dashboard.header.householdBudgetPrefix')} - ${config.householdName}`;
+    }
+    if (config.isHouseholdBudget) {
+      return i18n.t('dashboard.header.householdBudgetPrefix');
+    }
+    return config.budgetName || i18n.t('dashboard.header.defaultBudgetName');
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -143,9 +168,31 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {/* Header */}
+        {/* Epic UI 4: Duolingo-style Header with Gamification */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>{i18n.t('dashboard.title')}</Text>
+          <View style={styles.headerContent}>
+            {/* Feature UI 4.1.1 & UI 4.2: Budget name with streak indicator */}
+            <View style={styles.headerLeft}>
+              <Text style={styles.headerTitle}>{getBudgetDisplayName()}</Text>
+              {/* Feature UI 4.2.1: Streak indicator if active */}
+              {streakInfo.isActive && streakInfo.currentStreak > 0 && (
+                <View style={styles.streakBadge}>
+                  <Text style={styles.streakIcon}>🔥</Text>
+                  <Text style={styles.streakText}>
+                    {streakInfo.currentStreak}
+                  </Text>
+                </View>
+              )}
+            </View>
+            {/* Feature UI 4.1.2: Settings button on the right */}
+            <TouchableOpacity
+              style={styles.settingsButton}
+              onPress={onReconfigure}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.settingsIcon}>⚙️</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.headerSubtitle}>
             {i18n.t('dashboard.cycleSubtitle', { day: config.cycleStartDay })}
           </Text>
@@ -409,16 +456,55 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  // Epic UI 4: Duolingo-style header styles
   header: {
     padding: spacing.lg,
     paddingTop: 60,
     backgroundColor: colors.primary,
   },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.xs,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
   headerTitle: {
-    fontSize: typography.fontSize.h2,
+    fontSize: typography.fontSize.h3,
     fontWeight: typography.fontWeight.bold,
     color: colors.textInverse,
-    marginBottom: spacing.xs,
+    marginRight: spacing.sm,
+    flexShrink: 1,
+  },
+  // Feature UI 4.2.1: Streak badge styles
+  streakBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+  },
+  streakIcon: {
+    fontSize: 18,
+    marginRight: 4,
+  },
+  streakText: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textInverse,
+  },
+  // Feature UI 4.1.2: Settings button styles
+  settingsButton: {
+    padding: spacing.sm,
+    marginLeft: spacing.sm,
+  },
+  settingsIcon: {
+    fontSize: 24,
   },
   headerSubtitle: {
     fontSize: typography.fontSize.bodySmall,

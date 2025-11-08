@@ -10,6 +10,9 @@ export interface BudgetConfig {
   fixedCharges: number;
   savingsGoal: number;
   cycleStartDay: number;
+  budgetName?: string; // Optional custom budget name
+  isHouseholdBudget?: boolean; // True if this is a household/family budget
+  householdName?: string; // Optional household name (e.g., "Foyer Dupont")
 }
 
 /**
@@ -87,4 +90,14 @@ export interface SubscriptionInfo {
   plan?: SubscriptionPlan;
   expirationDate?: string;
   isActive: boolean;
+}
+
+/**
+ * Streak info interface for daily tracking
+ */
+export interface StreakInfo {
+  currentStreak: number; // Number of consecutive days with tracking activity
+  longestStreak: number; // Best streak ever achieved
+  lastActivityDate: string; // ISO date string of last activity
+  isActive: boolean; // True if streak is currently active (activity today or yesterday)
 }
