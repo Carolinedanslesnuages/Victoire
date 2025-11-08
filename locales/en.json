@@ -53,7 +53,8 @@
       "confirm": "Delete",
       "cancel": "Cancel"
     },
-    "configButton": "⚙️ Change configuration"
+    "settingsButton": "⚙️ Settings",
+    "configButton": "🔧 Change configuration"
   },
   "addExpense": {
     "title": "Add expense",
@@ -69,6 +70,41 @@
       "title": "Error",
       "invalidAmount": "Please enter a valid amount",
       "missingDescription": "Please enter a description"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "personalization": "Personalization",
+    "currency": "Currency",
+    "selectCurrency": "Select currency",
+    "customCategories": "Custom categories",
+    "categoryPlaceholder": "E.g.: Leisure, Health...",
+    "noCustomCategories": "No custom categories. Add one above!",
+    "dangerZone": "⚠️ Danger Zone",
+    "dangerZoneDescription": "The following actions are irreversible. Be careful!",
+    "success": "Success",
+    "currencyUpdated": "Currency has been updated",
+    "categoryAdded": "Category added successfully",
+    "errors": {
+      "title": "Error",
+      "emptyCategoryName": "Category name cannot be empty",
+      "duplicateCategory": "This category already exists"
+    },
+    "deleteCategory": {
+      "title": "Delete category",
+      "message": "Do you really want to delete the category \"{{category}}\"?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "resetApp": {
+      "title": "⚠️ Reset Application",
+      "message": "Are you sure you want to reset the application? All your data will be permanently deleted (configuration, expenses, preferences).",
+      "confirmTitle": "⚠️ FINAL CONFIRMATION",
+      "confirmMessage": "This action is IRREVERSIBLE. All your data will be lost. Continue?",
+      "confirm": "Yes, reset",
+      "confirmFinal": "Confirm reset",
+      "cancel": "Cancel",
+      "button": "🗑️ Reset Application"
     }
   }
 }

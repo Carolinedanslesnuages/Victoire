@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
 import BudgetRing from './BudgetRing';
 import AddExpenseModal from './AddExpenseModal';
+import SettingsScreen from './SettingsScreen';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -12,10 +13,12 @@ import {
   saveTransaction,
   getTransactionsForCurrentCycle,
   deleteTransaction,
+  loadUserPreferences,
 } from '../utils/storage';
-import { BudgetConfig, Transaction } from '../types';
+import { BudgetConfig, Transaction, UserPreferences } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 import i18n from '../utils/i18n';
+import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
 
 interface BudgetDashboardProps {
   config: BudgetConfig;
@@ -25,11 +28,22 @@ interface BudgetDashboardProps {
 export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboardProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isAddExpenseVisible, setIsAddExpenseVisible] = useState(false);
+  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [userPreferences, setUserPreferences] = useState<UserPreferences>({
+    currency: 'EUR',
+    customCategories: [],
+  });
 
   useEffect(() => {
     loadTransactions();
+    loadPreferences();
   }, [config.cycleStartDay]);
+
+  const loadPreferences = async () => {
+    const prefs = await loadUserPreferences();
+    setUserPreferences(prefs);
+  };
 
   const loadTransactions = async () => {
     const txns = await getTransactionsForCurrentCycle(config.cycleStartDay);
@@ -39,6 +53,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
   const handleRefresh = async () => {
     setRefreshing(true);
     await loadTransactions();
+    await loadPreferences();
     setRefreshing(false);
   };
 
@@ -47,6 +62,16 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     if (success) {
       await loadTransactions();
     }
+  };
+
+  const handleSettingsClose = async () => {
+    setIsSettingsVisible(false);
+    await loadPreferences();
+  };
+
+  const handleResetComplete = () => {
+    // When reset is complete, trigger reconfigure to restart the app
+    onReconfigure();
   };
 
   const handleDeleteExpense = (transaction: Transaction) => {
@@ -78,10 +103,7 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
   const formatCurrency = (amount: number) => {
     // Get current locale from i18n, default to 'fr-FR'
     const locale = i18n.locale.startsWith('en') ? 'en-US' : 'fr-FR';
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount);
+    return formatCurrencyUtil(amount, userPreferences.currency, locale);
   };
 
   // Calculate values
@@ -258,10 +280,18 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
         {/* Settings Button */}
         <TouchableOpacity
           style={styles.configButton}
+          onPress={() => setIsSettingsVisible(true)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.configButtonText}>{i18n.t('dashboard.settingsButton')}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.reconfigButton}
           onPress={onReconfigure}
           activeOpacity={0.7}
         >
-          <Text style={styles.configButtonText}>{i18n.t('dashboard.configButton')}</Text>
+          <Text style={styles.reconfigButtonText}>{i18n.t('dashboard.configButton')}</Text>
         </TouchableOpacity>
 
         <View style={{ height: 100 }} />
@@ -281,6 +311,14 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
         visible={isAddExpenseVisible}
         onClose={() => setIsAddExpenseVisible(false)}
         onAddExpense={handleAddExpense}
+        customCategories={userPreferences.customCategories}
+      />
+
+      {/* Settings Screen */}
+      <SettingsScreen
+        visible={isSettingsVisible}
+        onClose={handleSettingsClose}
+        onResetComplete={handleResetComplete}
       />
     </View>
   );
@@ -511,6 +549,20 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.regular,
   },
   configButton: {
+    backgroundColor: colors.primary,
+    margin: spacing.md,
+    marginTop: spacing.sm,
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    alignItems: 'center',
+    ...elevation.low,
+  },
+  configButtonText: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
+  },
+  reconfigButton: {
     backgroundColor: colors.surface,
     margin: spacing.md,
     marginTop: spacing.sm,
@@ -520,7 +572,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  configButtonText: {
+  reconfigButtonText: {
     color: colors.textSecondary,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.medium,
