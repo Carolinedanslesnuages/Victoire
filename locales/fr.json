@@ -105,6 +105,72 @@
       "confirmFinal": "Confirmer la réinitialisation",
       "cancel": "Annuler",
       "button": "🗑️ Réinitialiser l'application"
+    },
+    "subscription": {
+      "title": "Abonnement",
+      "status": "Statut",
+      "free": "Gratuit",
+      "premium": "Premium",
+      "upgradeToPremium": "🔓 Passer à Premium",
+      "manageSubscription": "Gérer l'abonnement"
+    },
+    "premiumFeature": {
+      "locked": "🔒 Fonctionnalité Premium",
+      "message": "Cette fonctionnalité nécessite un abonnement Premium.",
+      "upgrade": "Passer à Premium",
+      "cancel": "Annuler"
+    },
+    "categoryLimit": {
+      "title": "Limite atteinte",
+      "message": "Les utilisateurs gratuits sont limités à 3 catégories personnalisées. Passez à Premium pour des catégories illimitées.",
+      "upgrade": "Passer à Premium",
+      "cancel": "Annuler"
+    }
+  },
+  "paywall": {
+    "title": "Débloquez PACE Premium",
+    "subtitle": "Accédez à toutes les fonctionnalités pour mieux gérer votre budget",
+    "features": {
+      "title": "Fonctionnalités Premium",
+      "unlimitedCategories": "Catégories personnalisées illimitées",
+      "advancedAnalytics": "Analyses avancées et tendances",
+      "cloudBackup": "Sauvegarde cloud automatique",
+      "exportData": "Export des données (CSV, PDF)",
+      "prioritySupport": "Support prioritaire"
+    },
+    "plans": {
+      "bestOffer": "Meilleure Offre",
+      "monthly": {
+        "name": "Mensuel",
+        "price": "2,99 € / mois"
+      },
+      "annual": {
+        "name": "Annuel",
+        "price": "24,99 € / an",
+        "equivalent": "Soit 2,08 € / mois",
+        "savings": "✨ Économisez 30% par rapport au plan mensuel"
+      }
+    },
+    "subscribeButton": "S'abonner maintenant",
+    "restoreButton": "Restaurer mes achats",
+    "terms": {
+      "autoRenew": "• L'abonnement se renouvelle automatiquement sauf annulation au moins 24h avant la fin de la période en cours.",
+      "cancellation": "• Vous pouvez annuler à tout moment depuis les paramètres de votre compte App Store ou Google Play.",
+      "privacy": "• Vos données sont protégées. Consultez notre politique de confidentialité."
+    },
+    "success": {
+      "title": "Bienvenue Premium ! 🎉",
+      "message": "Votre abonnement est maintenant actif. Profitez de toutes les fonctionnalités !"
+    },
+    "error": {
+      "title": "Erreur",
+      "message": "Une erreur est survenue lors de l'achat. Veuillez réessayer."
+    },
+    "restore": {
+      "success": "Achats restaurés ! 🎉",
+      "successMessage": "Votre abonnement Premium a été restauré avec succès.",
+      "notFound": "Aucun achat trouvé",
+      "notFoundMessage": "Aucun abonnement actif n'a été trouvé sur ce compte."
     }
   }
 }

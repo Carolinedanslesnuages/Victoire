@@ -14,12 +14,16 @@ import { colors, typography, spacing, borderRadius, elevation } from '../constan
 import i18n from '../utils/i18n';
 import { CURRENCY_OPTIONS } from '../utils/currency';
 import { loadUserPreferences, saveUserPreferences, resetAllData } from '../utils/storage';
+import { useSubscription } from '../contexts/SubscriptionContext';
+import PaywallScreen from './PaywallScreen';
 
 interface SettingsScreenProps {
   visible: boolean;
   onClose: () => void;
   onResetComplete: () => void;
 }
+
+const FREE_CATEGORY_LIMIT = 3;
 
 export default function SettingsScreen({ visible, onClose, onResetComplete }: SettingsScreenProps) {
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -28,6 +32,8 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
   });
   const [newCategory, setNewCategory] = useState('');
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const { isPremium, refreshSubscription } = useSubscription();
 
   useEffect(() => {
     if (visible) {
@@ -58,6 +64,25 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
 
     if (preferences.customCategories.includes(newCategory.trim())) {
       Alert.alert(i18n.t('settings.errors.title'), i18n.t('settings.errors.duplicateCategory'));
+      return;
+    }
+
+    // Check if user has reached the free tier limit
+    if (!isPremium && preferences.customCategories.length >= FREE_CATEGORY_LIMIT) {
+      Alert.alert(
+        i18n.t('settings.categoryLimit.title'),
+        i18n.t('settings.categoryLimit.message'),
+        [
+          {
+            text: i18n.t('settings.categoryLimit.cancel'),
+            style: 'cancel',
+          },
+          {
+            text: i18n.t('settings.categoryLimit.upgrade'),
+            onPress: () => setShowPaywall(true),
+          },
+        ]
+      );
       return;
     }
 
@@ -160,6 +185,43 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
         </View>
 
         <ScrollView style={styles.scrollView}>
+          {/* Subscription Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{i18n.t('settings.subscription.title')}</Text>
+            
+            <View style={styles.settingItem}>
+              <Text style={styles.settingLabel}>{i18n.t('settings.subscription.status')}</Text>
+              <View style={styles.subscriptionStatus}>
+                <Text style={[
+                  styles.subscriptionStatusText,
+                  isPremium && styles.subscriptionStatusPremium
+                ]}>
+                  {isPremium 
+                    ? i18n.t('settings.subscription.premium') 
+                    : i18n.t('settings.subscription.free')}
+                </Text>
+              </View>
+            </View>
+
+            {!isPremium && (
+              <TouchableOpacity
+                style={styles.upgradeButton}
+                onPress={() => setShowPaywall(true)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.upgradeButtonText}>
+                  {i18n.t('settings.subscription.upgradeToPremium')}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {!isPremium && preferences.customCategories.length > 0 && (
+              <Text style={styles.limitText}>
+                🔒 {preferences.customCategories.length}/{FREE_CATEGORY_LIMIT} {i18n.t('settings.customCategories')}
+              </Text>
+            )}
+          </View>
+
           {/* Currency Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{i18n.t('settings.personalization')}</Text>
@@ -181,7 +243,12 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
 
           {/* Custom Categories Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{i18n.t('settings.customCategories')}</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{i18n.t('settings.customCategories')}</Text>
+              {!isPremium && (
+                <Text style={styles.premiumBadge}>🔒</Text>
+              )}
+            </View>
             
             <View style={styles.addCategoryContainer}>
               <TextInput
@@ -279,6 +346,16 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
             </View>
           </TouchableOpacity>
         </Modal>
+
+        {/* Paywall Screen */}
+        <PaywallScreen
+          visible={showPaywall}
+          onClose={() => setShowPaywall(false)}
+          onPurchaseComplete={async () => {
+            await refreshSubscription();
+            setShowPaywall(false);
+          }}
+        />
       </View>
     </Modal>
   );
@@ -476,5 +553,49 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: colors.primary,
     fontWeight: typography.fontWeight.bold,
+  },
+  // Subscription section styles
+  subscriptionStatus: {
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+  },
+  subscriptionStatusText: {
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+    fontWeight: typography.fontWeight.medium,
+  },
+  subscriptionStatusPremium: {
+    color: colors.warning,
+    fontWeight: typography.fontWeight.bold,
+  },
+  upgradeButton: {
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+    marginTop: spacing.md,
+  },
+  upgradeButtonText: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
+  },
+  limitText: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+    textAlign: 'center',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  premiumBadge: {
+    fontSize: 20,
   },
 });
