@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, View, Text } from 'react-native';
 import BudgetDashboard from '../components/BudgetDashboard';
+import HistoryScreen from '../components/HistoryScreen';
 import SettingsScreen from '../components/SettingsScreen';
 import { colors, typography, borderRadius, elevation } from '../constants/theme';
 import i18n from '../utils/i18n';
@@ -56,6 +57,17 @@ export default function MainTabNavigator({ budgetConfig, onReconfigure, onAddExp
         >
           {() => <BudgetDashboard config={budgetConfig} onReconfigure={onReconfigure} />}
         </Tab.Screen>
+
+        <Tab.Screen
+          name="History"
+          component={HistoryScreen}
+          options={{
+            tabBarLabel: i18n.t('navigation.history'),
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ fontSize: size, color }}>📋</Text>
+            ),
+          }}
+        />
 
         {/* Central FAB as a Tab */}
         <Tab.Screen
