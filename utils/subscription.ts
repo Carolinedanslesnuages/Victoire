@@ -15,7 +15,11 @@ export const initializePurchases = async (): Promise<void> => {
     // Android: Purchases.configure({ apiKey: 'goog_XXX' });
     
     // For now, we'll use a mock implementation that allows the UI to work
-    console.log('RevenueCat: Would initialize in production with API keys');
+    if (__DEV__) {
+      console.log('RevenueCat: Running in DEVELOPMENT mode - Premium access granted for testing');
+    } else {
+      console.log('RevenueCat: Would initialize in production with API keys');
+    }
   } catch (error) {
     console.error('Error initializing purchases:', error);
   }
@@ -30,7 +34,15 @@ export const getSubscriptionStatus = async (): Promise<SubscriptionInfo> => {
     // const customerInfo = await Purchases.getCustomerInfo();
     // return parseSubscriptionInfo(customerInfo);
     
-    // For demo/development, return free tier
+    // In development mode, grant premium access to test all features
+    if (__DEV__) {
+      return {
+        status: 'premium',
+        isActive: true,
+      };
+    }
+    
+    // For demo/production, return free tier
     return {
       status: 'free',
       isActive: false,
@@ -46,6 +58,7 @@ export const getSubscriptionStatus = async (): Promise<SubscriptionInfo> => {
 
 /**
  * Check if user has premium access
+ * In development mode, this always returns true to allow testing of all features
  */
 export const hasPremiumAccess = async (): Promise<boolean> => {
   const subscriptionInfo = await getSubscriptionStatus();
