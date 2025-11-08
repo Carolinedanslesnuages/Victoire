@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.10.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.9.0...v1.10.0) (2025-11-08)
+
+
+### Features
+
+* add budget profile rename functionality ([3fc6645](https://github.com/Carolinedanslesnuages/PACE/commit/3fc664566aacac49bca69cacf20453f5f76e31a6))
+
+
+### Bug Fixes
+
+* :bug: fix package json for expo ([a64c29c](https://github.com/Carolinedanslesnuages/PACE/commit/a64c29c9f8c86d5cc3a7923d1704e019a9fccce1))
+* add budget profile renaming and verify switcher functionality ([0810d9e](https://github.com/Carolinedanslesnuages/PACE/commit/0810d9e95792babd0b93f7a60b4b9a5f8ad543b6))
+* add cross-platform rename modal for Android compatibility ([4085092](https://github.com/Carolinedanslesnuages/PACE/commit/40850924ec34a479ea368090d84f1827d344e7a8))
+
 ## [1.9.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.8.0...v1.9.0) (2025-11-08)
 
 
