@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
 import BudgetRing from './BudgetRing';
-import AddExpenseModal from './AddExpenseModal';
-import SettingsScreen from './SettingsScreen';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -10,7 +8,6 @@ import {
   calculateSpentPercentage,
 } from '../utils/budgetCalculations';
 import {
-  saveTransaction,
   getTransactionsForCurrentCycle,
   deleteTransaction,
   loadUserPreferences,
@@ -27,8 +24,6 @@ interface BudgetDashboardProps {
 
 export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboardProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [isAddExpenseVisible, setIsAddExpenseVisible] = useState(false);
-  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     currency: 'EUR',
@@ -55,23 +50,6 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     await loadTransactions();
     await loadPreferences();
     setRefreshing(false);
-  };
-
-  const handleAddExpense = async (expense: Omit<Transaction, 'id'>) => {
-    const success = await saveTransaction(expense);
-    if (success) {
-      await loadTransactions();
-    }
-  };
-
-  const handleSettingsClose = async () => {
-    setIsSettingsVisible(false);
-    await loadPreferences();
-  };
-
-  const handleResetComplete = () => {
-    // When reset is complete, trigger reconfigure to restart the app
-    onReconfigure();
   };
 
   const handleDeleteExpense = (transaction: Transaction) => {
@@ -279,14 +257,6 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
 
         {/* Settings Button */}
         <TouchableOpacity
-          style={styles.configButton}
-          onPress={() => setIsSettingsVisible(true)}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.configButtonText}>{i18n.t('dashboard.settingsButton')}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
           style={styles.reconfigButton}
           onPress={onReconfigure}
           activeOpacity={0.7}
@@ -296,30 +266,6 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
 
         <View style={{ height: 100 }} />
       </ScrollView>
-
-      {/* Floating Add Button */}
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => setIsAddExpenseVisible(true)}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.addButtonText}>+</Text>
-      </TouchableOpacity>
-
-      {/* Add Expense Modal */}
-      <AddExpenseModal
-        visible={isAddExpenseVisible}
-        onClose={() => setIsAddExpenseVisible(false)}
-        onAddExpense={handleAddExpense}
-        customCategories={userPreferences.customCategories}
-      />
-
-      {/* Settings Screen */}
-      <SettingsScreen
-        visible={isSettingsVisible}
-        onClose={handleSettingsClose}
-        onResetComplete={handleResetComplete}
-      />
     </View>
   );
 }
@@ -531,37 +477,6 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.body,
   },
   // Buttons - Flat design with opacity feedback
-  addButton: {
-    position: 'absolute',
-    bottom: spacing.lg,
-    right: spacing.lg,
-    width: 64,
-    height: 64,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...elevation.medium,
-  },
-  addButtonText: {
-    fontSize: 36,
-    color: colors.textInverse,
-    fontWeight: typography.fontWeight.regular,
-  },
-  configButton: {
-    backgroundColor: colors.primary,
-    margin: spacing.md,
-    marginTop: spacing.sm,
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    alignItems: 'center',
-    ...elevation.low,
-  },
-  configButtonText: {
-    color: colors.textInverse,
-    fontSize: typography.fontSize.body,
-    fontWeight: typography.fontWeight.bold,
-  },
   reconfigButton: {
     backgroundColor: colors.surface,
     margin: spacing.md,

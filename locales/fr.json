@@ -1,4 +1,13 @@
 {
+  "navigation": {
+    "home": "Accueil",
+    "history": "Historique",
+    "settings": "Paramètres"
+  },
+  "history": {
+    "title": "Historique",
+    "comingSoon": "L'historique des transactions arrive bientôt !"
+  },
   "configWizard": {
     "title": "Configuration Budgétaire",
     "subtitle": "Définissez votre cadre budgétaire pour commencer",

@@ -1,25 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import ConfigWizard from './components/ConfigWizard';
-import BudgetDashboard from './components/BudgetDashboard';
-import { saveBudgetConfig, loadBudgetConfig } from './utils/storage';
-import { BudgetConfig } from './types';
+import MainTabNavigator from './navigation/MainTabNavigator';
+import AddExpenseModal from './components/AddExpenseModal';
+import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreferences } from './utils/storage';
+import { BudgetConfig, Transaction, UserPreferences } from './types';
 import { colors } from './constants/theme';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [budgetConfig, setBudgetConfig] = useState<BudgetConfig | null>(null);
+  const [isAddExpenseVisible, setIsAddExpenseVisible] = useState(false);
+  const [userPreferences, setUserPreferences] = useState<UserPreferences>({
+    currency: 'EUR',
+    customCategories: [],
+  });
 
   useEffect(() => {
     loadConfig();
+    loadPreferences();
   }, []);
 
   const loadConfig = async () => {
     const config = await loadBudgetConfig();
     setBudgetConfig(config);
     setIsLoading(false);
+  };
+
+  const loadPreferences = async () => {
+    const prefs = await loadUserPreferences();
+    setUserPreferences(prefs);
   };
 
   const handleConfigComplete = async (config: BudgetConfig) => {
@@ -33,6 +46,13 @@ export default function App() {
     setBudgetConfig(null);
   };
 
+  const handleAddExpense = async (expense: Omit<Transaction, 'id'>) => {
+    const success = await saveTransaction(expense);
+    if (success) {
+      setIsAddExpenseVisible(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -43,17 +63,28 @@ export default function App() {
 
   return (
     <SubscriptionProvider>
-      <View style={styles.container}>
-        {budgetConfig ? (
-          <BudgetDashboard
-            config={budgetConfig}
-            onReconfigure={handleReconfigure}
-          />
-        ) : (
-          <ConfigWizard onComplete={handleConfigComplete} />
-        )}
-        <StatusBar style="auto" />
-      </View>
+      <NavigationContainer>
+        <View style={styles.container}>
+          {budgetConfig ? (
+            <>
+              <MainTabNavigator
+                budgetConfig={budgetConfig}
+                onReconfigure={handleReconfigure}
+                onAddExpense={() => setIsAddExpenseVisible(true)}
+              />
+              <AddExpenseModal
+                visible={isAddExpenseVisible}
+                onClose={() => setIsAddExpenseVisible(false)}
+                onAddExpense={handleAddExpense}
+                customCategories={userPreferences.customCategories}
+              />
+            </>
+          ) : (
+            <ConfigWizard onComplete={handleConfigComplete} />
+          )}
+          <StatusBar style="auto" />
+        </View>
+      </NavigationContainer>
     </SubscriptionProvider>
   );
 }
