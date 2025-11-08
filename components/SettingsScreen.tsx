@@ -15,7 +15,7 @@ import { UserPreferences, NotificationSettings } from '../types';
 import { colors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { CURRENCY_OPTIONS } from '../utils/currency';
-import { loadUserPreferences, saveUserPreferences, resetAllData } from '../utils/storage';
+import { loadUserPreferences, saveUserPreferences, resetAllData, loadTransactions } from '../utils/storage';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import PaywallScreen from './PaywallScreen';
 import { 
@@ -24,6 +24,7 @@ import {
   scheduleMorningBudgetNotification,
   getDefaultNotificationSettings
 } from '../utils/notifications';
+import { exportTransactionsToCSV } from '../utils/export';
 
 interface SettingsScreenProps {
   visible: boolean;
@@ -270,6 +271,43 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
     }
   };
 
+  const handleExportData = async () => {
+    try {
+      // Load all transactions
+      const transactions = await loadTransactions();
+      
+      // Check if there are transactions to export
+      if (transactions.length === 0) {
+        Alert.alert(
+          i18n.t('settings.export.noData'),
+          i18n.t('settings.export.noDataMessage')
+        );
+        return;
+      }
+      
+      // Export to CSV
+      const success = await exportTransactionsToCSV(transactions);
+      
+      if (success) {
+        Alert.alert(
+          i18n.t('settings.export.success'),
+          i18n.t('settings.export.successMessage')
+        );
+      } else {
+        Alert.alert(
+          i18n.t('settings.export.error'),
+          i18n.t('settings.export.errorMessage')
+        );
+      }
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      Alert.alert(
+        i18n.t('settings.export.error'),
+        i18n.t('settings.export.errorMessage')
+      );
+    }
+  };
+
   const selectedCurrency = CURRENCY_OPTIONS.find(c => c.code === preferences.currency);
 
   return (
@@ -481,6 +519,24 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
                 ))}
               </View>
             )}
+          </View>
+
+          {/* Data Export Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{i18n.t('settings.export.title')}</Text>
+            <Text style={styles.exportDescription}>
+              {i18n.t('settings.export.description')}
+            </Text>
+            
+            <TouchableOpacity
+              style={styles.exportButton}
+              onPress={handleExportData}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.exportButtonText}>
+                {i18n.t('settings.export.button')}
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* Legal Section */}
@@ -958,5 +1014,25 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.medium,
+  },
+  // Export section styles
+  exportDescription: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginBottom: spacing.md,
+    lineHeight: 20,
+  },
+  exportButton: {
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  exportButtonText: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
   },
 });

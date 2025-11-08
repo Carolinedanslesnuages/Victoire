@@ -193,6 +193,17 @@
       "permissionMessage": "PACE needs notification permissions to send you reminders and alerts.",
       "enablePermission": "Enable Notifications",
       "updated": "Notification settings updated"
+    },
+    "export": {
+      "title": "Data Export",
+      "description": "Export all your expense history to analyze in Excel or other tools",
+      "button": "📤 Export to CSV",
+      "success": "Export successful!",
+      "successMessage": "Your expense data has been exported. You can now share or save the CSV file.",
+      "noData": "No data to export",
+      "noDataMessage": "You don't have any expenses to export yet.",
+      "error": "Export failed",
+      "errorMessage": "An error occurred while exporting your data. Please try again."
     }
   },
   "notifications": {
