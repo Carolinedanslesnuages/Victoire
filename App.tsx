@@ -10,9 +10,11 @@ import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreference
 import { BudgetConfig, Transaction, UserPreferences } from './types';
 import { colors } from './constants/theme';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { initializeNotifications, sendBudgetAlertNotification } from './utils/notifications';
 import { calculateDailyBudget } from './utils/budgetCalculations';
 import { updateStreakAfterActivity } from './utils/streaks';
+import { triggerSuccessHaptic, triggerWarningHaptic } from './utils/haptics';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -77,9 +79,18 @@ export default function App() {
           budgetConfig.cycleStartDay
         );
         
+        // US 11.2.1: Haptic feedback based on budget state
         if (dailyBudget < 0) {
           await sendBudgetAlertNotification(dailyBudget, userPreferences.currency);
+          // Warning haptic when budget goes into the red
+          await triggerWarningHaptic();
+        } else {
+          // Success haptic for normal expense addition
+          await triggerSuccessHaptic();
         }
+      } else {
+        // Success haptic if no budget config
+        await triggerSuccessHaptic();
       }
     }
   };
@@ -93,35 +104,37 @@ export default function App() {
   }
 
   return (
-    <SubscriptionProvider>
-      <NavigationContainer>
-        <View style={styles.container}>
-          {budgetConfig ? (
-            <>
-              <MainTabNavigator
-                budgetConfig={budgetConfig}
-                onReconfigure={handleReconfigure}
-                onAddExpense={() => setIsAddExpenseVisible(true)}
-              />
-              <AddExpenseModal
-                visible={isAddExpenseVisible}
-                onClose={() => setIsAddExpenseVisible(false)}
-                onAddExpense={handleAddExpense}
-                customCategories={userPreferences.customCategories}
-              />
-              <StreakCelebration
-                visible={showStreakCelebration}
-                streakCount={currentStreak}
-                onComplete={() => setShowStreakCelebration(false)}
-              />
-            </>
-          ) : (
-            <ConfigWizard onComplete={handleConfigComplete} />
-          )}
-          <StatusBar style="auto" />
-        </View>
-      </NavigationContainer>
-    </SubscriptionProvider>
+    <ThemeProvider>
+      <SubscriptionProvider>
+        <NavigationContainer>
+          <View style={styles.container}>
+            {budgetConfig ? (
+              <>
+                <MainTabNavigator
+                  budgetConfig={budgetConfig}
+                  onReconfigure={handleReconfigure}
+                  onAddExpense={() => setIsAddExpenseVisible(true)}
+                />
+                <AddExpenseModal
+                  visible={isAddExpenseVisible}
+                  onClose={() => setIsAddExpenseVisible(false)}
+                  onAddExpense={handleAddExpense}
+                  customCategories={userPreferences.customCategories}
+                />
+                <StreakCelebration
+                  visible={showStreakCelebration}
+                  streakCount={currentStreak}
+                  onComplete={() => setShowStreakCelebration(false)}
+                />
+              </>
+            ) : (
+              <ConfigWizard onComplete={handleConfigComplete} />
+            )}
+            <StatusBar style="auto" />
+          </View>
+        </NavigationContainer>
+      </SubscriptionProvider>
+    </ThemeProvider>
   );
 }
 
