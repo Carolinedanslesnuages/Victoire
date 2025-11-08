@@ -6,6 +6,7 @@ import BudgetDashboard from './components/BudgetDashboard';
 import { saveBudgetConfig, loadBudgetConfig } from './utils/storage';
 import { BudgetConfig } from './types';
 import { colors } from './constants/theme';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -41,17 +42,19 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      {budgetConfig ? (
-        <BudgetDashboard
-          config={budgetConfig}
-          onReconfigure={handleReconfigure}
-        />
-      ) : (
-        <ConfigWizard onComplete={handleConfigComplete} />
-      )}
-      <StatusBar style="auto" />
-    </View>
+    <SubscriptionProvider>
+      <View style={styles.container}>
+        {budgetConfig ? (
+          <BudgetDashboard
+            config={budgetConfig}
+            onReconfigure={handleReconfigure}
+          />
+        ) : (
+          <ConfigWizard onComplete={handleConfigComplete} />
+        )}
+        <StatusBar style="auto" />
+      </View>
+    </SubscriptionProvider>
   );
 }
 

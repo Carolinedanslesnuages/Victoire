@@ -105,6 +105,72 @@
       "confirmFinal": "Confirm reset",
       "cancel": "Cancel",
       "button": "🗑️ Reset Application"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "status": "Status",
+      "free": "Free",
+      "premium": "Premium",
+      "upgradeToPremium": "🔓 Upgrade to Premium",
+      "manageSubscription": "Manage subscription"
+    },
+    "premiumFeature": {
+      "locked": "🔒 Premium Feature",
+      "message": "This feature requires a Premium subscription.",
+      "upgrade": "Upgrade to Premium",
+      "cancel": "Cancel"
+    },
+    "categoryLimit": {
+      "title": "Limit reached",
+      "message": "Free users are limited to 3 custom categories. Upgrade to Premium for unlimited categories.",
+      "upgrade": "Upgrade to Premium",
+      "cancel": "Cancel"
+    }
+  },
+  "paywall": {
+    "title": "Unlock PACE Premium",
+    "subtitle": "Access all features to better manage your budget",
+    "features": {
+      "title": "Premium Features",
+      "unlimitedCategories": "Unlimited custom categories",
+      "advancedAnalytics": "Advanced analytics and trends",
+      "cloudBackup": "Automatic cloud backup",
+      "exportData": "Export data (CSV, PDF)",
+      "prioritySupport": "Priority support"
+    },
+    "plans": {
+      "bestOffer": "Best Offer",
+      "monthly": {
+        "name": "Monthly",
+        "price": "€2.99 / month"
+      },
+      "annual": {
+        "name": "Annual",
+        "price": "€24.99 / year",
+        "equivalent": "That's €2.08 / month",
+        "savings": "✨ Save 30% compared to monthly plan"
+      }
+    },
+    "subscribeButton": "Subscribe now",
+    "restoreButton": "Restore purchases",
+    "terms": {
+      "autoRenew": "• Subscription automatically renews unless canceled at least 24 hours before the end of the current period.",
+      "cancellation": "• You can cancel anytime from your App Store or Google Play account settings.",
+      "privacy": "• Your data is protected. Check our privacy policy."
+    },
+    "success": {
+      "title": "Welcome Premium! 🎉",
+      "message": "Your subscription is now active. Enjoy all the features!"
+    },
+    "error": {
+      "title": "Error",
+      "message": "An error occurred during the purchase. Please try again."
+    },
+    "restore": {
+      "success": "Purchases restored! 🎉",
+      "successMessage": "Your Premium subscription has been successfully restored.",
+      "notFound": "No purchases found",
+      "notFoundMessage": "No active subscription was found on this account."
     }
   }
 }

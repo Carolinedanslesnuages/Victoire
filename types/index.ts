@@ -56,3 +56,23 @@ export interface CurrencyOption {
   symbol: string;
   name: string;
 }
+
+/**
+ * Subscription status type
+ */
+export type SubscriptionStatus = 'free' | 'premium';
+
+/**
+ * Subscription plan type
+ */
+export type SubscriptionPlan = 'monthly' | 'annual';
+
+/**
+ * Subscription info interface
+ */
+export interface SubscriptionInfo {
+  status: SubscriptionStatus;
+  plan?: SubscriptionPlan;
+  expirationDate?: string;
+  isActive: boolean;
+}
