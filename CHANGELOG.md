@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.0.0...v1.1.0) (2025-11-08)
+
+
+### Features
+
+* add IAP infrastructure with RevenueCat and paywall screen ([c02edd9](https://github.com/Carolinedanslesnuages/PACE/commit/c02edd9d5a3546fbf3fc504b6822a1253fce7bb4))
+* add legal documents and App Tracking Transparency for store compliance (Epic 13) ([fc84f2f](https://github.com/Carolinedanslesnuages/PACE/commit/fc84f2f246ebaa59a3473b7b42dff10533720a95))
+* add legal documents and compliance features (Epic 13) ([6f536a6](https://github.com/Carolinedanslesnuages/PACE/commit/6f536a6325c0a0bbe7791123cee86c167f51efdd))
+* implement IAP monetization with RevenueCat and premium feature gating ([8eb521a](https://github.com/Carolinedanslesnuages/PACE/commit/8eb521afa386a4372b5cdb12e1ce4bb8ad12fa09))
+
 ## 1.0.0 (2025-11-08)
 
 
