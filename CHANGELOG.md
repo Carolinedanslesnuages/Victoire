@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.6.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.5.0...v1.6.0) (2025-11-08)
+
+
+### Features
+
+* add automated build CI/CD with EAS and GitHub Actions ([8799aa2](https://github.com/Carolinedanslesnuages/PACE/commit/8799aa2def3866e50e5af359ae11fbf76e8c1c59))
+* add CSV export for expense history (Epic 7.1) ([dfa2790](https://github.com/Carolinedanslesnuages/PACE/commit/dfa27908e25683d7313c5024e7557511a5354812))
+* add CSV export functionality for expense history (Epic 7.1) ([a7d79f7](https://github.com/Carolinedanslesnuages/PACE/commit/a7d79f74e6f6a67cfe26597fedb006c22f577dc2))
+* add dark mode and haptic feedback support (Epic 11) ([c007861](https://github.com/Carolinedanslesnuages/PACE/commit/c007861e9f8842b4210202efc06c96d5fcbc591e))
+* add income transactions and recurring transactions support ([52def2f](https://github.com/Carolinedanslesnuages/PACE/commit/52def2f76b555e8c5e333332efbea28f9a9dfbce))
+* add streak celebration animation and integrate with app flow ([8a3eeed](https://github.com/Carolinedanslesnuages/PACE/commit/8a3eeed5e42abc3eca7d92e6ba8e092b31ff0a8f))
+* complete dark mode integration with dynamic theme context ([6c203ad](https://github.com/Carolinedanslesnuages/PACE/commit/6c203adef107fe63aa6bb99c45ebc72b1aca18dc))
+* Epic 10 - Gamification & Retention (Duolingo-style) ([c77b2f8](https://github.com/Carolinedanslesnuages/PACE/commit/c77b2f8186c6a35c528b7a59c86c6242ef2fdb77))
+* Epic 26 - Automated iOS/Android builds via EAS Build and GitHub Actions ([2f7d00f](https://github.com/Carolinedanslesnuages/PACE/commit/2f7d00fdbc412b5780ce55955024b31cba3598b9))
+* implement dark mode and haptic feedback (Epic 11) ([4a01fd8](https://github.com/Carolinedanslesnuages/PACE/commit/4a01fd8f6b6b5d0c9c5ddff8103c7c065192ba14))
+* implement gamification core features - types, utilities, and badge system ([5ba9341](https://github.com/Carolinedanslesnuages/PACE/commit/5ba9341c3c3bdd0ddc9d33ac0c408a520ec99e18))
+
+
+### Bug Fixes
+
+* add explicit permissions block to workflow for security ([f329132](https://github.com/Carolinedanslesnuages/PACE/commit/f3291327532e11376f11f8c1d62e537eb15bfe2b))
+* update analytics and gamification to handle income transactions ([72b28be](https://github.com/Carolinedanslesnuages/PACE/commit/72b28beade215f7343d88276667bab4f45d44751))
+
 ## [1.5.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.4.0...v1.5.0) (2025-11-08)
 
 
