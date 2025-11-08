@@ -16,6 +16,11 @@ export interface BudgetConfig {
 }
 
 /**
+ * Transaction type - either expense or income
+ */
+export type TransactionType = 'expense' | 'income';
+
+/**
  * Transaction interface
  */
 export interface Transaction {
@@ -24,6 +29,9 @@ export interface Transaction {
   description: string;
   date: string;
   category?: string;
+  type?: TransactionType; // Type of transaction (default: 'expense')
+  isRecurring?: boolean; // Whether this is a recurring transaction
+  recurringDay?: number; // Day of month when recurring transaction should be created (1-31)
 }
 
 /**

@@ -9,8 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Switch,
 } from 'react-native';
-import { Transaction } from '../types';
+import { Transaction, TransactionType } from '../types';
 import { colors, typography, spacing, borderRadius } from '../constants/theme';
 import i18n from '../utils/i18n';
 
@@ -25,6 +26,9 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [transactionType, setTransactionType] = useState<TransactionType>('expense');
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurringDay, setRecurringDay] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = () => {
@@ -40,17 +44,32 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
       return;
     }
 
+    // Validate recurring day if recurring is enabled
+    if (isRecurring) {
+      const day = parseInt(recurringDay);
+      if (isNaN(day) || day < 1 || day > 31) {
+        Alert.alert(i18n.t('addExpense.errors.title'), i18n.t('addExpense.errors.invalidRecurringDay'));
+        return;
+      }
+    }
+
     onAddExpense({
       amount: expenseAmount,
       description: description.trim(),
       category: category.trim() || undefined,
       date: new Date().toISOString(),
+      type: transactionType,
+      isRecurring: isRecurring,
+      recurringDay: isRecurring ? parseInt(recurringDay) : undefined,
     });
 
     // Reset form
     setAmount('');
     setDescription('');
     setCategory('');
+    setTransactionType('expense');
+    setIsRecurring(false);
+    setRecurringDay('');
     onClose();
   };
 
@@ -58,6 +77,9 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
     setAmount('');
     setDescription('');
     setCategory('');
+    setTransactionType('expense');
+    setIsRecurring(false);
+    setRecurringDay('');
     onClose();
   };
 
@@ -73,7 +95,50 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
         style={styles.modalContainer}
       >
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>{i18n.t('addExpense.title')}</Text>
+          <Text style={styles.modalTitle}>
+            {transactionType === 'income' ? i18n.t('addExpense.titleIncome') : i18n.t('addExpense.title')}
+          </Text>
+
+          {/* Transaction Type Selector */}
+          <View style={styles.formSection}>
+            <Text style={styles.label}>{i18n.t('addExpense.transactionType')}</Text>
+            <View style={styles.typeSelector}>
+              <TouchableOpacity
+                style={[
+                  styles.typeButton,
+                  transactionType === 'expense' && styles.typeButtonActive,
+                ]}
+                onPress={() => setTransactionType('expense')}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.typeButtonText,
+                    transactionType === 'expense' && styles.typeButtonTextActive,
+                  ]}
+                >
+                  {i18n.t('addExpense.typeExpense')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.typeButton,
+                  transactionType === 'income' && styles.typeButtonActive,
+                ]}
+                onPress={() => setTransactionType('income')}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.typeButtonText,
+                    transactionType === 'income' && styles.typeButtonTextActive,
+                  ]}
+                >
+                  {i18n.t('addExpense.typeIncome')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
           <View style={styles.formSection}>
             <Text style={styles.label}>{i18n.t('addExpense.amount')}</Text>
@@ -100,7 +165,11 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
                 styles.input,
                 focusedField === 'description' && styles.inputFocused,
               ]}
-              placeholder={i18n.t('addExpense.descriptionPlaceholder')}
+              placeholder={
+                transactionType === 'income'
+                  ? i18n.t('addExpense.descriptionPlaceholderIncome')
+                  : i18n.t('addExpense.descriptionPlaceholder')
+              }
               placeholderTextColor={colors.textDisabled}
               value={description}
               onChangeText={setDescription}
@@ -116,7 +185,11 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
                 styles.input,
                 focusedField === 'category' && styles.inputFocused,
               ]}
-              placeholder={i18n.t('addExpense.categoryPlaceholder')}
+              placeholder={
+                transactionType === 'income'
+                  ? i18n.t('addExpense.categoryPlaceholderIncome')
+                  : i18n.t('addExpense.categoryPlaceholder')
+              }
               placeholderTextColor={colors.textDisabled}
               value={category}
               onChangeText={setCategory}
@@ -138,6 +211,45 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
               </View>
             )}
           </View>
+
+          {/* Recurring Transaction Option - Only for expenses */}
+          {transactionType === 'expense' && (
+            <View style={styles.formSection}>
+              <View style={styles.switchRow}>
+                <View style={styles.switchLabelContainer}>
+                  <Text style={styles.label}>{i18n.t('addExpense.isRecurring')}</Text>
+                  {isRecurring && (
+                    <Text style={styles.recurringHint}>{i18n.t('addExpense.recurringHint')}</Text>
+                  )}
+                </View>
+                <Switch
+                  value={isRecurring}
+                  onValueChange={setIsRecurring}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.surface}
+                />
+              </View>
+              {isRecurring && (
+                <View style={styles.recurringDayContainer}>
+                  <Text style={styles.label}>{i18n.t('addExpense.recurringDay')}</Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      focusedField === 'recurringDay' && styles.inputFocused,
+                    ]}
+                    placeholder={i18n.t('addExpense.recurringDayPlaceholder')}
+                    placeholderTextColor={colors.textDisabled}
+                    keyboardType="number-pad"
+                    value={recurringDay}
+                    onChangeText={setRecurringDay}
+                    onFocus={() => setFocusedField('recurringDay')}
+                    onBlur={() => setFocusedField(null)}
+                    maxLength={2}
+                  />
+                </View>
+              )}
+            </View>
+          )}
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -174,6 +286,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: borderRadius.xl,
     padding: spacing.lg,
     paddingBottom: 40,
+    maxHeight: '90%',
   },
   modalTitle: {
     fontSize: typography.fontSize.h3,
@@ -203,6 +316,48 @@ const styles = StyleSheet.create({
   inputFocused: {
     borderColor: colors.primary,
     borderWidth: 2,
+  },
+  typeSelector: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  typeButton: {
+    flex: 1,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+  },
+  typeButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  typeButtonText: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textSecondary,
+  },
+  typeButtonTextActive: {
+    color: colors.textInverse,
+  },
+  switchRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  switchLabelContainer: {
+    flex: 1,
+    marginRight: spacing.md,
+  },
+  recurringHint: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
+  recurringDayContainer: {
+    marginTop: spacing.md,
   },
   buttonContainer: {
     flexDirection: 'row',

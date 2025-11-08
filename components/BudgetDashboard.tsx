@@ -136,14 +136,22 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
   };
 
   // Calculate values
-  const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+  // Separate expenses and income
+  const totalSpent = transactions.reduce((sum, t) => {
+    return t.type === 'income' ? sum : sum + t.amount;
+  }, 0);
+  const totalIncome = transactions.reduce((sum, t) => {
+    return t.type === 'income' ? sum + t.amount : sum;
+  }, 0);
+  
   const resteAVivre = config.monthlyIncome - config.fixedCharges - config.savingsGoal;
   const dailyBudget = calculateDailyBudget(
     config.monthlyIncome,
     config.fixedCharges,
     config.savingsGoal,
     totalSpent,
-    config.cycleStartDay
+    config.cycleStartDay,
+    totalIncome
   );
   const daysRemaining = getDaysRemainingInCycle(config.cycleStartDay);
   const budgetStatus = calculateBudgetStatus(
@@ -151,13 +159,15 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     config.fixedCharges,
     config.savingsGoal,
     totalSpent,
-    config.cycleStartDay
+    config.cycleStartDay,
+    totalIncome
   );
   const spentPercentage = calculateSpentPercentage(
     config.monthlyIncome,
     config.fixedCharges,
     config.savingsGoal,
-    totalSpent
+    totalSpent,
+    totalIncome
   );
 
   const isDailyBudgetNegative = dailyBudget < 0;
@@ -167,7 +177,8 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     config.monthlyIncome,
     config.fixedCharges,
     config.savingsGoal,
-    totalSpent
+    totalSpent,
+    totalIncome
   );
 
   // Analytics calculations for Epic 6
@@ -455,35 +466,46 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
               {i18n.t('dashboard.transactions.noTransactions')}
             </Text>
           ) : (
-            transactions.slice().reverse().map((transaction) => (
-              <View key={transaction.id} style={styles.transactionItem}>
-                <View style={styles.transactionLeft}>
-                  <Text style={styles.transactionDescription}>
-                    {transaction.description}
-                  </Text>
-                  {transaction.category && (
-                    <Text style={styles.transactionCategory}>
-                      {transaction.category}
+            transactions.slice().reverse().map((transaction) => {
+              const isIncome = transaction.type === 'income';
+              return (
+                <View key={transaction.id} style={styles.transactionItem}>
+                  <View style={styles.transactionLeft}>
+                    <Text style={styles.transactionDescription}>
+                      {transaction.description}
                     </Text>
-                  )}
-                  <Text style={styles.transactionDate}>
-                    {new Date(transaction.date).toLocaleDateString(i18n.locale)}
-                  </Text>
+                    {transaction.category && (
+                      <Text style={styles.transactionCategory}>
+                        {transaction.category}
+                      </Text>
+                    )}
+                    <Text style={styles.transactionDate}>
+                      {new Date(transaction.date).toLocaleDateString(i18n.locale)}
+                    </Text>
+                    {transaction.isRecurring && (
+                      <Text style={styles.transactionRecurring}>
+                        🔄 {i18n.t('dashboard.transactions.recurring')}
+                      </Text>
+                    )}
+                  </View>
+                  <View style={styles.transactionRight}>
+                    <Text style={[
+                      styles.transactionAmount,
+                      isIncome && styles.transactionAmountIncome
+                    ]}>
+                      {isIncome ? '+' : '-'}{formatCurrency(transaction.amount)}
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteExpense(transaction)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.deleteButtonText}>🗑️</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.transactionRight}>
-                  <Text style={styles.transactionAmount}>
-                    -{formatCurrency(transaction.amount)}
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => handleDeleteExpense(transaction)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.deleteButtonText}>🗑️</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))
+              );
+            })
           )}
         </View>
 
@@ -739,6 +761,14 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.bold,
     color: colors.error,
     marginBottom: spacing.xs,
+  },
+  transactionAmountIncome: {
+    color: colors.success, // Green color for income
+  },
+  transactionRecurring: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.primary,
+    marginTop: spacing.xs,
   },
   deleteButton: {
     padding: spacing.xs,

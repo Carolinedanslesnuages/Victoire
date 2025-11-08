@@ -6,7 +6,7 @@ import ConfigWizard from './components/ConfigWizard';
 import MainTabNavigator from './navigation/MainTabNavigator';
 import AddExpenseModal from './components/AddExpenseModal';
 import StreakCelebration from './components/StreakCelebration';
-import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreferences, getTransactionsForCurrentCycle } from './utils/storage';
+import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreferences, getTransactionsForCurrentCycle, processRecurringTransactions } from './utils/storage';
 import { BudgetConfig, Transaction, UserPreferences } from './types';
 import { colors } from './constants/theme';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
@@ -29,6 +29,7 @@ export default function App() {
     loadConfig();
     loadPreferences();
     initializeNotifications();
+    processRecurringTransactionsOnLoad();
   }, []);
 
   const loadConfig = async () => {
@@ -40,6 +41,14 @@ export default function App() {
   const loadPreferences = async () => {
     const prefs = await loadUserPreferences();
     setUserPreferences(prefs);
+  };
+
+  const processRecurringTransactionsOnLoad = async () => {
+    // Wait for budget config to load first
+    const config = await loadBudgetConfig();
+    if (config) {
+      await processRecurringTransactions(config.cycleStartDay);
+    }
   };
 
   const handleConfigComplete = async (config: BudgetConfig) => {
@@ -68,13 +77,19 @@ export default function App() {
       // Check if budget went negative and send alert
       if (budgetConfig) {
         const transactions = await getTransactionsForCurrentCycle(budgetConfig.cycleStartDay);
-        const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+        const totalSpent = transactions.reduce((sum, t) => {
+          return t.type === 'income' ? sum : sum + t.amount;
+        }, 0);
+        const totalIncome = transactions.reduce((sum, t) => {
+          return t.type === 'income' ? sum + t.amount : sum;
+        }, 0);
         const dailyBudget = calculateDailyBudget(
           budgetConfig.monthlyIncome,
           budgetConfig.fixedCharges,
           budgetConfig.savingsGoal,
           totalSpent,
-          budgetConfig.cycleStartDay
+          budgetConfig.cycleStartDay,
+          totalIncome
         );
         
         if (dailyBudget < 0) {

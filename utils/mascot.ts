@@ -28,18 +28,21 @@ export interface MascotState {
  * @param fixedCharges - Fixed charges
  * @param savingsGoal - Savings goal
  * @param totalSpent - Total amount spent in current cycle
+ * @param totalIncome - Total income received in current cycle (optional)
  * @returns Percentage of remaining budget (can be negative)
  */
 export const calculateResteAVivrePercentage = (
   monthlyIncome: number,
   fixedCharges: number,
   savingsGoal: number,
-  totalSpent: number
+  totalSpent: number,
+  totalIncome: number = 0
 ): number => {
   const resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
   if (resteAVivre === 0) return 0;
   
-  const remaining = resteAVivre - totalSpent;
+  // Income increases the remaining budget
+  const remaining = resteAVivre - totalSpent + totalIncome;
   return (remaining / resteAVivre) * 100;
 };
 
@@ -78,19 +81,22 @@ export const getMascotZone = (percentage: number): 'green' | 'yellow' | 'red' =>
  * @param fixedCharges - Fixed charges
  * @param savingsGoal - Savings goal
  * @param totalSpent - Total amount spent in current cycle
+ * @param totalIncome - Total income received in current cycle (optional)
  * @returns Complete mascot state
  */
 export const getMascotState = (
   monthlyIncome: number,
   fixedCharges: number,
   savingsGoal: number,
-  totalSpent: number
+  totalSpent: number,
+  totalIncome: number = 0
 ): MascotState => {
   const percentage = calculateResteAVivrePercentage(
     monthlyIncome,
     fixedCharges,
     savingsGoal,
-    totalSpent
+    totalSpent,
+    totalIncome
   );
   
   const mood = getMascotMood(percentage);

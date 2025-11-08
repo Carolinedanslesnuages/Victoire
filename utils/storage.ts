@@ -293,3 +293,77 @@ export const resetAllData = async (): Promise<boolean> => {
     return false;
   }
 };
+
+/**
+ * Get all recurring transactions (templates)
+ * @returns Array of recurring transactions
+ */
+export const getRecurringTransactions = async (): Promise<Transaction[]> => {
+  try {
+    const transactions = await loadTransactions();
+    return transactions.filter(t => t.isRecurring);
+  } catch (error) {
+    console.error('Error getting recurring transactions:', error);
+    return [];
+  }
+};
+
+/**
+ * Check and process recurring transactions for today
+ * Creates new transactions for recurring expenses that are due today
+ * @param cycleStartDay - Day of month when cycle starts
+ * @returns Array of newly created transaction IDs
+ */
+export const processRecurringTransactions = async (
+  cycleStartDay: number
+): Promise<string[]> => {
+  try {
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+    
+    // Get all recurring transactions
+    const recurringTemplates = await getRecurringTransactions();
+    
+    // Get transactions for current cycle to check if already processed today
+    const currentTransactions = await getTransactionsForCurrentCycle(cycleStartDay);
+    
+    const newTransactionIds: string[] = [];
+    
+    for (const template of recurringTemplates) {
+      // Check if this recurring transaction is due today
+      if (template.recurringDay === dayOfMonth) {
+        // Check if we've already created this transaction today
+        const alreadyCreatedToday = currentTransactions.some(t => {
+          const transactionDate = new Date(t.date);
+          return (
+            t.description === template.description &&
+            t.amount === template.amount &&
+            transactionDate.toDateString() === today.toDateString()
+          );
+        });
+        
+        if (!alreadyCreatedToday) {
+          // Create a new transaction from this template
+          const newTransaction: Omit<Transaction, 'id'> = {
+            amount: template.amount,
+            description: template.description,
+            category: template.category,
+            type: template.type || 'expense',
+            date: today.toISOString(),
+            isRecurring: false, // The created transaction is not itself recurring
+          };
+          
+          const success = await saveTransaction(newTransaction);
+          if (success) {
+            newTransactionIds.push(`recurring-${template.id}-${today.toISOString()}`);
+          }
+        }
+      }
+    }
+    
+    return newTransactionIds;
+  } catch (error) {
+    console.error('Error processing recurring transactions:', error);
+    return [];
+  }
+};

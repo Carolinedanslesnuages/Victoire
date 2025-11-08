@@ -160,7 +160,8 @@
     },
     "transactions": {
       "title": "Recent expenses",
-      "noTransactions": "No expenses recorded this month"
+      "noTransactions": "No expenses recorded this month",
+      "recurring": "Recurring"
     },
     "deleteExpense": {
       "title": "Delete expense",
@@ -194,18 +195,29 @@
   },
   "addExpense": {
     "title": "Add expense",
+    "titleIncome": "Add income",
+    "transactionType": "Transaction type",
+    "typeExpense": "Expense",
+    "typeIncome": "Income",
     "amount": "Amount (€)",
     "amountPlaceholder": "E.g.: 15.50",
     "description": "Description",
     "descriptionPlaceholder": "E.g.: Groceries, Restaurant...",
+    "descriptionPlaceholderIncome": "E.g.: Gift, Sale...",
     "category": "Category (optional)",
     "categoryPlaceholder": "E.g.: Food, Transport...",
+    "categoryPlaceholderIncome": "E.g.: Gift, Sale...",
+    "isRecurring": "Recurring transaction",
+    "recurringDay": "Day of month (1-31)",
+    "recurringDayPlaceholder": "E.g.: 5",
+    "recurringHint": "This transaction will be automatically created each month",
     "cancelButton": "Cancel",
     "addButton": "Add",
     "errors": {
       "title": "Error",
       "invalidAmount": "Please enter a valid amount",
-      "missingDescription": "Please enter a description"
+      "missingDescription": "Please enter a description",
+      "invalidRecurringDay": "Please enter a day between 1 and 31"
     }
   },
   "settings": {
