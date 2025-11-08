@@ -23,6 +23,7 @@ interface AddExpenseModalProps {
 export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddExpenseModalProps) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = () => {
@@ -41,18 +42,21 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
     onAddExpense({
       amount: expenseAmount,
       description: description.trim(),
+      category: category.trim() || undefined,
       date: new Date().toISOString(),
     });
 
     // Reset form
     setAmount('');
     setDescription('');
+    setCategory('');
     onClose();
   };
 
   const handleCancel = () => {
     setAmount('');
     setDescription('');
+    setCategory('');
     onClose();
   };
 
@@ -100,6 +104,22 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense }: AddE
               value={description}
               onChangeText={setDescription}
               onFocus={() => setFocusedField('description')}
+              onBlur={() => setFocusedField(null)}
+            />
+          </View>
+
+          <View style={styles.formSection}>
+            <Text style={styles.label}>{i18n.t('addExpense.category')}</Text>
+            <TextInput
+              style={[
+                styles.input,
+                focusedField === 'category' && styles.inputFocused,
+              ]}
+              placeholder={i18n.t('addExpense.categoryPlaceholder')}
+              placeholderTextColor={colors.textDisabled}
+              value={category}
+              onChangeText={setCategory}
+              onFocus={() => setFocusedField('category')}
               onBlur={() => setFocusedField(null)}
             />
           </View>

@@ -47,6 +47,12 @@
       "title": "Dépenses récentes",
       "noTransactions": "Aucune dépense enregistrée ce mois-ci"
     },
+    "deleteExpense": {
+      "title": "Supprimer la dépense",
+      "message": "Voulez-vous vraiment supprimer cette dépense de {{amount}} pour {{description}} ?",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    },
     "configButton": "⚙️ Modifier la configuration"
   },
   "addExpense": {
@@ -55,6 +61,8 @@
     "amountPlaceholder": "Ex: 15.50",
     "description": "Description",
     "descriptionPlaceholder": "Ex: Courses, Restaurant...",
+    "category": "Catégorie (optionnel)",
+    "categoryPlaceholder": "Ex: Alimentation, Transport...",
     "cancelButton": "Annuler",
     "addButton": "Ajouter",
     "errors": {
