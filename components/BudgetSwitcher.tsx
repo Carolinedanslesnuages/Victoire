@@ -14,6 +14,7 @@ import {
   getActiveBudgetId,
   setActiveBudgetId,
   createBudgetProfile,
+  updateBudgetProfile,
 } from '../utils/storage';
 import { lightColors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import { useTheme } from '../contexts/ThemeContext';
@@ -49,6 +50,39 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
     setActiveProfile(profile);
     setShowPicker(false);
     onBudgetChange();
+  };
+
+  const handleRenameBudget = (profile: BudgetProfile) => {
+    Alert.prompt(
+      i18n.t('budgetSwitcher.renameBudget'),
+      i18n.t('budgetSwitcher.renameBudgetMessage'),
+      [
+        {
+          text: i18n.t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: i18n.t('common.save'),
+          onPress: async (newName?: string) => {
+            if (newName && newName.trim()) {
+              const success = await updateBudgetProfile(profile.id, {
+                name: newName.trim(),
+              });
+              
+              if (success) {
+                await loadProfiles();
+                Alert.alert(
+                  i18n.t('budgetSwitcher.renamed'),
+                  i18n.t('budgetSwitcher.budgetRenamed')
+                );
+              }
+            }
+          },
+        },
+      ],
+      'plain-text',
+      profile.name
+    );
   };
 
   const handleCreateHouseholdBudget = async () => {
@@ -135,7 +169,7 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
 
             <ScrollView style={styles.profilesList}>
               {profiles.map(profile => (
-                <TouchableOpacity
+                <View
                   key={profile.id}
                   style={[
                     styles.profileItem,
@@ -143,23 +177,34 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
                       backgroundColor: themeColors.primaryLight,
                     },
                   ]}
-                  onPress={() => handleSelectBudget(profile)}
                 >
-                  <Text style={styles.profileIcon}>{getBudgetIcon(profile.type)}</Text>
-                  <View style={styles.profileInfo}>
-                    <Text style={[styles.profileName, { color: themeColors.textPrimary }]}>
-                      {profile.name}
-                    </Text>
-                    <Text style={[styles.profileType, { color: themeColors.textSecondary }]}>
-                      {profile.type === 'personal'
-                        ? i18n.t('budgetSwitcher.personal')
-                        : i18n.t('budgetSwitcher.household')}
-                    </Text>
-                  </View>
-                  {profile.id === activeProfile?.id && (
-                    <Text style={[styles.checkmark, { color: themeColors.primary }]}>✓</Text>
-                  )}
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.profileMainContent}
+                    onPress={() => handleSelectBudget(profile)}
+                  >
+                    <Text style={styles.profileIcon}>{getBudgetIcon(profile.type)}</Text>
+                    <View style={styles.profileInfo}>
+                      <Text style={[styles.profileName, { color: themeColors.textPrimary }]}>
+                        {profile.name}
+                      </Text>
+                      <Text style={[styles.profileType, { color: themeColors.textSecondary }]}>
+                        {profile.type === 'personal'
+                          ? i18n.t('budgetSwitcher.personal')
+                          : i18n.t('budgetSwitcher.household')}
+                      </Text>
+                    </View>
+                    {profile.id === activeProfile?.id && (
+                      <Text style={[styles.checkmark, { color: themeColors.primary }]}>✓</Text>
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() => handleRenameBudget(profile)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Text style={styles.editIcon}>✏️</Text>
+                  </TouchableOpacity>
+                </View>
               ))}
             </ScrollView>
 
@@ -237,9 +282,14 @@ const styles = StyleSheet.create({
   profileItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.md,
     borderRadius: borderRadius.md,
     marginBottom: spacing.sm,
+  },
+  profileMainContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    flex: 1,
   },
   profileIcon: {
     fontSize: 24,
@@ -259,6 +309,13 @@ const styles = StyleSheet.create({
   checkmark: {
     fontSize: 24,
     fontWeight: typography.fontWeight.bold,
+  },
+  editButton: {
+    padding: spacing.sm,
+    paddingRight: spacing.md,
+  },
+  editIcon: {
+    fontSize: 18,
   },
   createButton: {
     padding: spacing.md,

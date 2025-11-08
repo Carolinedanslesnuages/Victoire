@@ -444,7 +444,11 @@
     "householdExists": "Household Budget Exists",
     "householdExistsMessage": "You already have a Household budget.",
     "created": "Budget Created",
-    "householdCreated": "Your Household budget has been successfully created! Configure it in Settings."
+    "householdCreated": "Your Household budget has been successfully created! Configure it in Settings.",
+    "renameBudget": "Rename Budget",
+    "renameBudgetMessage": "Enter a new name for this budget:",
+    "renamed": "Budget Renamed",
+    "budgetRenamed": "The budget has been successfully renamed!"
   },
   "common": {
     "cancel": "Cancel",
