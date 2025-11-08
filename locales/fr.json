@@ -193,6 +193,17 @@
       "permissionMessage": "PACE a besoin de la permission pour les notifications afin de vous envoyer des rappels et des alertes.",
       "enablePermission": "Activer les Notifications",
       "updated": "Paramètres de notification mis à jour"
+    },
+    "export": {
+      "title": "Export des données",
+      "description": "Exportez tout votre historique de dépenses pour l'analyser dans Excel ou d'autres outils",
+      "button": "📤 Exporter en CSV",
+      "success": "Export réussi !",
+      "successMessage": "Vos données de dépenses ont été exportées. Vous pouvez maintenant partager ou enregistrer le fichier CSV.",
+      "noData": "Aucune donnée à exporter",
+      "noDataMessage": "Vous n'avez pas encore de dépenses à exporter.",
+      "error": "Échec de l'export",
+      "errorMessage": "Une erreur s'est produite lors de l'exportation de vos données. Veuillez réessayer."
     }
   },
   "notifications": {
