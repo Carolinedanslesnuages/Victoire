@@ -11,7 +11,102 @@
   },
   "profile": {
     "title": "Profile & Stats",
-    "comingSoon": "Profile and statistics coming soon!"
+    "comingSoon": "Profile and statistics coming soon!",
+    "streakSection": {
+      "title": "Your Streak 🔥",
+      "currentStreak": "Current Streak",
+      "longestStreak": "Longest Streak",
+      "days": "days",
+      "streakFreezes": "Streak Freezes Available",
+      "jokersRemaining": "Jokers Remaining",
+      "useFreeze": "Use a Freeze",
+      "useJoker": "Use a Joker",
+      "freezeUsed": "Streak freeze used!",
+      "jokerUsed": "Joker used!",
+      "noFreezes": "No freezes available",
+      "noJokers": "No jokers available",
+      "jokerNotEligible": "Joker not available (budget > -5€)"
+    },
+    "badgesSection": {
+      "title": "Badge Collection",
+      "unlockedCount": "{{count}} badges unlocked",
+      "noBadges": "No badges unlocked yet. Keep tracking your budget!",
+      "rareBadge": "Rare Badge ✨"
+    },
+    "statsSection": {
+      "title": "Statistics",
+      "cyclesCompleted": "Cycles Completed",
+      "cyclesPositive": "Positive Cycles"
+    }
+  },
+  "badges": {
+    "firstStep": {
+      "name": "First Step",
+      "description": "First expense tracked"
+    },
+    "streak7": {
+      "name": "Week Warrior",
+      "description": "7 consecutive days"
+    },
+    "streak30": {
+      "name": "30 Days Zen",
+      "description": "30 consecutive days"
+    },
+    "streak100": {
+      "name": "Centurion",
+      "description": "100 consecutive days"
+    },
+    "perfectBalance": {
+      "name": "Perfect Balance",
+      "description": "Cycle ended with exactly €0"
+    },
+    "budgetMaster": {
+      "name": "Budget Master",
+      "description": "3 cycles with positive balance"
+    },
+    "earlyBird": {
+      "name": "Early Bird",
+      "description": "Expense logged before 8 AM"
+    },
+    "nightOwl": {
+      "name": "Night Owl",
+      "description": "Expense logged after 10 PM"
+    },
+    "frugalMonth": {
+      "name": "Frugal Month",
+      "description": "Spent less than 50% of budget"
+    },
+    "saver": {
+      "name": "Saver",
+      "description": "Saved more than planned for 3 months"
+    },
+    "streakSaver": {
+      "name": "Streak Protector",
+      "description": "Used a streak freeze"
+    },
+    "jokerUser": {
+      "name": "Joker Ace",
+      "description": "Successfully used a joker"
+    }
+  },
+  "badgeUnlocked": {
+    "title": "🎉 New Badge!",
+    "message": "You unlocked: {{badgeName}}",
+    "rareBadge": "✨ Rare Badge! ✨",
+    "ok": "Awesome!"
+  },
+  "streakNotification": {
+    "saveStreak": {
+      "title": "Save your streak! 🔥",
+      "body": "You haven't opened the app today yet. Don't lose your {{streak}} day streak!"
+    }
+  },
+  "streakCelebration": {
+    "streak": "Active Streak!",
+    "dayOne": "First Day!",
+    "day": "day",
+    "days": "days",
+    "keepGoing": "Keep it up!"
   },
   "configWizard": {
     "title": "Budget Configuration",

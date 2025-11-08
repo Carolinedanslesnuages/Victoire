@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StreakInfo } from '../types';
 import { loadTransactions } from './storage';
+import { updateStreakWithGamification, loadGamificationData } from './gamification';
 
 const STREAK_INFO_KEY = '@pace_streak_info';
 
@@ -12,6 +13,9 @@ const getDefaultStreakInfo = (): StreakInfo => ({
   longestStreak: 0,
   lastActivityDate: '',
   isActive: false,
+  streakFreezes: 2,
+  jokersRemaining: 3,
+  lastJokerResetDate: new Date().toISOString().split('T')[0],
 });
 
 /**
@@ -149,12 +153,21 @@ export const calculateStreak = async (): Promise<StreakInfo> => {
       currentStreak = 0;
     }
 
+    // Get gamification data for freezes and jokers
+    const gamificationData = await loadGamificationData();
+
     const streakInfo: StreakInfo = {
       currentStreak,
       longestStreak,
       lastActivityDate: lastActivityDateStr,
       isActive,
+      streakFreezes: gamificationData.streakInfo.streakFreezes,
+      jokersRemaining: gamificationData.streakInfo.jokersRemaining,
+      lastJokerResetDate: gamificationData.streakInfo.lastJokerResetDate,
     };
+
+    // Update with gamification features (handles auto-freeze)
+    await updateStreakWithGamification(streakInfo);
 
     // Save the calculated streak info
     await saveStreakInfo(streakInfo);

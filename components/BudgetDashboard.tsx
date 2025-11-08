@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl, A
 import BudgetRing from './BudgetRing';
 import PieChart from './PieChart';
 import MascotDisplay from './MascotDisplay';
+import BadgeUnlockModal from './BadgeUnlockModal';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -21,11 +22,12 @@ import {
   compareMonthlySpending,
 } from '../utils/analytics';
 import { getMascotState } from '../utils/mascot';
-import { BudgetConfig, Transaction, UserPreferences, StreakInfo } from '../types';
+import { BudgetConfig, Transaction, UserPreferences, StreakInfo, Badge } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
 import { calculateStreak } from '../utils/streaks';
+import { checkAndUnlockBadges, unlockBadge } from '../utils/gamification';
 
 interface BudgetDashboardProps {
   config: BudgetConfig;
@@ -45,7 +47,11 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
     longestStreak: 0,
     lastActivityDate: '',
     isActive: false,
+    streakFreezes: 2,
+    jokersRemaining: 3,
   });
+  const [unlockedBadge, setUnlockedBadge] = useState<Badge | null>(null);
+  const [showBadgeModal, setShowBadgeModal] = useState(false);
 
   useEffect(() => {
     loadTransactions();
@@ -61,11 +67,28 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
   const loadStreak = async () => {
     const streak = await calculateStreak();
     setStreakInfo(streak);
+    
+    // Check for newly unlocked badges
+    const newBadges = await checkAndUnlockBadges();
+    if (newBadges.length > 0) {
+      // Show the first badge that was unlocked
+      setUnlockedBadge(newBadges[0]);
+      setShowBadgeModal(true);
+    }
   };
 
   const loadTransactions = async () => {
     const txns = await getTransactionsForCurrentCycle(config.cycleStartDay);
     setTransactions(txns);
+    
+    // Check for first step badge on first transaction
+    if (txns.length === 1) {
+      const badge = await unlockBadge('first_step', false);
+      if (badge) {
+        setUnlockedBadge(badge);
+        setShowBadgeModal(true);
+      }
+    }
     
     // Load previous month transactions for comparison
     const prevTxns = await getTransactionsForPreviousCycleSameDay(config.cycleStartDay);
@@ -173,6 +196,16 @@ export default function BudgetDashboard({ config, onReconfigure }: BudgetDashboa
 
   return (
     <View style={styles.container}>
+      {/* Badge Unlock Modal */}
+      <BadgeUnlockModal
+        visible={showBadgeModal}
+        badge={unlockedBadge}
+        onClose={() => {
+          setShowBadgeModal(false);
+          setUnlockedBadge(null);
+        }}
+      />
+
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
