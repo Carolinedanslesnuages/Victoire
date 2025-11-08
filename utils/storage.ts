@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BudgetConfig, Transaction, UserPreferences } from '../types';
+import { getDefaultNotificationSettings } from './notifications';
 
 const BUDGET_CONFIG_KEY = '@pace_budget_config';
 const TRANSACTIONS_KEY = '@pace_transactions';
@@ -146,18 +147,25 @@ export const loadUserPreferences = async (): Promise<UserPreferences> => {
   try {
     const jsonValue = await AsyncStorage.getItem(USER_PREFERENCES_KEY);
     if (jsonValue != null) {
-      return JSON.parse(jsonValue);
+      const prefs = JSON.parse(jsonValue);
+      // Add default notification settings if not present
+      if (!prefs.notificationSettings) {
+        prefs.notificationSettings = getDefaultNotificationSettings();
+      }
+      return prefs;
     }
     // Return default preferences
     return {
       currency: 'EUR',
       customCategories: [],
+      notificationSettings: getDefaultNotificationSettings(),
     };
   } catch (error) {
     console.error('Error loading user preferences:', error);
     return {
       currency: 'EUR',
       customCategories: [],
+      notificationSettings: getDefaultNotificationSettings(),
     };
   }
 };

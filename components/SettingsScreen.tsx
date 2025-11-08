@@ -9,14 +9,22 @@ import {
   Alert,
   Modal,
   Linking,
+  Switch,
+  Platform,
 } from 'react-native';
-import { UserPreferences } from '../types';
+import { UserPreferences, NotificationSettings } from '../types';
 import { colors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { CURRENCY_OPTIONS } from '../utils/currency';
 import { loadUserPreferences, saveUserPreferences, resetAllData } from '../utils/storage';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import PaywallScreen from './PaywallScreen';
+import { 
+  requestNotificationPermissions, 
+  scheduleEveningReminder, 
+  scheduleMorningBudgetNotification,
+  getDefaultNotificationSettings
+} from '../utils/notifications';
 
 interface SettingsScreenProps {
   visible: boolean;
@@ -30,10 +38,15 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
   const [preferences, setPreferences] = useState<UserPreferences>({
     currency: 'EUR',
     customCategories: [],
+    notificationSettings: getDefaultNotificationSettings(),
   });
   const [newCategory, setNewCategory] = useState('');
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState<{
+    type: 'evening' | 'morning';
+    show: boolean;
+  }>({ type: 'evening', show: false });
   const { isPremium, refreshSubscription } = useSubscription();
 
   useEffect(() => {
@@ -55,6 +68,86 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
       setShowCurrencyPicker(false);
       Alert.alert(i18n.t('settings.success'), i18n.t('settings.currencyUpdated'));
     }
+  };
+
+  const handleNotificationToggle = async (
+    setting: 'eveningReminderEnabled' | 'morningBudgetEnabled' | 'budgetAlertEnabled',
+    value: boolean
+  ) => {
+    if (value) {
+      const hasPermission = await requestNotificationPermissions();
+      if (!hasPermission) {
+        Alert.alert(
+          i18n.t('settings.notifications.permissionRequired'),
+          i18n.t('settings.notifications.permissionMessage')
+        );
+        return;
+      }
+    }
+
+    const updatedSettings: NotificationSettings = {
+      ...preferences.notificationSettings!,
+      [setting]: value,
+    };
+
+    const updatedPreferences = {
+      ...preferences,
+      notificationSettings: updatedSettings,
+    };
+
+    const success = await saveUserPreferences(updatedPreferences);
+    if (success) {
+      setPreferences(updatedPreferences);
+
+      // Update scheduled notifications
+      if (setting === 'eveningReminderEnabled') {
+        await scheduleEveningReminder(updatedSettings);
+      } else if (setting === 'morningBudgetEnabled') {
+        await scheduleMorningBudgetNotification(updatedSettings);
+      }
+    }
+  };
+
+  const handleTimeChange = (type: 'evening' | 'morning', time: string) => {
+    const setting = type === 'evening' ? 'eveningReminderTime' : 'morningBudgetTime';
+    
+    const updatedSettings: NotificationSettings = {
+      ...preferences.notificationSettings!,
+      [setting]: time,
+    };
+
+    const updatedPreferences = {
+      ...preferences,
+      notificationSettings: updatedSettings,
+    };
+
+    saveUserPreferences(updatedPreferences).then((success) => {
+      if (success) {
+        setPreferences(updatedPreferences);
+        
+        // Re-schedule notifications with new time
+        if (type === 'evening') {
+          scheduleEveningReminder(updatedSettings);
+        } else {
+          scheduleMorningBudgetNotification(updatedSettings);
+        }
+
+        Alert.alert(i18n.t('settings.success'), i18n.t('settings.notifications.updated'));
+      }
+    });
+
+    setShowTimePicker({ type: 'evening', show: false });
+  };
+
+  const parseTimeInput = (input: string): string | null => {
+    // Simple validation for HH:mm format
+    const match = input.match(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/);
+    if (!match) {
+      return null;
+    }
+    const hours = match[1].padStart(2, '0');
+    const minutes = match[2];
+    return `${hours}:${minutes}`;
   };
 
   const handleAddCategory = async () => {
@@ -256,6 +349,93 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
             </View>
           </View>
 
+          {/* Notification Settings Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{i18n.t('settings.notifications.title')}</Text>
+            
+            {/* Evening Reminder */}
+            <View style={styles.notificationItem}>
+              <View style={styles.notificationHeader}>
+                <Text style={styles.notificationLabel}>
+                  📝 {i18n.t('settings.notifications.eveningReminder.label')}
+                </Text>
+                <Switch
+                  value={preferences.notificationSettings?.eveningReminderEnabled ?? true}
+                  onValueChange={(value) => handleNotificationToggle('eveningReminderEnabled', value)}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.surface}
+                />
+              </View>
+              <Text style={styles.notificationDescription}>
+                {i18n.t('settings.notifications.eveningReminder.description')}
+              </Text>
+              {preferences.notificationSettings?.eveningReminderEnabled && (
+                <TouchableOpacity
+                  style={styles.timeButton}
+                  onPress={() => setShowTimePicker({ type: 'evening', show: true })}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.timeButtonLabel}>
+                    {i18n.t('settings.notifications.eveningReminder.time')}
+                  </Text>
+                  <Text style={styles.timeButtonValue}>
+                    {preferences.notificationSettings?.eveningReminderTime || '20:00'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Morning Budget */}
+            <View style={styles.notificationItem}>
+              <View style={styles.notificationHeader}>
+                <Text style={styles.notificationLabel}>
+                  💰 {i18n.t('settings.notifications.morningBudget.label')}
+                </Text>
+                <Switch
+                  value={preferences.notificationSettings?.morningBudgetEnabled ?? true}
+                  onValueChange={(value) => handleNotificationToggle('morningBudgetEnabled', value)}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.surface}
+                />
+              </View>
+              <Text style={styles.notificationDescription}>
+                {i18n.t('settings.notifications.morningBudget.description')}
+              </Text>
+              {preferences.notificationSettings?.morningBudgetEnabled && (
+                <TouchableOpacity
+                  style={styles.timeButton}
+                  onPress={() => setShowTimePicker({ type: 'morning', show: true })}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.timeButtonLabel}>
+                    {i18n.t('settings.notifications.morningBudget.time')}
+                  </Text>
+                  <Text style={styles.timeButtonValue}>
+                    {preferences.notificationSettings?.morningBudgetTime || '08:00'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Budget Alert */}
+            <View style={styles.notificationItem}>
+              <View style={styles.notificationHeader}>
+                <Text style={styles.notificationLabel}>
+                  ⚠️ {i18n.t('settings.notifications.budgetAlert.label')}
+                </Text>
+                <Switch
+                  value={preferences.notificationSettings?.budgetAlertEnabled ?? true}
+                  onValueChange={(value) => handleNotificationToggle('budgetAlertEnabled', value)}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.surface}
+                />
+              </View>
+              <Text style={styles.notificationDescription}>
+                {i18n.t('settings.notifications.budgetAlert.description')}
+              </Text>
+            </View>
+          </View>
+
           {/* Custom Categories Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -385,6 +565,61 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
                   )}
                 </TouchableOpacity>
               ))}
+            </View>
+          </TouchableOpacity>
+        </Modal>
+
+        {/* Time Picker Modal */}
+        <Modal
+          visible={showTimePicker.show}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowTimePicker({ type: 'evening', show: false })}
+        >
+          <TouchableOpacity
+            style={styles.currencyPickerOverlay}
+            activeOpacity={1}
+            onPress={() => setShowTimePicker({ type: 'evening', show: false })}
+          >
+            <View style={styles.currencyPickerContent}>
+              <Text style={styles.currencyPickerTitle}>
+                {showTimePicker.type === 'evening'
+                  ? i18n.t('settings.notifications.eveningReminder.time')
+                  : i18n.t('settings.notifications.morningBudget.time')}
+              </Text>
+              <TextInput
+                style={styles.timeInput}
+                placeholder="HH:mm (e.g., 20:00)"
+                placeholderTextColor={colors.textDisabled}
+                defaultValue={
+                  showTimePicker.type === 'evening'
+                    ? preferences.notificationSettings?.eveningReminderTime || '20:00'
+                    : preferences.notificationSettings?.morningBudgetTime || '08:00'
+                }
+                onSubmitEditing={(e) => {
+                  const time = parseTimeInput(e.nativeEvent.text);
+                  if (time) {
+                    handleTimeChange(showTimePicker.type, time);
+                  } else {
+                    Alert.alert(
+                      i18n.t('settings.errors.title'),
+                      'Please enter a valid time in HH:mm format (e.g., 20:00)'
+                    );
+                  }
+                }}
+                keyboardType="numbers-and-punctuation"
+                maxLength={5}
+                autoFocus
+              />
+              <TouchableOpacity
+                style={styles.timePickerCloseButton}
+                onPress={() => setShowTimePicker({ type: 'evening', show: false })}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.timePickerCloseButtonText}>
+                  {i18n.t('addExpense.cancelButton')}
+                </Text>
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         </Modal>
@@ -660,5 +895,69 @@ const styles = StyleSheet.create({
   legalButtonArrow: {
     fontSize: 24,
     color: colors.textSecondary,
+  },
+  // Notification settings styles
+  notificationItem: {
+    marginBottom: spacing.lg,
+  },
+  notificationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  notificationLabel: {
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+    fontWeight: typography.fontWeight.medium,
+    flex: 1,
+  },
+  notificationDescription: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
+  },
+  timeButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginTop: spacing.sm,
+  },
+  timeButtonLabel: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+  },
+  timeButtonValue: {
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+    fontWeight: typography.fontWeight.bold,
+  },
+  timeInput: {
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    fontSize: typography.fontSize.body,
+    color: colors.textPrimary,
+    marginVertical: spacing.md,
+    textAlign: 'center',
+  },
+  timePickerCloseButton: {
+    backgroundColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  timePickerCloseButtonText: {
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.medium,
   },
 });

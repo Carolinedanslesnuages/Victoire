@@ -46,6 +46,18 @@ export interface BudgetStatus {
 export interface UserPreferences {
   currency: string;
   customCategories: string[];
+  notificationSettings?: NotificationSettings;
+}
+
+/**
+ * Notification settings interface
+ */
+export interface NotificationSettings {
+  eveningReminderEnabled: boolean;
+  eveningReminderTime: string; // Format: "HH:mm" (24-hour format)
+  morningBudgetEnabled: boolean;
+  morningBudgetTime: string; // Format: "HH:mm" (24-hour format)
+  budgetAlertEnabled: boolean;
 }
 
 /**
