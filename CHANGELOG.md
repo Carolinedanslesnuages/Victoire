@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.4.0...v1.5.0) (2025-11-08)
+
+
+### Features
+
+* add reactive mascot L'Écureuil Économe with 10 emotion states ([9be008a](https://github.com/Carolinedanslesnuages/PACE/commit/9be008afa3e79f34597f8f36cdce3fe6a7504c93))
+* add reactive mascot L'Écureuil Économe with emotion-based budget feedback ([7a95f7d](https://github.com/Carolinedanslesnuages/PACE/commit/7a95f7d08ba232a143bb64ccb68104cb9399d361))
+
 ## [1.4.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.3.0...v1.4.0) (2025-11-08)
 
 
