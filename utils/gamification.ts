@@ -26,6 +26,29 @@ const getDefaultGamificationData = (): GamificationData => ({
 });
 
 /**
+ * Validate that loaded gamification data has the expected structure
+ */
+const validateGamificationData = (data: any): boolean => {
+  try {
+    return (
+      data &&
+      typeof data === 'object' &&
+      Array.isArray(data.badges) &&
+      data.streakInfo &&
+      typeof data.streakInfo === 'object' &&
+      typeof data.streakInfo.currentStreak === 'number' &&
+      typeof data.streakInfo.longestStreak === 'number' &&
+      data.monthlyStats &&
+      typeof data.monthlyStats === 'object' &&
+      typeof data.monthlyStats.cyclesWithPositiveBalance === 'number' &&
+      typeof data.monthlyStats.totalCyclesCompleted === 'number'
+    );
+  } catch {
+    return false;
+  }
+};
+
+/**
  * Load gamification data from storage
  */
 export const loadGamificationData = async (): Promise<GamificationData> => {
@@ -33,6 +56,13 @@ export const loadGamificationData = async (): Promise<GamificationData> => {
     const jsonValue = await AsyncStorage.getItem(GAMIFICATION_DATA_KEY);
     if (jsonValue != null) {
       const data = JSON.parse(jsonValue);
+      
+      // Validate the loaded data structure
+      if (!validateGamificationData(data)) {
+        console.error('Invalid gamification data structure, resetting to defaults');
+        return getDefaultGamificationData();
+      }
+      
       // Ensure jokers are reset monthly
       return resetJokersIfNeeded(data);
     }
@@ -109,7 +139,14 @@ export const unlockBadge = async (
     };
 
     data.badges.push(newBadge);
-    await saveGamificationData(data);
+    const saved = await saveGamificationData(data);
+    
+    // Only return the badge if it was successfully saved
+    // This prevents showing the unlock modal if persistence failed
+    if (!saved) {
+      console.error('Failed to save badge data to storage');
+      return null;
+    }
 
     return newBadge;
   } catch (error) {
@@ -175,7 +212,12 @@ export const useStreakFreeze = async (): Promise<boolean> => {
       await unlockBadge('streak_saver', false);
     }
 
-    await saveGamificationData(data);
+    const saved = await saveGamificationData(data);
+    if (!saved) {
+      console.error('Failed to save streak freeze usage to storage');
+      return false;
+    }
+    
     return true;
   } catch (error) {
     console.error('Error using streak freeze:', error);
@@ -226,7 +268,12 @@ export const useJoker = async (): Promise<boolean> => {
       await unlockBadge('joker_user', false);
     }
 
-    await saveGamificationData(data);
+    const saved = await saveGamificationData(data);
+    if (!saved) {
+      console.error('Failed to save joker usage to storage');
+      return false;
+    }
+    
     return true;
   } catch (error) {
     console.error('Error using joker:', error);
@@ -303,9 +350,14 @@ export const updateStreakWithGamification = async (newStreakInfo: StreakInfo): P
       lastJokerResetDate: data.streakInfo.lastJokerResetDate,
     };
 
-    await saveGamificationData(data);
+    const saved = await saveGamificationData(data);
+    if (!saved) {
+      console.error('Failed to save streak data to storage');
+      throw new Error('Failed to persist streak update');
+    }
   } catch (error) {
     console.error('Error updating streak with gamification:', error);
+    throw error;
   }
 };
 
@@ -321,12 +373,17 @@ export const recordCycleCompletion = async (hadPositiveBalance: boolean): Promis
       data.monthlyStats.cyclesWithPositiveBalance++;
     }
 
-    await saveGamificationData(data);
+    const saved = await saveGamificationData(data);
+    if (!saved) {
+      console.error('Failed to save cycle completion data to storage');
+      throw new Error('Failed to persist cycle completion');
+    }
     
     // Check for new badges
     await checkAndUnlockBadges();
   } catch (error) {
     console.error('Error recording cycle completion:', error);
+    throw error;
   }
 };
 
