@@ -11,7 +11,8 @@ import {
   Alert,
 } from 'react-native';
 import { Transaction } from '../types';
-import { colors, typography, spacing, borderRadius } from '../constants/theme';
+import { typography, spacing, borderRadius } from '../constants/theme';
+import { useTheme } from '../contexts/ThemeContext';
 import i18n from '../utils/i18n';
 
 interface AddExpenseModalProps {
@@ -22,6 +23,7 @@ interface AddExpenseModalProps {
 }
 
 export default function AddExpenseModal({ visible, onClose, onAddExpense, customCategories = [] }: AddExpenseModalProps) {
+  const { colors } = useTheme();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -72,15 +74,20 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.modalContainer}
       >
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>{i18n.t('addExpense.title')}</Text>
+        <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>{i18n.t('addExpense.title')}</Text>
 
           <View style={styles.formSection}>
-            <Text style={styles.label}>{i18n.t('addExpense.amount')}</Text>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>{i18n.t('addExpense.amount')}</Text>
             <TextInput
               style={[
                 styles.input,
-                focusedField === 'amount' && styles.inputFocused,
+                { 
+                  backgroundColor: colors.background, 
+                  borderColor: colors.border,
+                  color: colors.textPrimary 
+                },
+                focusedField === 'amount' && { borderColor: colors.primary, borderWidth: 2 },
               ]}
               placeholder={i18n.t('addExpense.amountPlaceholder')}
               placeholderTextColor={colors.textDisabled}
@@ -94,11 +101,16 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
           </View>
 
           <View style={styles.formSection}>
-            <Text style={styles.label}>{i18n.t('addExpense.description')}</Text>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>{i18n.t('addExpense.description')}</Text>
             <TextInput
               style={[
                 styles.input,
-                focusedField === 'description' && styles.inputFocused,
+                { 
+                  backgroundColor: colors.background, 
+                  borderColor: colors.border,
+                  color: colors.textPrimary 
+                },
+                focusedField === 'description' && { borderColor: colors.primary, borderWidth: 2 },
               ]}
               placeholder={i18n.t('addExpense.descriptionPlaceholder')}
               placeholderTextColor={colors.textDisabled}
@@ -110,11 +122,16 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
           </View>
 
           <View style={styles.formSection}>
-            <Text style={styles.label}>{i18n.t('addExpense.category')}</Text>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>{i18n.t('addExpense.category')}</Text>
             <TextInput
               style={[
                 styles.input,
-                focusedField === 'category' && styles.inputFocused,
+                { 
+                  backgroundColor: colors.background, 
+                  borderColor: colors.border,
+                  color: colors.textPrimary 
+                },
+                focusedField === 'category' && { borderColor: colors.primary, borderWidth: 2 },
               ]}
               placeholder={i18n.t('addExpense.categoryPlaceholder')}
               placeholderTextColor={colors.textDisabled}
@@ -128,11 +145,11 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
                 {customCategories.map((cat, index) => (
                   <TouchableOpacity
                     key={index}
-                    style={styles.categoryChip}
+                    style={[styles.categoryChip, { backgroundColor: colors.primary }]}
                     onPress={() => setCategory(cat)}
                     activeOpacity={0.7}
                   >
-                    <Text style={styles.categoryChipText}>{cat}</Text>
+                    <Text style={[styles.categoryChipText, { color: colors.textInverse }]}>{cat}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -141,19 +158,22 @@ export default function AddExpenseModal({ visible, onClose, onAddExpense, custom
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
+              style={[styles.button, styles.cancelButton, { 
+                backgroundColor: colors.background,
+                borderColor: colors.border 
+              }]}
               onPress={handleCancel}
               activeOpacity={0.7}
             >
-              <Text style={styles.cancelButtonText}>{i18n.t('addExpense.cancelButton')}</Text>
+              <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>{i18n.t('addExpense.cancelButton')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.submitButton]}
+              style={[styles.button, styles.submitButton, { backgroundColor: colors.primary }]}
               onPress={handleSubmit}
               activeOpacity={0.7}
             >
-              <Text style={styles.submitButtonText}>{i18n.t('addExpense.addButton')}</Text>
+              <Text style={[styles.submitButtonText, { color: colors.textInverse }]}>{i18n.t('addExpense.addButton')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -169,7 +189,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: colors.surface,
     borderTopLeftRadius: borderRadius.xl,
     borderTopRightRadius: borderRadius.xl,
     padding: spacing.lg,
@@ -178,7 +197,6 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: typography.fontSize.h3,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textPrimary,
     marginBottom: spacing.lg,
     textAlign: 'center',
   },
@@ -188,21 +206,13 @@ const styles = StyleSheet.create({
   label: {
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textPrimary,
     marginBottom: spacing.sm,
   },
   input: {
-    backgroundColor: colors.background,
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: borderRadius.md,
     padding: spacing.md,
     fontSize: typography.fontSize.body,
-    color: colors.textPrimary,
-  },
-  inputFocused: {
-    borderColor: colors.primary,
-    borderWidth: 2,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -217,20 +227,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
   },
   cancelButton: {
-    backgroundColor: colors.background,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   cancelButtonText: {
-    color: colors.textSecondary,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.semibold,
   },
   submitButton: {
-    backgroundColor: colors.primary,
   },
   submitButtonText: {
-    color: colors.textInverse,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.semibold,
   },
@@ -240,7 +245,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   categoryChip: {
-    backgroundColor: colors.primary,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.full,
@@ -248,7 +252,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   categoryChipText: {
-    color: colors.textInverse,
     fontSize: typography.fontSize.bodySmall,
     fontWeight: typography.fontWeight.medium,
   },

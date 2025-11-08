@@ -8,13 +8,15 @@ import AddExpenseModal from './components/AddExpenseModal';
 import StreakCelebration from './components/StreakCelebration';
 import { saveBudgetConfig, loadBudgetConfig, saveTransaction, loadUserPreferences, getTransactionsForCurrentCycle } from './utils/storage';
 import { BudgetConfig, Transaction, UserPreferences } from './types';
-import { colors } from './constants/theme';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { initializeNotifications, sendBudgetAlertNotification } from './utils/notifications';
 import { calculateDailyBudget } from './utils/budgetCalculations';
 import { updateStreakAfterActivity } from './utils/streaks';
+import { triggerSuccessHaptic, triggerWarningHaptic } from './utils/haptics';
 
-export default function App() {
+function AppContent() {
+  const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [budgetConfig, setBudgetConfig] = useState<BudgetConfig | null>(null);
   const [isAddExpenseVisible, setIsAddExpenseVisible] = useState(false);
@@ -77,16 +79,25 @@ export default function App() {
           budgetConfig.cycleStartDay
         );
         
+        // US 11.2.1: Haptic feedback based on budget state
         if (dailyBudget < 0) {
           await sendBudgetAlertNotification(dailyBudget, userPreferences.currency);
+          // Warning haptic when budget goes into the red
+          await triggerWarningHaptic();
+        } else {
+          // Success haptic for normal expense addition
+          await triggerSuccessHaptic();
         }
+      } else {
+        // Success haptic if no budget config
+        await triggerSuccessHaptic();
       }
     }
   };
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -95,7 +106,7 @@ export default function App() {
   return (
     <SubscriptionProvider>
       <NavigationContainer>
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
           {budgetConfig ? (
             <>
               <MainTabNavigator
@@ -118,16 +129,23 @@ export default function App() {
           ) : (
             <ConfigWizard onComplete={handleConfigComplete} />
           )}
-          <StatusBar style="auto" />
+          <StatusBar style={colors.textPrimary === '#212121' ? 'dark' : 'light'} />
         </View>
       </NavigationContainer>
     </SubscriptionProvider>
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
 });
