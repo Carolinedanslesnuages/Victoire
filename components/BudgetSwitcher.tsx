@@ -7,6 +7,8 @@ import {
   Modal,
   ScrollView,
   Alert,
+  TextInput,
+  Platform,
 } from 'react-native';
 import { BudgetProfile } from '../types';
 import {
@@ -14,6 +16,7 @@ import {
   getActiveBudgetId,
   setActiveBudgetId,
   createBudgetProfile,
+  updateBudgetProfile,
 } from '../utils/storage';
 import { lightColors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import { useTheme } from '../contexts/ThemeContext';
@@ -28,6 +31,9 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
   const [profiles, setProfiles] = useState<BudgetProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<BudgetProfile | null>(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [renamingProfile, setRenamingProfile] = useState<BudgetProfile | null>(null);
+  const [newName, setNewName] = useState('');
 
   useEffect(() => {
     loadProfiles();
@@ -49,6 +55,64 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
     setActiveProfile(profile);
     setShowPicker(false);
     onBudgetChange();
+  };
+
+  const handleRenameBudget = (profile: BudgetProfile) => {
+    if (Platform.OS === 'ios') {
+      // Use native iOS prompt
+      Alert.prompt(
+        i18n.t('budgetSwitcher.renameBudget'),
+        i18n.t('budgetSwitcher.renameBudgetMessage'),
+        [
+          {
+            text: i18n.t('common.cancel'),
+            style: 'cancel',
+          },
+          {
+            text: i18n.t('common.save'),
+            onPress: async (inputName?: string) => {
+              if (inputName && inputName.trim()) {
+                await performRename(profile.id, inputName.trim());
+              }
+            },
+          },
+        ],
+        'plain-text',
+        profile.name
+      );
+    } else {
+      // Use custom modal for Android
+      setRenamingProfile(profile);
+      setNewName(profile.name);
+      setShowRenameModal(true);
+    }
+  };
+
+  const performRename = async (profileId: string, name: string) => {
+    const success = await updateBudgetProfile(profileId, { name });
+    
+    if (success) {
+      await loadProfiles();
+      Alert.alert(
+        i18n.t('budgetSwitcher.renamed'),
+        i18n.t('budgetSwitcher.budgetRenamed')
+      );
+    }
+  };
+
+  const handleSaveRename = async () => {
+    if (renamingProfile && newName.trim()) {
+      await performRename(renamingProfile.id, newName.trim());
+      setShowRenameModal(false);
+      setRenamingProfile(null);
+      setNewName('');
+    }
+  };
+
+  const handleCancelRename = () => {
+    setShowRenameModal(false);
+    setRenamingProfile(null);
+    setNewName('');
   };
 
   const handleCreateHouseholdBudget = async () => {
@@ -135,7 +199,7 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
 
             <ScrollView style={styles.profilesList}>
               {profiles.map(profile => (
-                <TouchableOpacity
+                <View
                   key={profile.id}
                   style={[
                     styles.profileItem,
@@ -143,23 +207,34 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
                       backgroundColor: themeColors.primaryLight,
                     },
                   ]}
-                  onPress={() => handleSelectBudget(profile)}
                 >
-                  <Text style={styles.profileIcon}>{getBudgetIcon(profile.type)}</Text>
-                  <View style={styles.profileInfo}>
-                    <Text style={[styles.profileName, { color: themeColors.textPrimary }]}>
-                      {profile.name}
-                    </Text>
-                    <Text style={[styles.profileType, { color: themeColors.textSecondary }]}>
-                      {profile.type === 'personal'
-                        ? i18n.t('budgetSwitcher.personal')
-                        : i18n.t('budgetSwitcher.household')}
-                    </Text>
-                  </View>
-                  {profile.id === activeProfile?.id && (
-                    <Text style={[styles.checkmark, { color: themeColors.primary }]}>✓</Text>
-                  )}
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.profileMainContent}
+                    onPress={() => handleSelectBudget(profile)}
+                  >
+                    <Text style={styles.profileIcon}>{getBudgetIcon(profile.type)}</Text>
+                    <View style={styles.profileInfo}>
+                      <Text style={[styles.profileName, { color: themeColors.textPrimary }]}>
+                        {profile.name}
+                      </Text>
+                      <Text style={[styles.profileType, { color: themeColors.textSecondary }]}>
+                        {profile.type === 'personal'
+                          ? i18n.t('budgetSwitcher.personal')
+                          : i18n.t('budgetSwitcher.household')}
+                      </Text>
+                    </View>
+                    {profile.id === activeProfile?.id && (
+                      <Text style={[styles.checkmark, { color: themeColors.primary }]}>✓</Text>
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() => handleRenameBudget(profile)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Text style={styles.editIcon}>✏️</Text>
+                  </TouchableOpacity>
+                </View>
               ))}
             </ScrollView>
 
@@ -183,6 +258,69 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
               </Text>
             </TouchableOpacity>
           </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Rename Modal for Android */}
+      <Modal
+        visible={showRenameModal}
+        transparent
+        animationType="fade"
+        onRequestClose={handleCancelRename}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={handleCancelRename}
+        >
+          <TouchableOpacity activeOpacity={1}>
+            <View style={[styles.renameModalContent, { backgroundColor: themeColors.surface }]}>
+              <Text style={[styles.renameModalTitle, { color: themeColors.textPrimary }]}>
+                {i18n.t('budgetSwitcher.renameBudget')}
+              </Text>
+              <Text style={[styles.renameModalMessage, { color: themeColors.textSecondary }]}>
+                {i18n.t('budgetSwitcher.renameBudgetMessage')}
+              </Text>
+              <TextInput
+                style={[
+                  styles.renameInput,
+                  {
+                    backgroundColor: themeColors.background,
+                    color: themeColors.textPrimary,
+                    borderColor: themeColors.border,
+                  },
+                ]}
+                value={newName}
+                onChangeText={setNewName}
+                placeholder={renamingProfile?.name}
+                placeholderTextColor={themeColors.textSecondary}
+                autoFocus
+                selectTextOnFocus
+              />
+              <View style={styles.renameModalButtons}>
+                <TouchableOpacity
+                  style={[styles.renameModalButton, { borderColor: themeColors.border }]}
+                  onPress={handleCancelRename}
+                >
+                  <Text style={[styles.renameModalButtonText, { color: themeColors.textPrimary }]}>
+                    {i18n.t('common.cancel')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.renameModalButton,
+                    styles.renameModalButtonPrimary,
+                    { backgroundColor: themeColors.primary },
+                  ]}
+                  onPress={handleSaveRename}
+                >
+                  <Text style={styles.renameModalButtonTextPrimary}>
+                    {i18n.t('common.save')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
     </>
@@ -237,9 +375,14 @@ const styles = StyleSheet.create({
   profileItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.md,
     borderRadius: borderRadius.md,
     marginBottom: spacing.sm,
+  },
+  profileMainContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    flex: 1,
   },
   profileIcon: {
     fontSize: 24,
@@ -259,6 +402,13 @@ const styles = StyleSheet.create({
   checkmark: {
     fontSize: 24,
     fontWeight: typography.fontWeight.bold,
+  },
+  editButton: {
+    padding: spacing.sm,
+    paddingRight: spacing.md,
+  },
+  editIcon: {
+    fontSize: 18,
   },
   createButton: {
     padding: spacing.md,
@@ -281,5 +431,54 @@ const styles = StyleSheet.create({
   closeButtonText: {
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.medium,
+  },
+  // Rename modal styles
+  renameModalContent: {
+    width: '85%',
+    maxWidth: 400,
+    borderRadius: borderRadius.xl,
+    padding: spacing.lg,
+    ...elevation.high,
+  },
+  renameModalTitle: {
+    fontSize: typography.fontSize.h3,
+    fontWeight: typography.fontWeight.bold,
+    marginBottom: spacing.sm,
+    textAlign: 'center',
+  },
+  renameModalMessage: {
+    fontSize: typography.fontSize.body,
+    marginBottom: spacing.md,
+    textAlign: 'center',
+  },
+  renameInput: {
+    borderWidth: 1,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    fontSize: typography.fontSize.body,
+    marginBottom: spacing.lg,
+  },
+  renameModalButtons: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  renameModalButton: {
+    flex: 1,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  renameModalButtonPrimary: {
+    borderWidth: 0,
+  },
+  renameModalButtonText: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.medium,
+  },
+  renameModalButtonTextPrimary: {
+    color: lightColors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
   },
 });

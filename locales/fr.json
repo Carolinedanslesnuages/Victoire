@@ -444,7 +444,11 @@
     "householdExists": "Budget Foyer existant",
     "householdExistsMessage": "Vous avez déjà un budget Foyer.",
     "created": "Budget créé",
-    "householdCreated": "Votre budget Foyer a été créé avec succès ! Configurez-le dans les Paramètres."
+    "householdCreated": "Votre budget Foyer a été créé avec succès ! Configurez-le dans les Paramètres.",
+    "renameBudget": "Renommer le budget",
+    "renameBudgetMessage": "Entrez un nouveau nom pour ce budget :",
+    "renamed": "Budget renommé",
+    "budgetRenamed": "Le budget a été renommé avec succès !"
   },
   "common": {
     "cancel": "Annuler",
