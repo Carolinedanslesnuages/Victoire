@@ -18,6 +18,7 @@ import { CURRENCY_OPTIONS } from '../utils/currency';
 import { loadUserPreferences, saveUserPreferences, resetAllData, loadTransactions } from '../utils/storage';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import PaywallScreen from './PaywallScreen';
+import AvatarSelector from './AvatarSelector';
 import { 
   requestNotificationPermissions, 
   scheduleEveningReminder, 
@@ -25,6 +26,7 @@ import {
   getDefaultNotificationSettings
 } from '../utils/notifications';
 import { exportTransactionsToCSV } from '../utils/export';
+import { AvatarId, getAvatarEmoji } from '../constants/avatars';
 
 interface SettingsScreenProps {
   visible: boolean;
@@ -42,6 +44,7 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
   });
   const [newCategory, setNewCategory] = useState('');
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
+  const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState<{
     type: 'evening' | 'morning';
@@ -67,6 +70,16 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
       setPreferences(updatedPreferences);
       setShowCurrencyPicker(false);
       Alert.alert(i18n.t('settings.success'), i18n.t('settings.currencyUpdated'));
+    }
+  };
+
+  const handleAvatarChange = async (avatarId: AvatarId) => {
+    const updatedPreferences = { ...preferences, avatarId };
+    const success = await saveUserPreferences(updatedPreferences);
+    if (success) {
+      setPreferences(updatedPreferences);
+      setShowAvatarSelector(false);
+      Alert.alert(i18n.t('settings.success'), i18n.t('avatarSelection.updated'));
     }
   };
 
@@ -371,6 +384,19 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{i18n.t('settings.personalization')}</Text>
             
+            {/* Avatar Selection */}
+            <View style={styles.settingItem}>
+              <Text style={styles.settingLabel}>{i18n.t('settings.avatar')}</Text>
+              <TouchableOpacity
+                style={styles.currencyButton}
+                onPress={() => setShowAvatarSelector(true)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.avatarEmoji}>{getAvatarEmoji(preferences.avatarId)}</Text>
+                <Text style={styles.currencyButtonArrow}>›</Text>
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.settingItem}>
               <Text style={styles.settingLabel}>{i18n.t('settings.currency')}</Text>
               <TouchableOpacity
@@ -622,6 +648,33 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
               ))}
             </View>
           </TouchableOpacity>
+        </Modal>
+
+        {/* Avatar Selector Modal */}
+        <Modal
+          visible={showAvatarSelector}
+          animationType="slide"
+          onRequestClose={() => setShowAvatarSelector(false)}
+        >
+          <View style={styles.avatarSelectorContainer}>
+            <View style={styles.avatarSelectorHeader}>
+              <Text style={styles.avatarSelectorTitle}>
+                {i18n.t('avatarSelection.settingsTitle')}
+              </Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setShowAvatarSelector(false)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <AvatarSelector
+              selectedAvatar={preferences.avatarId}
+              onSelectAvatar={handleAvatarChange}
+              subtitle={i18n.t('avatarSelection.settingsSubtitle')}
+            />
+          </View>
         </Modal>
 
         {/* Time Picker Modal */}
@@ -1034,5 +1087,27 @@ const styles = StyleSheet.create({
     color: colors.textInverse,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.bold,
+  },
+  // Avatar selector styles
+  avatarSelectorContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  avatarSelectorHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: spacing.lg,
+    paddingTop: 60,
+    backgroundColor: colors.primary,
+  },
+  avatarSelectorTitle: {
+    fontSize: typography.fontSize.h2,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textInverse,
+  },
+  avatarEmoji: {
+    fontSize: 28,
+    marginRight: spacing.sm,
   },
 });

@@ -13,6 +13,9 @@ import {
 import { BudgetConfig } from '../types';
 import { colors, typography, spacing, borderRadius } from '../constants/theme';
 import i18n from '../utils/i18n';
+import AvatarSelector from './AvatarSelector';
+import { AvatarId, DEFAULT_AVATAR } from '../constants/avatars';
+import { saveUserPreferences, loadUserPreferences } from '../utils/storage';
 
 interface ConfigWizardProps {
   onComplete: (config: BudgetConfig) => void;
@@ -24,8 +27,10 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
   const [savingsGoal, setSavingsGoal] = useState('');
   const [cycleStartDay, setCycleStartDay] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [step, setStep] = useState<'budget' | 'avatar'>('budget');
+  const [selectedAvatar, setSelectedAvatar] = useState<AvatarId>(DEFAULT_AVATAR);
 
-  const handleSubmit = () => {
+  const handleBudgetSubmit = () => {
     // Validation
     const income = parseFloat(monthlyIncome);
     const charges = parseFloat(fixedCharges);
@@ -52,15 +57,50 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
       return;
     }
 
+    // Move to avatar selection
+    setStep('avatar');
+  };
+
+  const handleAvatarComplete = async () => {
+    // Save avatar to preferences
+    const prefs = await loadUserPreferences();
+    await saveUserPreferences({
+      ...prefs,
+      avatarId: selectedAvatar,
+    });
+
+    // Complete configuration with budget data
     const config = {
-      monthlyIncome: income,
-      fixedCharges: charges,
-      savingsGoal: savings,
-      cycleStartDay: startDay,
+      monthlyIncome: parseFloat(monthlyIncome),
+      fixedCharges: parseFloat(fixedCharges),
+      savingsGoal: parseFloat(savingsGoal),
+      cycleStartDay: parseInt(cycleStartDay),
     };
 
     onComplete(config);
   };
+
+  if (step === 'avatar') {
+    return (
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <AvatarSelector
+            selectedAvatar={selectedAvatar}
+            onSelectAvatar={setSelectedAvatar}
+            title={i18n.t('avatarSelection.onboardingTitle')}
+            subtitle={i18n.t('avatarSelection.onboardingSubtitle')}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleAvatarComplete}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.buttonText}>{i18n.t('avatarSelection.continue')}</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -149,7 +189,7 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={handleSubmit}
+          onPress={handleBudgetSubmit}
           activeOpacity={0.7}
         >
           <Text style={styles.buttonText}>{i18n.t('configWizard.saveButton')}</Text>
