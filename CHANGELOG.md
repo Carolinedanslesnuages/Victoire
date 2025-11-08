@@ -1,0 +1,13 @@
+# Changelog
+
+## 1.0.0 (2025-11-08)
+
+
+### Features
+
+* add category field and expense deletion functionality ([00fd79a](https://github.com/Carolinedanslesnuages/PACE/commit/00fd79a533e409bbcd5d9e4d691bd1bc5fccf3e7))
+* automate releases with Release Please and enforce Conventional Commits ([9f0835b](https://github.com/Carolinedanslesnuages/PACE/commit/9f0835b22d48222c0e8c2fe2381a2f1e892e5809))
+* implement Epic 3 expense tracking with delete and category support ([4980e5a](https://github.com/Carolinedanslesnuages/PACE/commit/4980e5a176eb7d6edd4b67c26a5893111aeec4d1))
+* implement Epic 4 - Settings & Personalization features ([b662375](https://github.com/Carolinedanslesnuages/PACE/commit/b66237538c0d8ba1617659f70d9f32b83360a445))
+* implement Epic 4 - Settings & Personalization with currency customization, custom categories, and data management ([6a1a095](https://github.com/Carolinedanslesnuages/PACE/commit/6a1a095bedba63248806f4d540a12782b09449e6))
+* implement Release Please automation with Conventional Commits ([77e8fb1](https://github.com/Carolinedanslesnuages/PACE/commit/77e8fb1f12e3485ab039562bd54c1253b31bde2d))
