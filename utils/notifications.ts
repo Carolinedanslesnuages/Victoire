@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { NotificationSettings } from '../types';
 import { loadUserPreferences, loadBudgetConfig, getTransactionsForCurrentCycle } from './storage';
 import { calculateDailyBudget } from './budgetCalculations';
+import { loadGamificationData } from './gamification';
 import i18n from './i18n';
 
 // Configure notification handler
@@ -19,6 +20,7 @@ Notifications.setNotificationHandler({
 // Notification identifiers
 const EVENING_REMINDER_ID = 'evening-reminder';
 const MORNING_BUDGET_ID = 'morning-budget';
+const STREAK_SAVE_ID = 'streak-save';
 
 /**
  * Request notification permissions
@@ -213,6 +215,39 @@ export const updateMorningBudgetContent = async (): Promise<void> => {
     });
   } catch (error) {
     console.error('Error updating morning budget notification:', error);
+  }
+};
+
+/**
+ * Schedule streak save notification if user has an active streak and hasn't opened app today
+ * @param streakCount - Current streak count
+ */
+export const scheduleStreakSaveNotification = async (streakCount: number): Promise<void> => {
+  try {
+    if (streakCount === 0) {
+      await Notifications.cancelScheduledNotificationAsync(STREAK_SAVE_ID).catch(() => {});
+      return;
+    }
+
+    // Schedule for evening (20:00)
+    await Notifications.cancelScheduledNotificationAsync(STREAK_SAVE_ID).catch(() => {});
+
+    await Notifications.scheduleNotificationAsync({
+      identifier: STREAK_SAVE_ID,
+      content: {
+        title: i18n.t('streakNotification.saveStreak.title'),
+        body: i18n.t('streakNotification.saveStreak.body', { streak: streakCount }),
+        sound: true,
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
+        hour: 20,
+        minute: 0,
+        repeats: true,
+      },
+    });
+  } catch (error) {
+    console.error('Error scheduling streak save notification:', error);
   }
 };
 

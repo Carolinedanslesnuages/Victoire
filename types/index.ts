@@ -100,4 +100,45 @@ export interface StreakInfo {
   longestStreak: number; // Best streak ever achieved
   lastActivityDate: string; // ISO date string of last activity
   isActive: boolean; // True if streak is currently active (activity today or yesterday)
+  streakFreezes: number; // Number of streak freezes available
+  jokersRemaining: number; // Number of jokers remaining this month
+  lastJokerResetDate?: string; // Last date when jokers were reset
+}
+
+/**
+ * Badge types for achievements
+ */
+export type BadgeType = 
+  | 'first_step' // 🏅 Premier Pas - First expense tracked
+  | 'streak_7' // 🔥 Week Warrior - 7 day streak
+  | 'streak_30' // 🏆 30 Jours Zen - 30 day streak
+  | 'streak_100' // 💎 Centurion - 100 day streak
+  | 'perfect_balance' // 🎯 Pile Poil à 0€ - End cycle with exactly 0€
+  | 'budget_master' // 💰 Maître du Budget - End 3 cycles with positive balance
+  | 'early_bird' // 🌅 Lève-tôt - Log expense before 8 AM
+  | 'night_owl' // 🦉 Noctambule - Log expense after 10 PM
+  | 'frugal_month' // 🌱 Mois Frugal - Spend less than 50% of budget
+  | 'saver' // 💎 Épargnant - Save more than planned for 3 months
+  | 'streak_saver' // 🧊 Protecteur de Série - Use a streak freeze
+  | 'joker_user'; // ❤️ As du Joker - Use a joker successfully
+
+/**
+ * Badge interface
+ */
+export interface Badge {
+  type: BadgeType;
+  unlockedAt: string; // ISO date string when unlocked
+  isRare?: boolean; // True for rare badges (100+ day streak, etc.)
+}
+
+/**
+ * Gamification data interface
+ */
+export interface GamificationData {
+  badges: Badge[]; // Array of unlocked badges
+  streakInfo: StreakInfo; // Streak tracking information
+  monthlyStats: {
+    cyclesWithPositiveBalance: number; // Number of cycles ending with positive balance
+    totalCyclesCompleted: number; // Total number of completed cycles
+  };
 }

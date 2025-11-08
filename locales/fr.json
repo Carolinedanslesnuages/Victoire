@@ -11,7 +11,95 @@
   },
   "profile": {
     "title": "Profil & Stats",
-    "comingSoon": "Le profil et les statistiques arrivent bientôt !"
+    "comingSoon": "Le profil et les statistiques arrivent bientôt !",
+    "streakSection": {
+      "title": "Votre Série 🔥",
+      "currentStreak": "Série Actuelle",
+      "longestStreak": "Meilleure Série",
+      "days": "jours",
+      "streakFreezes": "Gels de Série Disponibles",
+      "jokersRemaining": "Jokers Restants",
+      "useFreeze": "Utiliser un Gel",
+      "useJoker": "Utiliser un Joker",
+      "freezeUsed": "Gel de série utilisé !",
+      "jokerUsed": "Joker utilisé !",
+      "noFreezes": "Aucun gel disponible",
+      "noJokers": "Aucun joker disponible",
+      "jokerNotEligible": "Joker non disponible (budget > -5€)"
+    },
+    "badgesSection": {
+      "title": "Collection de Badges",
+      "unlockedCount": "{{count}} badges débloqués",
+      "noBadges": "Aucun badge débloqué. Continuez à suivre votre budget !",
+      "rareBadge": "Badge Rare ✨"
+    },
+    "statsSection": {
+      "title": "Statistiques",
+      "cyclesCompleted": "Cycles Terminés",
+      "cyclesPositive": "Cycles Positifs"
+    }
+  },
+  "badges": {
+    "firstStep": {
+      "name": "Premier Pas",
+      "description": "Première dépense enregistrée"
+    },
+    "streak7": {
+      "name": "Guerrier de la Semaine",
+      "description": "7 jours consécutifs"
+    },
+    "streak30": {
+      "name": "30 Jours Zen",
+      "description": "30 jours consécutifs"
+    },
+    "streak100": {
+      "name": "Centurion",
+      "description": "100 jours consécutifs"
+    },
+    "perfectBalance": {
+      "name": "Pile Poil à 0€",
+      "description": "Cycle terminé avec exactement 0€"
+    },
+    "budgetMaster": {
+      "name": "Maître du Budget",
+      "description": "3 cycles avec solde positif"
+    },
+    "earlyBird": {
+      "name": "Lève-tôt",
+      "description": "Dépense enregistrée avant 8h"
+    },
+    "nightOwl": {
+      "name": "Noctambule",
+      "description": "Dépense enregistrée après 22h"
+    },
+    "frugalMonth": {
+      "name": "Mois Frugal",
+      "description": "Moins de 50% du budget dépensé"
+    },
+    "saver": {
+      "name": "Épargnant",
+      "description": "Épargne supérieure prévue 3 mois"
+    },
+    "streakSaver": {
+      "name": "Protecteur de Série",
+      "description": "Gel de série utilisé"
+    },
+    "jokerUser": {
+      "name": "As du Joker",
+      "description": "Joker utilisé avec succès"
+    }
+  },
+  "badgeUnlocked": {
+    "title": "🎉 Nouveau Badge !",
+    "message": "Vous avez débloqué : {{badgeName}}",
+    "rareBadge": "✨ Badge Rare ! ✨",
+    "ok": "Super !"
+  },
+  "streakNotification": {
+    "saveStreak": {
+      "title": "Sauvez votre série ! 🔥",
+      "body": "Vous n'avez pas encore ouvert l'application aujourd'hui. Ne perdez pas votre série de {{streak}} jours !"
+    }
   },
   "configWizard": {
     "title": "Configuration Budgétaire",
