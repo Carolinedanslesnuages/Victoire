@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
 import { Text, View, StyleSheet } from 'react-native';
 import BudgetDashboard from '../components/BudgetDashboard';
 import HistoryScreen from '../components/HistoryScreen';
@@ -20,6 +21,16 @@ interface MainTabNavigatorProps {
   refreshKey: number;
 }
 
+function HeaderWithNavigation({ onBudgetChange }: { onBudgetChange: () => void }) {
+  const navigation = useNavigation<any>();
+
+  return (
+    <View style={styles.headerContainer}>
+      <BudgetSwitcher onBudgetChange={onBudgetChange} navigation={navigation} />
+    </View>
+  );
+}
+
 export default function MainTabNavigator({ 
   budgetProfile, 
   onReconfigure, 
@@ -32,9 +43,7 @@ export default function MainTabNavigator({
   return (
     <>
       {/* Budget Switcher Header */}
-      <View style={styles.headerContainer}>
-        <BudgetSwitcher onBudgetChange={onBudgetChange} />
-      </View>
+      <HeaderWithNavigation onBudgetChange={onBudgetChange} />
 
       <Tab.Navigator
         screenOptions={{

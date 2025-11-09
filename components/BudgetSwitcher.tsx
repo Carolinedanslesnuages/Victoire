@@ -25,9 +25,10 @@ import i18n from '../utils/i18n';
 
 interface BudgetSwitcherProps {
   onBudgetChange: () => void;
+  navigation?: any; // Navigation object for navigating to Profile screen
 }
 
-export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) {
+export default function BudgetSwitcher({ onBudgetChange, navigation }: BudgetSwitcherProps) {
   const { colors: themeColors } = useTheme();
   const [profiles, setProfiles] = useState<BudgetProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<BudgetProfile | null>(null);
@@ -199,26 +200,48 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
     );
   };
 
-  if (profiles.length <= 1) {
-    return null; // Don't show switcher if only one budget exists
-  }
-
   const getBudgetIcon = (type: 'personal' | 'household') => {
     return type === 'personal' ? '👤' : '👨‍👩‍👧‍👦';
   };
 
+  const handleAvatarClick = () => {
+    if (profiles.length <= 1) {
+      // Single budget: Navigate to Profile screen
+      if (navigation) {
+        navigation.navigate('Profile');
+      }
+    } else {
+      // Multiple budgets: Show picker modal
+      setShowPicker(true);
+    }
+  };
+
+  if (profiles.length <= 1) {
+    // Always show avatar, even with single budget
+    // Clicking navigates to Profile screen
+    const icon = activeProfile ? getBudgetIcon(activeProfile.type) : '📊';
+    
+    return (
+      <>
+        <TouchableOpacity
+          style={styles.avatarContainer}
+          onPress={handleAvatarClick}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.avatarIcon}>{icon}</Text>
+        </TouchableOpacity>
+      </>
+    );
+  }
+
   return (
     <>
       <TouchableOpacity
-        style={[styles.container, { backgroundColor: themeColors.surface }]}
-        onPress={() => setShowPicker(true)}
+        style={styles.avatarContainer}
+        onPress={handleAvatarClick}
         activeOpacity={0.7}
       >
-        <Text style={styles.icon}>{activeProfile ? getBudgetIcon(activeProfile.type) : '📊'}</Text>
-        <Text style={[styles.text, { color: themeColors.textPrimary }]} numberOfLines={1}>
-          {activeProfile?.name || i18n.t('budgetSwitcher.selectBudget')}
-        </Text>
-        <Text style={[styles.arrow, { color: themeColors.textSecondary }]}>▼</Text>
+        <Text style={styles.avatarIcon}>{activeProfile ? getBudgetIcon(activeProfile.type) : '📊'}</Text>
       </TouchableOpacity>
 
       <Modal
@@ -377,6 +400,18 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
 }
 
 const styles = StyleSheet.create({
+  avatarContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: lightColors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...elevation.medium,
+  },
+  avatarIcon: {
+    fontSize: 32,
+  },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
