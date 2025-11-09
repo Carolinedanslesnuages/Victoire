@@ -17,6 +17,7 @@ import {
   setActiveBudgetId,
   createBudgetProfile,
   updateBudgetProfile,
+  deleteBudgetProfile,
 } from '../utils/storage';
 import { lightColors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import { useTheme } from '../contexts/ThemeContext';
@@ -113,6 +114,45 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
     setShowRenameModal(false);
     setRenamingProfile(null);
     setNewName('');
+  };
+
+  const handleDeleteBudget = async (profile: BudgetProfile) => {
+    // Check if this is the last budget profile
+    if (profiles.length <= 1) {
+      Alert.alert(
+        i18n.t('budgetSwitcher.cannotDeleteLast'),
+        i18n.t('budgetSwitcher.cannotDeleteLastMessage')
+      );
+      return;
+    }
+
+    Alert.alert(
+      i18n.t('budgetSwitcher.deleteBudget'),
+      i18n.t('budgetSwitcher.deleteBudgetMessage'),
+      [
+        {
+          text: i18n.t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: i18n.t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            const success = await deleteBudgetProfile(profile.id);
+            
+            if (success) {
+              await loadProfiles();
+              setShowPicker(false);
+              onBudgetChange();
+              Alert.alert(
+                i18n.t('budgetSwitcher.deleted'),
+                i18n.t('budgetSwitcher.budgetDeleted')
+              );
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleCreateHouseholdBudget = async () => {
@@ -227,13 +267,22 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
                       <Text style={[styles.checkmark, { color: themeColors.primary }]}>✓</Text>
                     )}
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.editButton}
-                    onPress={() => handleRenameBudget(profile)}
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  >
-                    <Text style={styles.editIcon}>✏️</Text>
-                  </TouchableOpacity>
+                  <View style={styles.actionButtons}>
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() => handleRenameBudget(profile)}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <Text style={styles.editIcon}>✏️</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteBudget(profile)}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <Text style={styles.deleteIcon}>🗑️</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ))}
             </ScrollView>
@@ -403,11 +452,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: typography.fontWeight.bold,
   },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   editButton: {
+    padding: spacing.sm,
+  },
+  editIcon: {
+    fontSize: 18,
+  },
+  deleteButton: {
     padding: spacing.sm,
     paddingRight: spacing.md,
   },
-  editIcon: {
+  deleteIcon: {
     fontSize: 18,
   },
   createButton: {
