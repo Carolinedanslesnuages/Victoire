@@ -448,7 +448,13 @@
     "renameBudget": "Rename Budget",
     "renameBudgetMessage": "Enter a new name for this budget:",
     "renamed": "Budget Renamed",
-    "budgetRenamed": "The budget has been successfully renamed!"
+    "budgetRenamed": "The budget has been successfully renamed!",
+    "deleteBudget": "Delete Budget",
+    "deleteBudgetMessage": "Are you sure you want to delete this budget? All associated transactions will be kept.",
+    "deleted": "Budget Deleted",
+    "budgetDeleted": "The budget has been successfully deleted!",
+    "cannotDeleteLast": "Cannot Delete",
+    "cannotDeleteLastMessage": "You cannot delete your last budget."
   },
   "common": {
     "cancel": "Cancel",

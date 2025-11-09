@@ -448,7 +448,13 @@
     "renameBudget": "Renommer le budget",
     "renameBudgetMessage": "Entrez un nouveau nom pour ce budget :",
     "renamed": "Budget renommé",
-    "budgetRenamed": "Le budget a été renommé avec succès !"
+    "budgetRenamed": "Le budget a été renommé avec succès !",
+    "deleteBudget": "Supprimer le budget",
+    "deleteBudgetMessage": "Êtes-vous sûr de vouloir supprimer ce budget ? Toutes les transactions associées seront conservées.",
+    "deleted": "Budget supprimé",
+    "budgetDeleted": "Le budget a été supprimé avec succès !",
+    "cannotDeleteLast": "Impossible de supprimer",
+    "cannotDeleteLastMessage": "Vous ne pouvez pas supprimer votre dernier budget."
   },
   "common": {
     "cancel": "Annuler",
