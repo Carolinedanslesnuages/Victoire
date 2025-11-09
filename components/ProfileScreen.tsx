@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, RefreshControl, TextInput, Platform, Modal } from 'react-native';
 import { colors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { 
@@ -9,15 +9,33 @@ import {
   useJoker,
   canUseJoker 
 } from '../utils/gamification';
-import { GamificationData, Badge } from '../types';
+import { GamificationData, Badge, BudgetProfile } from '../types';
+import {
+  loadBudgetProfiles,
+  getActiveBudgetId,
+  setActiveBudgetId,
+  createBudgetProfile,
+  updateBudgetProfile,
+  deleteBudgetProfile,
+} from '../utils/storage';
 
-export default function ProfileScreen() {
+interface ProfileScreenProps {
+  onBudgetChange?: () => void;
+}
+
+export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
   const [gamificationData, setGamificationData] = useState<GamificationData | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [canUseJokerNow, setCanUseJokerNow] = useState(false);
+  const [profiles, setProfiles] = useState<BudgetProfile[]>([]);
+  const [activeProfile, setActiveProfile] = useState<BudgetProfile | null>(null);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [renamingProfile, setRenamingProfile] = useState<BudgetProfile | null>(null);
+  const [newName, setNewName] = useState('');
 
   useEffect(() => {
     loadData();
+    loadProfiles();
   }, []);
 
   const loadData = async () => {
@@ -28,10 +46,172 @@ export default function ProfileScreen() {
     setCanUseJokerNow(jokerEligible);
   };
 
+  const loadProfiles = async () => {
+    const allProfiles = await loadBudgetProfiles();
+    setProfiles(allProfiles);
+    
+    const activeId = await getActiveBudgetId();
+    if (activeId) {
+      const active = allProfiles.find(p => p.id === activeId);
+      setActiveProfile(active || null);
+    }
+  };
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await loadData();
+    await loadProfiles();
     setRefreshing(false);
+  };
+
+  const handleSelectBudget = async (profile: BudgetProfile) => {
+    await setActiveBudgetId(profile.id);
+    setActiveProfile(profile);
+    if (onBudgetChange) {
+      onBudgetChange();
+    }
+  };
+
+  const handleRenameBudget = (profile: BudgetProfile) => {
+    if (Platform.OS === 'ios') {
+      Alert.prompt(
+        i18n.t('budgetSwitcher.renameBudget'),
+        i18n.t('budgetSwitcher.renameBudgetMessage'),
+        [
+          {
+            text: i18n.t('common.cancel'),
+            style: 'cancel',
+          },
+          {
+            text: i18n.t('common.save'),
+            onPress: async (inputName?: string) => {
+              if (inputName && inputName.trim()) {
+                await performRename(profile.id, inputName.trim());
+              }
+            },
+          },
+        ],
+        'plain-text',
+        profile.name
+      );
+    } else {
+      setRenamingProfile(profile);
+      setNewName(profile.name);
+      setShowRenameModal(true);
+    }
+  };
+
+  const performRename = async (profileId: string, name: string) => {
+    const success = await updateBudgetProfile(profileId, { name });
+    
+    if (success) {
+      await loadProfiles();
+      Alert.alert(
+        i18n.t('budgetSwitcher.renamed'),
+        i18n.t('budgetSwitcher.budgetRenamed')
+      );
+    }
+  };
+
+  const handleSaveRename = async () => {
+    if (renamingProfile && newName.trim()) {
+      await performRename(renamingProfile.id, newName.trim());
+      setShowRenameModal(false);
+      setRenamingProfile(null);
+      setNewName('');
+    }
+  };
+
+  const handleCancelRename = () => {
+    setShowRenameModal(false);
+    setRenamingProfile(null);
+    setNewName('');
+  };
+
+  const handleDeleteBudget = async (profile: BudgetProfile) => {
+    if (profiles.length <= 1) {
+      Alert.alert(
+        i18n.t('budgetSwitcher.cannotDeleteLast'),
+        i18n.t('budgetSwitcher.cannotDeleteLastMessage')
+      );
+      return;
+    }
+
+    Alert.alert(
+      i18n.t('budgetSwitcher.deleteBudget'),
+      i18n.t('budgetSwitcher.deleteBudgetMessage'),
+      [
+        {
+          text: i18n.t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: i18n.t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            const success = await deleteBudgetProfile(profile.id);
+            
+            if (success) {
+              await loadProfiles();
+              if (onBudgetChange) {
+                onBudgetChange();
+              }
+              Alert.alert(
+                i18n.t('budgetSwitcher.deleted'),
+                i18n.t('budgetSwitcher.budgetDeleted')
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleCreateHouseholdBudget = async () => {
+    const householdExists = profiles.some(p => p.type === 'household');
+    if (householdExists) {
+      Alert.alert(
+        i18n.t('budgetSwitcher.householdExists'),
+        i18n.t('budgetSwitcher.householdExistsMessage')
+      );
+      return;
+    }
+
+    Alert.alert(
+      i18n.t('budgetSwitcher.createHousehold'),
+      i18n.t('budgetSwitcher.createHouseholdMessage'),
+      [
+        {
+          text: i18n.t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: i18n.t('common.create'),
+          onPress: async () => {
+            const newProfile = await createBudgetProfile({
+              type: 'household',
+              name: i18n.t('budgetSwitcher.household'),
+              monthlyIncome: 0,
+              fixedCharges: 0,
+              savingsGoal: 0,
+              cycleStartDay: activeProfile?.cycleStartDay || 1,
+            });
+
+            if (newProfile) {
+              await loadProfiles();
+              Alert.alert(
+                i18n.t('budgetSwitcher.created'),
+                i18n.t('budgetSwitcher.householdCreated')
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const getBudgetIcon = (type: 'personal' | 'household') => {
+    return type === 'personal' ? '👤' : '👨‍👩‍👧‍👦';
   };
 
   const handleUseFreeze = async () => {
@@ -115,18 +295,83 @@ export default function ProfileScreen() {
   const { streakInfo, badges, monthlyStats } = gamificationData;
 
   return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-    >
-      <View style={styles.content}>
-        <Text style={styles.pageTitle}>{i18n.t('profile.title')}</Text>
+    <>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
+        <View style={styles.content}>
+          <Text style={styles.pageTitle}>{i18n.t('profile.title')}</Text>
 
-        {/* Streak Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{i18n.t('profile.streakSection.title')}</Text>
+          {/* Budget Profiles Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{i18n.t('budgetSwitcher.selectBudget')}</Text>
+            
+            <View style={styles.profilesList}>
+              {profiles.map(profile => (
+                <View
+                  key={profile.id}
+                  style={[
+                    styles.profileItem,
+                    profile.id === activeProfile?.id && styles.profileItemActive,
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={styles.profileMainContent}
+                    onPress={() => handleSelectBudget(profile)}
+                  >
+                    <Text style={styles.profileIcon}>{getBudgetIcon(profile.type)}</Text>
+                    <View style={styles.profileInfo}>
+                      <Text style={styles.profileName}>
+                        {profile.name}
+                      </Text>
+                      <Text style={styles.profileType}>
+                        {profile.type === 'personal'
+                          ? i18n.t('budgetSwitcher.personal')
+                          : i18n.t('budgetSwitcher.household')}
+                      </Text>
+                    </View>
+                    {profile.id === activeProfile?.id && (
+                      <Text style={styles.checkmark}>✓</Text>
+                    )}
+                  </TouchableOpacity>
+                  <View style={styles.actionButtons}>
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() => handleRenameBudget(profile)}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <Text style={styles.editIcon}>✏️</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteBudget(profile)}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <Text style={styles.deleteIcon}>🗑️</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            {!profiles.some(p => p.type === 'household') && (
+              <TouchableOpacity
+                style={styles.createButton}
+                onPress={handleCreateHouseholdBudget}
+              >
+                <Text style={styles.createButtonText}>
+                  + {i18n.t('budgetSwitcher.createHousehold')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Streak Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{i18n.t('profile.streakSection.title')}</Text>
           
           <View style={styles.streakCard}>
             <View style={styles.streakRow}>
@@ -235,6 +480,59 @@ export default function ProfileScreen() {
         </View>
       </View>
     </ScrollView>
+
+    {/* Rename Modal for Android */}
+    <Modal
+      visible={showRenameModal}
+      transparent
+      animationType="fade"
+      onRequestClose={handleCancelRename}
+    >
+      <TouchableOpacity
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={handleCancelRename}
+      >
+        <TouchableOpacity activeOpacity={1}>
+          <View style={styles.renameModalContent}>
+            <Text style={styles.renameModalTitle}>
+              {i18n.t('budgetSwitcher.renameBudget')}
+            </Text>
+            <Text style={styles.renameModalMessage}>
+              {i18n.t('budgetSwitcher.renameBudgetMessage')}
+            </Text>
+            <TextInput
+              style={styles.renameInput}
+              value={newName}
+              onChangeText={setNewName}
+              placeholder={renamingProfile?.name}
+              placeholderTextColor={colors.textSecondary}
+              autoFocus
+              selectTextOnFocus
+            />
+            <View style={styles.renameModalButtons}>
+              <TouchableOpacity
+                style={styles.renameModalButton}
+                onPress={handleCancelRename}
+              >
+                <Text style={styles.renameModalButtonText}>
+                  {i18n.t('common.cancel')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.renameModalButton, styles.renameModalButtonPrimary]}
+                onPress={handleSaveRename}
+              >
+                <Text style={styles.renameModalButtonTextPrimary}>
+                  {i18n.t('common.save')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  </>
   );
 }
 
@@ -427,5 +725,140 @@ const styles = StyleSheet.create({
     width: 1,
     backgroundColor: colors.border,
     marginHorizontal: spacing.md,
+  },
+  // Budget Profiles Section Styles
+  profilesList: {
+    marginBottom: spacing.md,
+  },
+  profileItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    marginBottom: spacing.sm,
+    borderWidth: 2,
+    borderColor: colors.border,
+    ...elevation.low,
+  },
+  profileItemActive: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryLight,
+  },
+  profileMainContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    flex: 1,
+  },
+  profileIcon: {
+    fontSize: 24,
+    marginRight: spacing.md,
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  profileName: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
+    marginBottom: 2,
+  },
+  profileType: {
+    fontSize: typography.fontSize.caption,
+    color: colors.textSecondary,
+  },
+  checkmark: {
+    fontSize: 24,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
+  },
+  editButton: {
+    padding: spacing.sm,
+  },
+  editIcon: {
+    fontSize: 18,
+  },
+  deleteButton: {
+    padding: spacing.sm,
+    paddingRight: spacing.md,
+  },
+  deleteIcon: {
+    fontSize: 18,
+  },
+  createButton: {
+    backgroundColor: colors.primary,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  createButtonText: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+  },
+  // Rename Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  renameModalContent: {
+    width: '85%',
+    maxWidth: 400,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    padding: spacing.lg,
+    ...elevation.high,
+  },
+  renameModalTitle: {
+    fontSize: typography.fontSize.h3,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
+    textAlign: 'center',
+  },
+  renameModalMessage: {
+    fontSize: typography.fontSize.body,
+    color: colors.textSecondary,
+    marginBottom: spacing.md,
+    textAlign: 'center',
+  },
+  renameInput: {
+    backgroundColor: colors.background,
+    color: colors.textPrimary,
+    borderColor: colors.border,
+    borderWidth: 1,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    fontSize: typography.fontSize.body,
+    marginBottom: spacing.lg,
+  },
+  renameModalButtons: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  renameModalButton: {
+    flex: 1,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  renameModalButtonPrimary: {
+    backgroundColor: colors.primary,
+    borderWidth: 0,
+  },
+  renameModalButtonText: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.textPrimary,
+  },
+  renameModalButtonTextPrimary: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
   },
 });
