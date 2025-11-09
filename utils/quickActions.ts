@@ -29,9 +29,11 @@ export async function setupQuickActions(onAction: (actionType: string) => void):
     await QuickActions.setItems(actions);
 
     // Listen for quick action events
-    const initialAction = await QuickActions.initial();
-    if (initialAction) {
-      onAction(initialAction.id);
+    if (QuickActions.initial && typeof QuickActions.initial === 'function') {
+      const initialAction = await (QuickActions.initial as () => Promise<QuickActions.Action | null>)();
+      if (initialAction) {
+        onAction(initialAction.id);
+      }
     }
 
     const subscription = QuickActions.addListener((action) => {
