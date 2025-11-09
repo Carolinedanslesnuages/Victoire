@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.10.0...v1.11.0) (2025-11-09)
+
+
+### Features
+
+* add budget profile deletion UI ([28d79df](https://github.com/Carolinedanslesnuages/PACE/commit/28d79dfcc14e86a4f590c919076a1d6719748729))
+* add delete budget profile functionality to UI ([f40d09c](https://github.com/Carolinedanslesnuages/PACE/commit/f40d09c9b5d86df3dd7a7cc1d3da7f77035573ea))
+
 ## [1.10.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.9.0...v1.10.0) (2025-11-08)
 
 
