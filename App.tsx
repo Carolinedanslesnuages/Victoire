@@ -24,6 +24,8 @@ import { initializeNotifications, sendBudgetAlertNotification } from './utils/no
 import { calculateDailyBudget } from './utils/budgetCalculations';
 import { updateStreakAfterActivity } from './utils/streaks';
 import { triggerSuccessHaptic, triggerWarningHaptic } from './utils/haptics';
+import { updateWidgetData } from './utils/widgetData';
+import { setupQuickActions } from './utils/quickActions';
 
 function AppContent() {
   const { colors } = useTheme();
@@ -43,6 +45,7 @@ function AppContent() {
     loadPreferences();
     initializeNotifications();
     processRecurringTransactionsOnLoad();
+    setupQuickActions(handleQuickAction);
   }, []);
 
   const loadProfile = async () => {
@@ -51,6 +54,8 @@ function AppContent() {
     
     if (profile) {
       setBudgetProfile(profile);
+      // Update widget data when profile loads
+      await updateWidgetData();
     } else {
       // Check if there's an old config to migrate
       const oldConfig = await loadBudgetConfig();
@@ -59,6 +64,7 @@ function AppContent() {
         const profiles = await loadBudgetProfiles();
         if (profiles.length > 0) {
           setBudgetProfile(profiles[0]);
+          await updateWidgetData();
         }
       }
     }
@@ -104,8 +110,16 @@ function AppContent() {
     // Reload the active budget profile
     const profile = await getActiveBudgetProfile();
     setBudgetProfile(profile);
+    // Update widget data when budget changes
+    await updateWidgetData();
     // Force refresh of all components
     setRefreshKey(prev => prev + 1);
+  };
+
+  const handleQuickAction = (actionType: string) => {
+    if (actionType === 'add_expense') {
+      setIsAddExpenseVisible(true);
+    }
   };
 
   const handleAddExpense = async (expense: Omit<Transaction, 'id'>) => {
@@ -154,6 +168,9 @@ function AppContent() {
         // Success haptic if no budget profile
         await triggerSuccessHaptic();
       }
+      
+      // Update widget data after transaction
+      await updateWidgetData();
       
       // Force refresh
       setRefreshKey(prev => prev + 1);
