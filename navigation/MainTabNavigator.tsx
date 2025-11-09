@@ -1,13 +1,11 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useNavigation } from '@react-navigation/native';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text } from 'react-native';
 import BudgetDashboard from '../components/BudgetDashboard';
 import HistoryScreen from '../components/HistoryScreen';
 import ProfileScreen from '../components/ProfileScreen';
 import SettingsScreen from '../components/SettingsScreen';
-import BudgetSwitcher from '../components/BudgetSwitcher';
-import { colors, typography, spacing } from '../constants/theme';
+import { colors, typography } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { BudgetProfile } from '../types';
 
@@ -21,16 +19,6 @@ interface MainTabNavigatorProps {
   refreshKey: number;
 }
 
-function HeaderWithNavigation({ onBudgetChange }: { onBudgetChange: () => void }) {
-  const navigation = useNavigation<any>();
-
-  return (
-    <View style={styles.headerContainer}>
-      <BudgetSwitcher onBudgetChange={onBudgetChange} navigation={navigation} />
-    </View>
-  );
-}
-
 export default function MainTabNavigator({ 
   budgetProfile, 
   onReconfigure, 
@@ -40,11 +28,12 @@ export default function MainTabNavigator({
 }: MainTabNavigatorProps) {
   const [isSettingsVisible, setIsSettingsVisible] = React.useState(false);
 
+  const getBudgetIcon = (type: 'personal' | 'household') => {
+    return type === 'personal' ? '👤' : '👨‍👩‍👧‍👦';
+  };
+
   return (
     <>
-      {/* Budget Switcher Header */}
-      <HeaderWithNavigation onBudgetChange={onBudgetChange} />
-
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -113,14 +102,15 @@ export default function MainTabNavigator({
 
         <Tab.Screen
           name="Profile"
-          component={ProfileScreen}
           options={{
             tabBarLabel: i18n.t('navigation.profile'),
             tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: size, color }}>👤</Text>
+              <Text style={{ fontSize: size, color }}>{getBudgetIcon(budgetProfile.type)}</Text>
             ),
           }}
-        />
+        >
+          {() => <ProfileScreen onBudgetChange={onBudgetChange} />}
+        </Tab.Screen>
 
         <Tab.Screen
           name="Settings"
@@ -152,15 +142,3 @@ export default function MainTabNavigator({
 
 // Empty component for tabs that don't have a screen
 const EmptyComponent = () => null;
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    backgroundColor: colors.surface,
-    paddingTop: spacing.lg + 40, // Add space for status bar
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-});
