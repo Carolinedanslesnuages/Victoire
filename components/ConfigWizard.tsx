@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,7 +10,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { BudgetConfig } from '../types';
+import { BudgetConfig, BudgetProfile } from '../types';
 import { colors, typography, spacing, borderRadius } from '../constants/theme';
 import i18n from '../utils/i18n';
 import AvatarSelector from './AvatarSelector';
@@ -19,9 +19,12 @@ import { saveUserPreferences, loadUserPreferences } from '../utils/storage';
 
 interface ConfigWizardProps {
   onComplete: (config: BudgetConfig) => void;
+  onCancel?: () => void;
+  mode?: 'create' | 'edit';
+  existingProfile?: BudgetProfile;
 }
 
-export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
+export default function ConfigWizard({ onComplete, onCancel, mode = 'create', existingProfile }: ConfigWizardProps) {
   const [monthlyIncome, setMonthlyIncome] = useState('');
   const [fixedCharges, setFixedCharges] = useState('');
   const [savingsGoal, setSavingsGoal] = useState('');
@@ -29,6 +32,16 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [step, setStep] = useState<'budget' | 'avatar'>('budget');
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarId>(DEFAULT_AVATAR);
+
+  // Pre-populate form fields when in edit mode
+  useEffect(() => {
+    if (mode === 'edit' && existingProfile) {
+      setMonthlyIncome(existingProfile.monthlyIncome.toString());
+      setFixedCharges(existingProfile.fixedCharges.toString());
+      setSavingsGoal(existingProfile.savingsGoal.toString());
+      setCycleStartDay(existingProfile.cycleStartDay.toString());
+    }
+  }, [mode, existingProfile]);
 
   const handleBudgetSubmit = () => {
     // Validation
@@ -57,27 +70,43 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
       return;
     }
 
-    // Move to avatar selection
-    setStep('avatar');
+    // In edit mode, skip avatar selection and complete directly
+    if (mode === 'edit') {
+      handleComplete();
+    } else {
+      // Move to avatar selection for new profiles
+      setStep('avatar');
+    }
   };
 
-  const handleAvatarComplete = async () => {
-    // Save avatar to preferences
-    const prefs = await loadUserPreferences();
-    await saveUserPreferences({
-      ...prefs,
-      avatarId: selectedAvatar,
-    });
+  const handleComplete = async () => {
+    // Save avatar to preferences only if in create mode
+    if (mode === 'create') {
+      const prefs = await loadUserPreferences();
+      await saveUserPreferences({
+        ...prefs,
+        avatarId: selectedAvatar,
+      });
+    }
 
     // Complete configuration with budget data
-    const config = {
+    const config: BudgetConfig = {
       monthlyIncome: parseFloat(monthlyIncome),
       fixedCharges: parseFloat(fixedCharges),
       savingsGoal: parseFloat(savingsGoal),
       cycleStartDay: parseInt(cycleStartDay),
     };
 
+    // Include profile ID if editing
+    if (mode === 'edit' && existingProfile) {
+      (config as any).profileId = existingProfile.id;
+    }
+
     onComplete(config);
+  };
+
+  const handleAvatarComplete = async () => {
+    await handleComplete();
   };
 
   if (step === 'avatar') {
@@ -108,6 +137,17 @@ export default function ConfigWizard({ onComplete }: ConfigWizardProps) {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Back/Cancel button for edit mode */}
+        {mode === 'edit' && onCancel && (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={onCancel}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.backButtonText}>← {i18n.t('configWizard.cancel')}</Text>
+          </TouchableOpacity>
+        )}
+
         <Text style={styles.title}>{i18n.t('configWizard.title')}</Text>
         <Text style={styles.subtitle}>
           {i18n.t('configWizard.subtitle')}
@@ -207,6 +247,17 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: spacing.lg,
     paddingTop: 60,
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md,
+  },
+  backButtonText: {
+    fontSize: typography.fontSize.body,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.semibold,
   },
   title: {
     fontSize: typography.fontSize.h2,
