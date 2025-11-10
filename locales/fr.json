@@ -463,5 +463,19 @@
     "save": "Enregistrer",
     "delete": "Supprimer",
     "edit": "Modifier"
+  },
+  "widget": {
+    "title": "PACE Budget",
+    "description": "Votre budget du jour en un coup d'œil",
+    "resteAVivre": "Reste à Vivre",
+    "perDay": "/jour",
+    "noData": "Ouvrez l'app pour configurer votre budget",
+    "loading": "Chargement..."
+  },
+  "quickActions": {
+    "addExpense": {
+      "title": "Ajouter une Dépense",
+      "subtitle": "Enregistrer rapidement"
+    }
   }
 }

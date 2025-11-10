@@ -44,6 +44,33 @@
           "icon": "./assets/icon.png",
           "color": "#ffffff"
         }
+      ],
+      [
+        "expo-quick-actions",
+        {
+          "androidIcons": {
+            "add_expense": {
+              "foregroundImage": "./assets/icon.png"
+            }
+          },
+          "iosIcons": {
+            "add_expense": "plus.circle.fill"
+          }
+        }
+      ],
+      [
+        "react-native-widget-extension",
+        {
+          "frequentUpdates": true,
+          "widgets": [
+            {
+              "name": "BudgetWidget",
+              "displayName": "PACE Budget",
+              "description": "See your daily budget at a glance",
+              "platforms": ["ios", "android"]
+            }
+          ]
+        }
       ]
     ]
   }

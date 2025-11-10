@@ -463,5 +463,19 @@
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit"
+  },
+  "widget": {
+    "title": "PACE Budget",
+    "description": "Your daily budget at a glance",
+    "resteAVivre": "Daily Budget",
+    "perDay": "/day",
+    "noData": "Open the app to configure your budget",
+    "loading": "Loading..."
+  },
+  "quickActions": {
+    "addExpense": {
+      "title": "Add Expense",
+      "subtitle": "Quick entry"
+    }
   }
 }
