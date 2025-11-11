@@ -27,6 +27,7 @@ import { updateStreakAfterActivity } from './utils/streaks';
 import { triggerSuccessHaptic, triggerWarningHaptic } from './utils/haptics';
 import { updateWidgetData } from './utils/widgetData';
 import { setupQuickActions } from './utils/quickActions';
+import { requestReview } from './utils/storeReview';
 
 function AppContent() {
   const { colors } = useTheme();
@@ -169,6 +170,10 @@ function AppContent() {
         setCurrentStreak(streakInfo.currentStreak);
         setShowStreakCelebration(true);
       }
+      
+      // US 17.1.1: Request review after positive moments (3-day streak or 10th expense)
+      // This will check if conditions are met and ask intelligently
+      await requestReview();
       
       // Check if budget went negative and send alert
       if (budgetProfile) {

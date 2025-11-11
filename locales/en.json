@@ -478,5 +478,15 @@
       "title": "Add Expense",
       "subtitle": "Quick entry"
     }
+  },
+  "sharing": {
+    "shareDialogTitle": "Share Your Success",
+    "streakMessage": "I've been managing my budget for {{days}} consecutive days with PACE! 🔥",
+    "budgetMessage": "I've stayed on budget for {{days}} days in a row with PACE! 💰",
+    "goalMessage": "I reached my savings goal with PACE! 🎯",
+    "defaultMessage": "Managing my budget has never been easier with PACE!",
+    "appPromo": "#PACE #BudgetApp",
+    "shareButton": "Share My Success 🎉",
+    "shareError": "Sharing is not available on this device"
   }
 }

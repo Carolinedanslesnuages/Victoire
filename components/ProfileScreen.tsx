@@ -18,6 +18,7 @@ import {
   updateBudgetProfile,
   deleteBudgetProfile,
 } from '../utils/storage';
+import { shareAchievement } from '../utils/sharing';
 
 interface ProfileScreenProps {
   onBudgetChange?: () => void;
@@ -269,6 +270,25 @@ export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
     );
   };
 
+  const handleShareSuccess = async () => {
+    if (!gamificationData) return;
+    
+    const streakDays = gamificationData.streakInfo.currentStreak;
+    
+    // US 17.2.1: Share achievement success to social media
+    if (streakDays >= 3) {
+      const success = await shareAchievement('streak', streakDays);
+      if (!success) {
+        Alert.alert(i18n.t('sharing.shareError'));
+      }
+    } else {
+      Alert.alert(
+        i18n.t('sharing.shareDialogTitle'),
+        'Atteignez une série de 3 jours pour partager votre succès !'
+      );
+    }
+  };
+
   const renderBadge = (badge: Badge) => {
     const metadata = getBadgeMetadata(badge.type);
     return (
@@ -441,6 +461,19 @@ export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
                 </Text>
               </TouchableOpacity>
             </View>
+
+            {/* US 17.2.1: Share Success Button */}
+            {streakInfo.currentStreak >= 3 && (
+              <TouchableOpacity
+                style={styles.shareButton}
+                onPress={handleShareSuccess}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.shareButtonText}>
+                  {i18n.t('sharing.shareButton')}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -647,6 +680,20 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: typography.fontSize.bodySmall,
     fontWeight: typography.fontWeight.semibold,
+    color: colors.textInverse,
+  },
+  shareButton: {
+    backgroundColor: colors.success,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    marginTop: spacing.md,
+    ...elevation.low,
+  },
+  shareButtonText: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
     color: colors.textInverse,
   },
   badgeCount: {
