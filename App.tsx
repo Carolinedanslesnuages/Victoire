@@ -15,6 +15,7 @@ import {
   loadBudgetProfiles,
   getActiveBudgetProfile,
   createBudgetProfile,
+  updateBudgetProfile,
   getTransactionsForBudget
 } from './utils/storage';
 import { BudgetConfig, BudgetProfile, Transaction, UserPreferences } from './types';
@@ -39,6 +40,8 @@ function AppContent() {
   const [showStreakCelebration, setShowStreakCelebration] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [profileToEdit, setProfileToEdit] = useState<BudgetProfile | null>(null);
 
   useEffect(() => {
     loadProfile();
@@ -85,25 +88,58 @@ function AppContent() {
   };
 
   const handleConfigComplete = async (config: BudgetConfig) => {
-    // Create a new personal budget profile from the config
-    const profile = await createBudgetProfile({
-      type: 'personal',
-      name: config.budgetName || 'Personnel',
-      monthlyIncome: config.monthlyIncome,
-      fixedCharges: config.fixedCharges,
-      savingsGoal: config.savingsGoal,
-      cycleStartDay: config.cycleStartDay,
-    });
-    
-    if (profile) {
-      setBudgetProfile(profile);
-      // Also save to old format for backward compatibility
-      await saveBudgetConfig(config);
+    // Check if we're updating an existing profile
+    if ((config as any).profileId) {
+      const profileId = (config as any).profileId;
+      const success = await updateBudgetProfile(profileId, {
+        monthlyIncome: config.monthlyIncome,
+        fixedCharges: config.fixedCharges,
+        savingsGoal: config.savingsGoal,
+        cycleStartDay: config.cycleStartDay,
+      });
+      
+      if (success) {
+        // Reload the updated profile
+        const updatedProfile = await getActiveBudgetProfile();
+        setBudgetProfile(updatedProfile);
+        setIsEditMode(false);
+        setProfileToEdit(null);
+        await updateWidgetData();
+        setRefreshKey(prev => prev + 1);
+      }
+    } else {
+      // Create a new personal budget profile from the config
+      const profile = await createBudgetProfile({
+        type: 'personal',
+        name: config.budgetName || 'Personnel',
+        monthlyIncome: config.monthlyIncome,
+        fixedCharges: config.fixedCharges,
+        savingsGoal: config.savingsGoal,
+        cycleStartDay: config.cycleStartDay,
+      });
+      
+      if (profile) {
+        setBudgetProfile(profile);
+        // Also save to old format for backward compatibility
+        await saveBudgetConfig(config);
+      }
     }
   };
 
   const handleReconfigure = () => {
+    // Store the current profile for editing
+    setProfileToEdit(budgetProfile);
+    setIsEditMode(true);
     setBudgetProfile(null);
+  };
+
+  const handleCancelEdit = () => {
+    // Restore the profile without changes
+    if (profileToEdit) {
+      setBudgetProfile(profileToEdit);
+      setProfileToEdit(null);
+      setIsEditMode(false);
+    }
   };
 
   const handleBudgetChange = async () => {
@@ -211,7 +247,12 @@ function AppContent() {
               />
             </>
           ) : (
-            <ConfigWizard onComplete={handleConfigComplete} />
+            <ConfigWizard 
+              onComplete={handleConfigComplete} 
+              mode={isEditMode ? 'edit' : 'create'}
+              existingProfile={profileToEdit || undefined}
+              onCancel={isEditMode ? handleCancelEdit : undefined}
+            />
           )}
           <StatusBar style={colors.textPrimary === '#212121' ? 'dark' : 'light'} />
         </View>

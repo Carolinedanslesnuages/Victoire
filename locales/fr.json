@@ -121,6 +121,7 @@
     "cycleStartDayHint": "Le jour du mois où vous recevez votre salaire",
     "cycleStartDayPlaceholder": "Ex: 5",
     "saveButton": "Enregistrer",
+    "cancel": "Retour",
     "errors": {
       "title": "Erreur",
       "invalidIncome": "Veuillez saisir un revenu mensuel valide",
