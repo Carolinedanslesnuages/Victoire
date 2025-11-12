@@ -478,5 +478,15 @@
       "title": "Ajouter une Dépense",
       "subtitle": "Enregistrer rapidement"
     }
+  },
+  "sharing": {
+    "shareDialogTitle": "Partager Votre Succès",
+    "streakMessage": "J'ai tenu mon budget {{days}} jours d'affilée avec PACE ! 🔥",
+    "budgetMessage": "J'ai respecté mon budget pendant {{days}} jours consécutifs avec PACE ! 💰",
+    "goalMessage": "J'ai atteint mon objectif d'épargne avec PACE ! 🎯",
+    "defaultMessage": "Gérer mon budget n'a jamais été aussi simple avec PACE !",
+    "appPromo": "#PACE #ApplicationBudget",
+    "shareButton": "Partager Mon Succès 🎉",
+    "shareError": "Le partage n'est pas disponible sur cet appareil"
   }
 }
