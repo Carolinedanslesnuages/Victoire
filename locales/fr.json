@@ -283,6 +283,11 @@
       "upgrade": "Passer à Premium",
       "cancel": "Annuler"
     },
+    "support": {
+      "title": "Support & Aide",
+      "faq": "Questions Fréquentes",
+      "sendFeedback": "Envoyer une Remarque"
+    },
     "legal": {
       "title": "Mentions Légales",
       "privacyPolicy": "Politique de Confidentialité",
@@ -488,5 +493,69 @@
     "appPromo": "#PACE #ApplicationBudget",
     "shareButton": "Partager Mon Succès 🎉",
     "shareError": "Le partage n'est pas disponible sur cet appareil"
+  },
+  "feedback": {
+    "title": "Envoyer une Remarque",
+    "subtitle": "Rencontrez-vous un problème ou avez-vous une idée ? Faites-le nous savoir !",
+    "typeLabel": "Type de remarque",
+    "types": {
+      "bug": "Problème",
+      "idea": "Idée",
+      "other": "Autre"
+    },
+    "messageLabel": "Votre message",
+    "messagePlaceholder": "Décrivez votre problème, idée ou suggestion en détail...",
+    "deviceInfoLabel": "Informations de l'appareil",
+    "privacyNote": "Ces informations techniques aident à diagnostiquer les problèmes. Aucune donnée personnelle n'est incluse.",
+    "sendButton": "📧 Envoyer ma Remarque",
+    "emailBody": "Message de l'utilisateur:",
+    "errors": {
+      "title": "Erreur",
+      "emptyMessage": "Veuillez saisir un message avant d'envoyer",
+      "emailNotSupported": "L'envoi d'e-mails n'est pas disponible sur cet appareil",
+      "sendFailed": "Impossible d'ouvrir le client e-mail. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Merci !",
+      "message": "Votre remarque a été envoyée. Nous apprécions votre retour !"
+    },
+    "confirmClose": {
+      "title": "Abandonner la remarque ?",
+      "message": "Vous avez un message non envoyé. Voulez-vous vraiment fermer ?",
+      "cancel": "Continuer l'édition",
+      "confirm": "Abandonner"
+    }
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "subtitle": "Trouvez rapidement des réponses aux questions courantes sur PACE",
+    "needMoreHelp": "Besoin d'aide supplémentaire ?",
+    "contactMessage": "Si vous ne trouvez pas la réponse à votre question, n'hésitez pas à nous contacter via le bouton 'Envoyer une Remarque' dans les Paramètres.",
+    "items": {
+      "budgetCalculation": {
+        "question": "Comment est calculé mon budget du jour ?",
+        "answer": "Votre budget du jour est calculé ainsi : (Revenus mensuels - Charges fixes - Objectif d'épargne) / Nombre de jours dans le mois. Ce montant est ensuite ajusté quotidiennement en fonction de vos dépenses pour refléter ce qu'il vous reste à dépenser aujourd'hui."
+      },
+      "cycleStartDay": {
+        "question": "Qu'est-ce que le jour de début du cycle ?",
+        "answer": "C'est le jour du mois où commence votre nouveau cycle budgétaire, généralement le jour où vous recevez votre salaire. À partir de ce jour, votre budget est recalculé pour le mois à venir."
+      },
+      "categories": {
+        "question": "Comment utiliser les catégories personnalisées ?",
+        "answer": "Dans les Paramètres, vous pouvez ajouter vos propres catégories de dépenses (ex: Loisirs, Santé). Les utilisateurs gratuits peuvent créer jusqu'à 3 catégories, tandis que les utilisateurs Premium ont accès à un nombre illimité."
+      },
+      "negativebudget": {
+        "question": "Que faire si mon budget passe en négatif ?",
+        "answer": "Un budget négatif signifie que vous dépensez plus que prévu. Essayez de réduire vos dépenses les jours suivants. L'application vous enverra des alertes pour vous aider à revenir dans le positif. Vous pouvez aussi utiliser un joker si vous êtes en situation difficile."
+      },
+      "dataExport": {
+        "question": "Comment exporter mes données ?",
+        "answer": "Dans les Paramètres, section 'Export des données', cliquez sur 'Exporter en CSV'. Vous pourrez ensuite partager ou enregistrer le fichier pour l'analyser dans Excel ou d'autres outils."
+      },
+      "notifications": {
+        "question": "Comment fonctionnent les notifications ?",
+        "answer": "PACE peut vous envoyer trois types de notifications : un rappel le soir si vous n'avez rien saisi, votre budget du matin pour bien démarrer la journée, et des alertes si votre budget devient négatif. Vous pouvez personnaliser tout cela dans les Paramètres."
+      }
+    }
   }
 }

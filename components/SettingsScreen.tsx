@@ -19,6 +19,8 @@ import { loadUserPreferences, saveUserPreferences, resetAllData, loadTransaction
 import { useSubscription } from '../contexts/SubscriptionContext';
 import PaywallScreen from './PaywallScreen';
 import AvatarSelector from './AvatarSelector';
+import FeedbackScreen from './FeedbackScreen';
+import FAQScreen from './FAQScreen';
 import { 
   requestNotificationPermissions, 
   scheduleEveningReminder, 
@@ -46,6 +48,8 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [showFAQ, setShowFAQ] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState<{
     type: 'evening' | 'morning';
     show: boolean;
@@ -588,6 +592,33 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
             </TouchableOpacity>
           </View>
 
+          {/* Support & Help Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{i18n.t('settings.support.title')}</Text>
+            
+            <TouchableOpacity
+              style={styles.legalButton}
+              onPress={() => setShowFAQ(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.legalButtonText}>
+                ❓ {i18n.t('settings.support.faq')}
+              </Text>
+              <Text style={styles.legalButtonArrow}>›</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.legalButton}
+              onPress={() => setShowFeedback(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.legalButtonText}>
+                💬 {i18n.t('settings.support.sendFeedback')}
+              </Text>
+              <Text style={styles.legalButtonArrow}>›</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Legal Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{i18n.t('settings.legal.title')}</Text>
@@ -754,6 +785,18 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
             </View>
           </TouchableOpacity>
         </Modal>
+
+        {/* Feedback Screen */}
+        <FeedbackScreen
+          visible={showFeedback}
+          onClose={() => setShowFeedback(false)}
+        />
+
+        {/* FAQ Screen */}
+        <FAQScreen
+          visible={showFAQ}
+          onClose={() => setShowFAQ(false)}
+        />
 
         {/* Paywall Screen */}
         <PaywallScreen
