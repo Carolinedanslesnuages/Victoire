@@ -21,15 +21,17 @@ import {
 } from '../utils/storage';
 import { lightColors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import { useTheme } from '../contexts/ThemeContext';
+import { useSubscription } from '../contexts/SubscriptionContext';
 import i18n from '../utils/i18n';
 
 interface BudgetSwitcherProps {
   onBudgetChange: () => void;
-  navigation?: any; // Navigation object for navigating to Profile screen
+  navigation?: any; // Navigation object (not used in current implementation)
 }
 
-export default function BudgetSwitcher({ onBudgetChange, navigation }: BudgetSwitcherProps) {
+export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) {
   const { colors: themeColors } = useTheme();
+  const { isPremium } = useSubscription();
   const [profiles, setProfiles] = useState<BudgetProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<BudgetProfile | null>(null);
   const [showPicker, setShowPicker] = useState(false);
@@ -156,6 +158,53 @@ export default function BudgetSwitcher({ onBudgetChange, navigation }: BudgetSwi
     );
   };
 
+  const handleCreateNewBudget = async () => {
+    // Check budget limit for freemium users
+    if (!isPremium && profiles.length >= 1) {
+      Alert.alert(
+        i18n.t('budgetSwitcher.budgetLimitReached'),
+        i18n.t('budgetSwitcher.budgetLimitFreemium')
+      );
+      return;
+    }
+
+    // Generate the next budget name
+    const budgetNumber = profiles.length + 1;
+    const budgetName = `Mon budget ${budgetNumber}`;
+
+    Alert.alert(
+      i18n.t('budgetSwitcher.createNewBudget'),
+      i18n.t('budgetSwitcher.createHouseholdMessage'),
+      [
+        {
+          text: i18n.t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: i18n.t('common.create'),
+          onPress: async () => {
+            const newProfile = await createBudgetProfile({
+              type: 'personal',
+              name: budgetName,
+              monthlyIncome: 0,
+              fixedCharges: 0,
+              savingsGoal: 0,
+              cycleStartDay: activeProfile?.cycleStartDay || 1,
+            });
+
+            if (newProfile) {
+              await loadProfiles();
+              Alert.alert(
+                i18n.t('budgetSwitcher.created'),
+                i18n.t('budgetSwitcher.budgetCreated')
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleCreateHouseholdBudget = async () => {
     // Check if household budget already exists
     const householdExists = profiles.some(p => p.type === 'household');
@@ -205,20 +254,13 @@ export default function BudgetSwitcher({ onBudgetChange, navigation }: BudgetSwi
   };
 
   const handleAvatarClick = () => {
-    if (profiles.length <= 1) {
-      // Single budget: Navigate to Profile screen
-      if (navigation) {
-        navigation.navigate('Profile');
-      }
-    } else {
-      // Multiple budgets: Show picker modal
-      setShowPicker(true);
-    }
+    // Always show the picker modal
+    setShowPicker(true);
   };
 
   if (profiles.length <= 1) {
     // Always show avatar, even with single budget
-    // Clicking navigates to Profile screen
+    // Clicking opens the modal to create or switch budgets
     const icon = activeProfile ? getBudgetIcon(activeProfile.type) : '📊';
     
     return (
@@ -230,6 +272,106 @@ export default function BudgetSwitcher({ onBudgetChange, navigation }: BudgetSwi
         >
           <Text style={styles.avatarIcon}>{icon}</Text>
         </TouchableOpacity>
+
+        {/* Modal for single budget - still shows option to create new budget */}
+        <Modal
+          visible={showPicker}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowPicker(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowPicker(false)}
+          >
+            <View style={[styles.modalContent, { backgroundColor: themeColors.surface }]}>
+              <Text style={[styles.modalTitle, { color: themeColors.textPrimary }]}>
+                {i18n.t('budgetSwitcher.selectBudget')}
+              </Text>
+
+              <ScrollView style={styles.profilesList}>
+                {profiles.map(profile => (
+                  <View
+                    key={profile.id}
+                    style={[
+                      styles.profileItem,
+                      profile.id === activeProfile?.id && {
+                        backgroundColor: themeColors.primaryLight,
+                      },
+                    ]}
+                  >
+                    <TouchableOpacity
+                      style={styles.profileMainContent}
+                      onPress={() => handleSelectBudget(profile)}
+                    >
+                      <Text style={styles.profileIcon}>{getBudgetIcon(profile.type)}</Text>
+                      <View style={styles.profileInfo}>
+                        <Text style={[styles.profileName, { color: themeColors.textPrimary }]}>
+                          {profile.name}
+                        </Text>
+                        <Text style={[styles.profileType, { color: themeColors.textSecondary }]}>
+                          {profile.type === 'personal'
+                            ? i18n.t('budgetSwitcher.personal')
+                            : i18n.t('budgetSwitcher.household')}
+                        </Text>
+                      </View>
+                      {profile.id === activeProfile?.id && (
+                        <Text style={[styles.checkmark, { color: themeColors.primary }]}>✓</Text>
+                      )}
+                    </TouchableOpacity>
+                    <View style={styles.actionButtons}>
+                      <TouchableOpacity
+                        style={styles.editButton}
+                        onPress={() => handleRenameBudget(profile)}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      >
+                        <Text style={styles.editIcon}>✏️</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={() => handleDeleteBudget(profile)}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      >
+                        <Text style={styles.deleteIcon}>🗑️</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+
+              {/* Always show create new budget button */}
+              <TouchableOpacity
+                style={[styles.createButton, { backgroundColor: themeColors.primary }]}
+                onPress={handleCreateNewBudget}
+              >
+                <Text style={styles.createButtonText}>
+                  + {i18n.t('budgetSwitcher.createNewBudget')}
+                </Text>
+              </TouchableOpacity>
+
+              {!profiles.some(p => p.type === 'household') && (
+                <TouchableOpacity
+                  style={[styles.createButton, { backgroundColor: themeColors.primary, marginTop: spacing.sm }]}
+                  onPress={handleCreateHouseholdBudget}
+                >
+                  <Text style={styles.createButtonText}>
+                    + {i18n.t('budgetSwitcher.createHousehold')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                style={[styles.closeButton, { borderColor: themeColors.border }]}
+                onPress={() => setShowPicker(false)}
+              >
+                <Text style={[styles.closeButtonText, { color: themeColors.textPrimary }]}>
+                  {i18n.t('common.close')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </>
     );
   }
@@ -310,9 +452,19 @@ export default function BudgetSwitcher({ onBudgetChange, navigation }: BudgetSwi
               ))}
             </ScrollView>
 
+            {/* Always show create new budget button */}
+            <TouchableOpacity
+              style={[styles.createButton, { backgroundColor: themeColors.primary }]}
+              onPress={handleCreateNewBudget}
+            >
+              <Text style={styles.createButtonText}>
+                + {i18n.t('budgetSwitcher.createNewBudget')}
+              </Text>
+            </TouchableOpacity>
+
             {!profiles.some(p => p.type === 'household') && (
               <TouchableOpacity
-                style={[styles.createButton, { backgroundColor: themeColors.primary }]}
+                style={[styles.createButton, { backgroundColor: themeColors.primary, marginTop: spacing.sm }]}
                 onPress={handleCreateHouseholdBudget}
               >
                 <Text style={styles.createButtonText}>
