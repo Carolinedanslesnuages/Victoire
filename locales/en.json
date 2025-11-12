@@ -283,6 +283,11 @@
       "upgrade": "Upgrade to Premium",
       "cancel": "Cancel"
     },
+    "support": {
+      "title": "Support & Help",
+      "faq": "Frequently Asked Questions",
+      "sendFeedback": "Send Feedback"
+    },
     "legal": {
       "title": "Legal",
       "privacyPolicy": "Privacy Policy",
@@ -488,5 +493,69 @@
     "appPromo": "#PACE #BudgetApp",
     "shareButton": "Share My Success 🎉",
     "shareError": "Sharing is not available on this device"
+  },
+  "feedback": {
+    "title": "Send Feedback",
+    "subtitle": "Experiencing a problem or have an idea? Let us know!",
+    "typeLabel": "Feedback type",
+    "types": {
+      "bug": "Bug Report",
+      "idea": "Idea",
+      "other": "Other"
+    },
+    "messageLabel": "Your message",
+    "messagePlaceholder": "Describe your problem, idea, or suggestion in detail...",
+    "deviceInfoLabel": "Device Information",
+    "privacyNote": "This technical information helps diagnose issues. No personal data is included.",
+    "sendButton": "📧 Send Feedback",
+    "emailBody": "User message:",
+    "errors": {
+      "title": "Error",
+      "emptyMessage": "Please enter a message before sending",
+      "emailNotSupported": "Sending emails is not available on this device",
+      "sendFailed": "Unable to open email client. Please try again."
+    },
+    "success": {
+      "title": "Thank You!",
+      "message": "Your feedback has been sent. We appreciate your input!"
+    },
+    "confirmClose": {
+      "title": "Discard Feedback?",
+      "message": "You have an unsent message. Do you really want to close?",
+      "cancel": "Continue Editing",
+      "confirm": "Discard"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Quickly find answers to common questions about PACE",
+    "needMoreHelp": "Need More Help?",
+    "contactMessage": "If you can't find the answer to your question, feel free to contact us via the 'Send Feedback' button in Settings.",
+    "items": {
+      "budgetCalculation": {
+        "question": "How is my daily budget calculated?",
+        "answer": "Your daily budget is calculated as: (Monthly income - Fixed charges - Savings goal) / Number of days in the month. This amount is then adjusted daily based on your expenses to reflect what you have left to spend today."
+      },
+      "cycleStartDay": {
+        "question": "What is the cycle start day?",
+        "answer": "It's the day of the month when your new budget cycle begins, usually the day you receive your salary. From this day, your budget is recalculated for the month ahead."
+      },
+      "categories": {
+        "question": "How do I use custom categories?",
+        "answer": "In Settings, you can add your own expense categories (e.g., Leisure, Health). Free users can create up to 3 categories, while Premium users have access to unlimited categories."
+      },
+      "negativebudget": {
+        "question": "What should I do if my budget goes negative?",
+        "answer": "A negative budget means you're spending more than planned. Try to reduce your expenses in the following days. The app will send you alerts to help you get back on track. You can also use a joker if you're in a difficult situation."
+      },
+      "dataExport": {
+        "question": "How do I export my data?",
+        "answer": "In Settings, under 'Data Export', click 'Export to CSV'. You can then share or save the file to analyze it in Excel or other tools."
+      },
+      "notifications": {
+        "question": "How do notifications work?",
+        "answer": "PACE can send you three types of notifications: an evening reminder if you haven't logged anything, your morning budget to start the day right, and alerts if your budget goes negative. You can customize all of this in Settings."
+      }
+    }
   }
 }
