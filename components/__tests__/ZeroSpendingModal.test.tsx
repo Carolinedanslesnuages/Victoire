@@ -5,7 +5,7 @@ import { ThemeProvider } from '../../contexts/ThemeContext';
 
 // Mock i18n
 jest.mock('../../utils/i18n', () => ({
-  t: (key: string, params?: any) => {
+  t: (key: string) => {
     const translations: { [key: string]: string } = {
       'dashboard.zeroSpending.modalTitle': 'Congratulations! 🎉',
       'dashboard.zeroSpending.todayBudget': 'Your daily budget was',
