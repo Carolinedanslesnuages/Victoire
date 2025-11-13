@@ -325,6 +325,10 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     fontSize: typography.fontSize.body,
   },
+  inputFocused: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
   typeSelector: {
     flexDirection: 'row',
     gap: spacing.sm,

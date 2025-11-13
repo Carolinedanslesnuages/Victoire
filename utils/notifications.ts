@@ -3,7 +3,6 @@ import { Platform } from 'react-native';
 import { NotificationSettings } from '../types';
 import { loadUserPreferences, loadBudgetConfig, getTransactionsForCurrentCycle } from './storage';
 import { calculateDailyBudget } from './budgetCalculations';
-import { loadGamificationData } from './gamification';
 import i18n from './i18n';
 
 // Configure notification handler

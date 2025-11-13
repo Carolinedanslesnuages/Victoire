@@ -5,7 +5,7 @@ import {
   unlockBadge,
   hasBadge,
 } from '../gamification';
-import { GamificationData, BadgeType } from '../../types';
+import { GamificationData } from '../../types';
 
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({

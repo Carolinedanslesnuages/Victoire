@@ -5,7 +5,7 @@ import FeedbackScreen from '../FeedbackScreen';
 
 // Mock dependencies
 jest.mock('../../utils/i18n', () => ({
-  t: (key: string, params?: any) => {
+  t: (key: string) => {
     const translations: { [key: string]: string } = {
       'feedback.title': 'Send Feedback',
       'feedback.subtitle': 'Experiencing a problem or have an idea? Let us know!',
