@@ -4,6 +4,7 @@ import BudgetRing from './BudgetRing';
 import PieChart from './PieChart';
 import MascotDisplay from './MascotDisplay';
 import BadgeUnlockModal from './BadgeUnlockModal';
+import ZeroSpendingModal from './ZeroSpendingModal';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -54,6 +55,7 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: 
   });
   const [unlockedBadge, setUnlockedBadge] = useState<Badge | null>(null);
   const [showBadgeModal, setShowBadgeModal] = useState(false);
+  const [showZeroSpendingModal, setShowZeroSpendingModal] = useState(false);
 
   useEffect(() => {
     loadTransactions();
@@ -196,6 +198,19 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: 
     return `${days} ${i18n.t('dashboard.monthlyHealth.daysRemaining')} ${i18n.t('dashboard.monthlyHealth.remaining')}`;
   };
 
+  // Handler for zero spending modal
+  const handleZeroSpendingClick = () => {
+    setShowZeroSpendingModal(true);
+  };
+
+  // Check if user has spent anything today
+  const hasSpentToday = () => {
+    const today = new Date().toDateString();
+    return transactions.some(t => 
+      new Date(t.date).toDateString() === today && t.type !== 'income'
+    );
+  };
+
   // Get budget display name
   const getBudgetDisplayName = () => {
     return profile.name;
@@ -211,6 +226,16 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: 
           setShowBadgeModal(false);
           setUnlockedBadge(null);
         }}
+      />
+
+      {/* Zero Spending Modal */}
+      <ZeroSpendingModal
+        visible={showZeroSpendingModal}
+        onClose={() => setShowZeroSpendingModal(false)}
+        currentDailyBudget={dailyBudget}
+        newDailyBudget={dailyBudget}
+        daysRemaining={daysRemaining}
+        formatCurrency={formatCurrency}
       />
 
       <ScrollView
@@ -285,6 +310,19 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: 
             {i18n.t('dashboard.dailyBudget.hint')}
           </Text>
         </View>
+
+        {/* Zero Spending Button - Show only if user hasn't spent today and budget is positive */}
+        {!hasSpentToday() && dailyBudget > 0 && daysRemaining > 0 && (
+          <TouchableOpacity
+            style={styles.zeroSpendingButton}
+            onPress={handleZeroSpendingClick}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.zeroSpendingButtonText}>
+              {i18n.t('dashboard.zeroSpending.button')}
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {/* Feature 2.2: Monthly Health Indicator */}
         <View style={styles.monthlyHealthCard}>
@@ -941,5 +979,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.md,
     paddingHorizontal: spacing.md,
+  },
+  // Zero Spending Button
+  zeroSpendingButton: {
+    backgroundColor: colors.success,
+    margin: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    alignItems: 'center',
+    ...elevation.medium,
+  },
+  zeroSpendingButtonText: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
   },
 });

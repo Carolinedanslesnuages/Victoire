@@ -192,6 +192,19 @@
         "equal": "Similar spending",
         "noData": "No data from last month for comparison"
       }
+    },
+    "zeroSpending": {
+      "button": "💰 No spending today",
+      "buttonShort": "💰 Zero spent",
+      "modalTitle": "Congratulations! 🎉",
+      "todayBudget": "Your daily budget was",
+      "redistributed": "By not spending today, this amount is redistributed across the",
+      "remainingDays": "remaining days",
+      "remainingDay": "remaining day",
+      "newDailyBudget": "Your new daily budget is now",
+      "orSave": "You can also choose to save this amount!",
+      "potentialSavings": "Potential savings",
+      "close": "Great!"
     }
   },
   "addExpense": {
