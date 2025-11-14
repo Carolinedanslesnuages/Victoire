@@ -5,7 +5,7 @@
 
 import { BudgetProfile } from '../types';
 import { getDaysRemainingInCycle } from './budgetCalculations';
-import { getTransactionsForBudget, getBonusPiggyBank, addToBonusPiggyBank } from './storage';
+import { getTransactionsForBudget, getBonusPiggyBank, addToBonusPiggyBank, saveBonusPiggyBank } from './storage';
 
 /**
  * Check if we need to process unspent budget for yesterday
@@ -88,7 +88,6 @@ export const processUnspentDailyBudget = async (profile: BudgetProfile): Promise
     // Update last processed date even if we didn't add anything
     // to avoid checking the same day multiple times
     piggyBank.lastProcessedDate = yesterday.toISOString();
-    const { saveBonusPiggyBank } = await import('./storage');
     await saveBonusPiggyBank(piggyBank, profile.id);
     
     return 0;
