@@ -7,7 +7,7 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
-import { colors, typography, spacing, borderRadius, opacity } from '../constants/theme';
+import { colors, typography, spacing, borderRadius } from '../constants/theme';
 import i18n from '../utils/i18n';
 
 interface TooltipStep {
@@ -28,7 +28,7 @@ interface TooltipOverlayProps {
   onComplete: () => void;
 }
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function TooltipOverlay({ visible, onComplete }: TooltipOverlayProps) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: colors.textPrimary,
-    opacity: opacity.overlay,
+    opacity: 0.75,
   },
   tooltipCard: {
     position: 'absolute',
