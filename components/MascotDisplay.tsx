@@ -51,17 +51,11 @@ export default function MascotDisplay({
           }
         ]}
       >
-        {mascotState.imageUrl ? (
-          <Image
-            source={{ uri: mascotState.imageUrl }}
-            style={[styles.mascotImage, { width: mascotSize, height: mascotSize }]}
-            resizeMode="contain"
-          />
-        ) : (
-          <View style={[styles.mascotPlaceholder, { width: mascotSize, height: mascotSize }]}>
-            <Text style={styles.mascotEmoji}>🐿️</Text>
-          </View>
-        )}
+   <Image
+          source={mascotState.imageSource}
+          style={[styles.mascotImage, { width: mascotSize, height: mascotSize }]}
+          resizeMode="contain"
+        />
       </View>
       
       {showDescription && (

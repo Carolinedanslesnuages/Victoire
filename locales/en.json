@@ -471,14 +471,14 @@
       "detresse": "In Distress"
     },
     "zones": {
-      "green": "Comfortable Budget",
+      "green": "Budget On Track",
       "yellow": "Strict Management",
       "red": "Critical Budget"
     },
     "descriptions": {
-      "serein": "Totally relaxed, your reserves are abundant! 🌟",
-      "joyeux": "Your budget is doing well, keep it up! 😊",
-      "optimiste": "The budget is holding, stay optimistic! 💪",
+      "serein": "Everything is under control, perfect management! 🌟",
+      "joyeux": "You are sticking to the plan perfectly! 😊",
+      "optimiste": "You are on the right track, keep going! 💪",
       "determine": "In management mode, stay the course! 🎯",
       "vigilant": "Watch your spending, stay vigilant! 👀",
       "inquiet": "Caution, the budget is tightening... 🤔",
