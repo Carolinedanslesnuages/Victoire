@@ -186,7 +186,7 @@ export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
 
     Alert.alert(
       i18n.t('budgetSwitcher.createNewBudget'),
-      i18n.t('budgetSwitcher.createHouseholdMessage'),
+      i18n.t('budgetSwitcher.createNewBudgetMessage'),
       [
         {
           text: i18n.t('common.cancel'),
