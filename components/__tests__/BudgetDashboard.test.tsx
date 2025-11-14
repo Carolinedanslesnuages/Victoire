@@ -40,8 +40,10 @@ jest.mock('../../utils/analytics', () => ({
 // Mock mascot module
 jest.mock('../../utils/mascot', () => ({
   getMascotState: jest.fn(() => ({
-    mood: 'happy',
-    expression: '😊',
+    mood: 'serein',
+    zone: 'green',
+    imageSource: 1, // Mock image source as number (React Native require() returns number)
+    description: 'mascot.moods.serein',
   })),
 }));
 
