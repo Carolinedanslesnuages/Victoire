@@ -384,29 +384,6 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
             )}
           </View>
 
-          {/* Budget Profiles Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{i18n.t('settings.budgetProfiles.title')}</Text>
-            <Text style={styles.sectionDescription}>
-              {i18n.t('settings.budgetProfiles.description')}
-            </Text>
-            
-            <TouchableOpacity
-              style={styles.linkButton}
-              onPress={() => {
-                Alert.alert(
-                  i18n.t('settings.budgetProfiles.editTitle'),
-                  i18n.t('settings.budgetProfiles.editMessage')
-                );
-              }}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.linkButtonText}>
-                {i18n.t('settings.budgetProfiles.manageBudgets')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
           {/* Currency Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{i18n.t('settings.personalization')}</Text>

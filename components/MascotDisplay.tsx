@@ -37,6 +37,7 @@ export default function MascotDisplay({
   
   const mascotSize = sizes[size];
   const backgroundColor = zoneColors[mascotState.zone];
+  const containerSize = mascotSize;
   
   return (
     <View style={styles.container}>
@@ -46,15 +47,23 @@ export default function MascotDisplay({
           { 
             backgroundColor: `${backgroundColor}20`,
             borderColor: backgroundColor,
-            width: mascotSize + 40,
-            height: mascotSize + 40,
+            width: containerSize,
+            height: containerSize
           }
         ]}
       >
-        {mascotState.imageUrl ? (
+        {mascotState.imageSource ? (
           <Image
-            source={{ uri: mascotState.imageUrl }}
-            style={[styles.mascotImage, { width: mascotSize, height: mascotSize }]}
+            source={mascotState.imageSource}
+            // MODIFICATION ICI : On force l'image à être ronde aussi
+            style={[
+              styles.mascotImage, 
+              { 
+                width: mascotSize, 
+                height: mascotSize,
+                borderRadius: mascotSize / 2 // Cercle parfait
+              }
+            ]}
             resizeMode="contain"
           />
         ) : (
@@ -92,15 +101,14 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
     borderWidth: 3,
     padding: spacing.md,
-  },
-  mascotImage: {
-    borderRadius: borderRadius.lg,
+    overflow: 'hidden', 
+    backgroundColor: colors.surface, 
   },
   mascotPlaceholder: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.gray100,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.full,
   },
   mascotEmoji: {
     fontSize: 60,

@@ -3,6 +3,8 @@
  * Determines mascot mood based on "Reste à Vivre" percentage
  */
 
+import { ImageSourcePropType } from 'react-native';
+
 export type MascotMood = 
   | 'serein'      // >75% - Zone Verte
   | 'joyeux'      // 60-75% - Zone Verte
@@ -12,13 +14,12 @@ export type MascotMood =
   | 'inquiet'     // 15-25% - Zone Jaune
   | 'nerveux'     // 10-15% - Zone Jaune
   | 'fatigue'     // 5-10% - Zone Rouge
-  | 'panique'     // 0-5% - Zone Rouge
   | 'detresse';   // <0% - Zone Rouge
 
 export interface MascotState {
   mood: MascotMood;
   zone: 'green' | 'yellow' | 'red';
-  imageUrl: string;
+  imageSource: ImageSourcePropType;
   description: string;
 }
 
@@ -60,7 +61,6 @@ export const getMascotMood = (percentage: number): MascotMood => {
   if (percentage > 15) return 'inquiet';
   if (percentage > 10) return 'nerveux';
   if (percentage > 5) return 'fatigue';
-  if (percentage > 0) return 'panique';
   return 'detresse';
 };
 
@@ -75,8 +75,21 @@ export const getMascotZone = (percentage: number): 'green' | 'yellow' | 'red' =>
   return 'red';
 };
 
+// Local mascot mood images
+const MASCOT_IMAGES: Record<MascotMood, ImageSourcePropType> = {
+  serein: require('../assets/mascotMood/serein.png'),
+  joyeux: require('../assets/mascotMood/joyeux.png'),
+  optimiste: require('../assets/mascotMood/optimiste.png'),
+  determine: require('../assets/mascotMood/determine.png'),
+  vigilant: require('../assets/mascotMood/vigilant.png'),
+  inquiet: require('../assets/mascotMood/inquiet.png'),
+  nerveux: require('../assets/mascotMood/nerveux.png'),
+  fatigue: require('../assets/mascotMood/fatigue.png'),
+  detresse: require('../assets/mascotMood/detresse.png'),
+};
+
 /**
- * Get mascot state including mood, zone, image URL and description
+ * Get mascot state including mood, zone, image source and description
  * @param monthlyIncome - Monthly income
  * @param fixedCharges - Fixed charges
  * @param savingsGoal - Savings goal
@@ -102,24 +115,10 @@ export const getMascotState = (
   const mood = getMascotMood(percentage);
   const zone = getMascotZone(percentage);
   
-  // Map mood to image URLs (from GitHub issue)
-  const imageUrls: Record<MascotMood, string> = {
-    serein: 'https://github.com/user-attachments/assets/921a9249-7427-4c14-a7f4-8f8345d63647',
-    joyeux: 'https://github.com/user-attachments/assets/9b8d55c7-94e5-47cc-862d-406591d56af8',
-    optimiste: 'https://github.com/user-attachments/assets/a3c76651-dbbc-406b-957c-93c1089d8f87',
-    determine: 'https://github.com/user-attachments/assets/2aa04abb-74ac-41b6-bb64-f698d5681694',
-    vigilant: 'https://github.com/user-attachments/assets/14f13e27-87ae-4438-ba6f-d7e0dffa47d7',
-    inquiet: 'https://github.com/user-attachments/assets/472e4b08-ff92-4c60-bd2d-f2e6ff547fa0',
-    nerveux: 'https://github.com/user-attachments/assets/203e4390-2269-4d7a-8967-4b8e54130d9e',
-    fatigue: '', // No image provided in issue
-    panique: 'https://github.com/user-attachments/assets/2845e5ae-1d23-4b9b-8a04-0727c482b29d',
-    detresse: 'https://github.com/user-attachments/assets/8ad8d7f2-6675-4883-b581-e1b770fddd85',
-  };
-  
   return {
     mood,
     zone,
-    imageUrl: imageUrls[mood],
+    imageSource: MASCOT_IMAGES[mood],
     description: `mascot.moods.${mood}`,
   };
 };

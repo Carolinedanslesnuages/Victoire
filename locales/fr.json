@@ -471,14 +471,14 @@
       "detresse": "En Détresse"
     },
     "zones": {
-      "green": "Budget Confortable",
+      "green": "Budget Maîtrisé",
       "yellow": "Gestion Stricte",
       "red": "Budget Critique"
     },
     "descriptions": {
-      "serein": "Totalement détendu, vos réserves sont abondantes ! 🌟",
-      "joyeux": "Votre budget se porte bien, gardez le cap ! 😊",
-      "optimiste": "Le budget se maintient, restez optimiste ! 💪",
+      "serein": "Tout est sous contrôle, votre gestion est parfaite ! 🌟",
+      "joyeux": "Vous respectez votre plan à merveille ! 😊",
+      "optimiste": "Vous êtes sur la bonne voie, continuez ! 💪",
       "determine": "En mode gestion, maintenez le cap ! 🎯",
       "vigilant": "Surveillez vos dépenses, restez vigilant ! 👀",
       "inquiet": "Attention, le budget se resserre... 🤔",
