@@ -78,6 +78,7 @@ export const getTotalDaysInCycle = (cycleStartDay: number): number => {
  * @param totalSpent - Total amount spent in current cycle
  * @param cycleStartDay - Day of month when cycle starts
  * @param totalIncome - Total income received in current cycle (optional)
+ * @param midCycleOnboarding - Mid-cycle onboarding data (optional)
  * @returns Daily budget for today
  */
 export const calculateDailyBudget = (
@@ -86,8 +87,31 @@ export const calculateDailyBudget = (
   savingsGoal: number,
   totalSpent: number,
   cycleStartDay: number,
-  totalIncome: number = 0
+  totalIncome: number = 0,
+  midCycleOnboarding?: { remainingAmount: number; cycleEndDate: string }
 ): number => {
+  // US 1.5.3: If we have mid-cycle onboarding data and we're still in the first incomplete cycle
+  if (midCycleOnboarding) {
+    const today = new Date();
+    const cycleEndDate = new Date(midCycleOnboarding.cycleEndDate);
+    
+    // Check if we're still in the first incomplete cycle
+    if (today <= cycleEndDate) {
+      // Use the remaining amount provided during onboarding, adjusted for spending
+      const adjustedRemaining = midCycleOnboarding.remainingAmount - totalSpent + totalIncome;
+      const daysRemaining = getDaysRemainingInCycle(cycleStartDay);
+      
+      // Avoid division by zero
+      if (daysRemaining === 0) {
+        return adjustedRemaining;
+      }
+      
+      return adjustedRemaining / daysRemaining;
+    }
+    // If we've passed the first cycle, fall through to normal calculation
+  }
+  
+  // Normal calculation for complete cycles
   const resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
   // Income increases the budget, expenses decrease it
   const remainingBudget = resteAVivre - totalSpent + totalIncome;

@@ -122,12 +122,19 @@
     "cycleStartDayPlaceholder": "E.g.: 5",
     "saveButton": "Save",
     "cancel": "Back",
+    "midCycleTitle": "Mid-Cycle Catch-up",
+    "midCycleQuestion": "How much do you have left exactly to finish the month (until {{endDate}})?",
+    "midCycleHint": "Enter the available amount you currently have for expenses until the end of the cycle",
+    "remainingAmount": "Remaining amount (€)",
+    "remainingAmountPlaceholder": "E.g.: 450",
+    "midCycleInfo": "💡 Your full budget (based on your income and expenses) will start automatically at the next cycle on {{nextCycleDate}}.",
     "errors": {
       "title": "Error",
       "invalidIncome": "Please enter a valid monthly income",
       "invalidCharges": "Please enter a valid charges amount",
       "invalidSavings": "Please enter a valid savings goal",
-      "invalidCycleDay": "Please enter a day between 1 and 31"
+      "invalidCycleDay": "Please enter a day between 1 and 31",
+      "invalidRemainingAmount": "Please enter a valid remaining amount"
     }
   },
   "onboarding": {

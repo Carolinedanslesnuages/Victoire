@@ -122,12 +122,19 @@
     "cycleStartDayPlaceholder": "Ex: 5",
     "saveButton": "Enregistrer",
     "cancel": "Retour",
+    "midCycleTitle": "Rattrapage du Cycle en Cours",
+    "midCycleQuestion": "Combien vous reste-t-il exactement pour finir le mois (jusqu'au {{endDate}}) ?",
+    "midCycleHint": "Entrez le montant disponible que vous avez actuellement pour vos dépenses jusqu'à la fin du cycle",
+    "remainingAmount": "Montant restant (€)",
+    "remainingAmountPlaceholder": "Ex: 450",
+    "midCycleInfo": "💡 Votre budget complet (basé sur vos revenus et charges) démarrera automatiquement lors du prochain cycle le {{nextCycleDate}}.",
     "errors": {
       "title": "Erreur",
       "invalidIncome": "Veuillez saisir un revenu mensuel valide",
       "invalidCharges": "Veuillez saisir un montant de charges valide",
       "invalidSavings": "Veuillez saisir un objectif d'épargne valide",
-      "invalidCycleDay": "Veuillez saisir un jour entre 1 et 31"
+      "invalidCycleDay": "Veuillez saisir un jour entre 1 et 31",
+      "invalidRemainingAmount": "Veuillez saisir un montant restant valide"
     }
   },
   "onboarding": {

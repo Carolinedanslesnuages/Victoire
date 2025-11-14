@@ -29,9 +29,12 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
   const [fixedCharges, setFixedCharges] = useState('');
   const [savingsGoal, setSavingsGoal] = useState('');
   const [cycleStartDay, setCycleStartDay] = useState('');
+  const [remainingAmount, setRemainingAmount] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [step, setStep] = useState<'budget' | 'avatar'>('budget');
+  const [step, setStep] = useState<'budget' | 'midCycle' | 'avatar'>('budget');
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarId>(DEFAULT_AVATAR);
+  const [isMidCycle, setIsMidCycle] = useState(false);
+  const [cycleEndDate, setCycleEndDate] = useState<Date | null>(null);
 
   // Pre-populate form fields when in edit mode
   useEffect(() => {
@@ -42,6 +45,35 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
       setCycleStartDay(existingProfile.cycleStartDay.toString());
     }
   }, [mode, existingProfile]);
+
+  // US 1.5.1: Detect if current date is after cycle start day
+  const checkIfMidCycle = (startDay: number): boolean => {
+    const today = new Date();
+    const currentDay = today.getDate();
+    
+    // If today is after the cycle start day, we're in the middle of a cycle
+    return currentDay > startDay;
+  };
+
+  const getCycleEndDate = (startDay: number): Date => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    
+    // The cycle ends the day before the next cycle start
+    const cycleEnd = new Date(year, month + 1, startDay - 1);
+    return cycleEnd;
+  };
+
+  const getNextCycleStartDate = (startDay: number): Date => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    
+    // Next cycle starts next month
+    const nextCycleStart = new Date(year, month + 1, startDay);
+    return nextCycleStart;
+  };
 
   const handleBudgetSubmit = () => {
     // Validation
@@ -70,13 +102,37 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
       return;
     }
 
-    // In edit mode, skip avatar selection and complete directly
+    // In edit mode, skip all other steps and complete directly
     if (mode === 'edit') {
       handleComplete();
     } else {
-      // Move to avatar selection for new profiles
-      setStep('avatar');
+      // US 1.5.1 & 1.5.2: Check if we're in mid-cycle
+      const midCycle = checkIfMidCycle(startDay);
+      setIsMidCycle(midCycle);
+      
+      if (midCycle) {
+        // Show mid-cycle screen
+        const endDate = getCycleEndDate(startDay);
+        setCycleEndDate(endDate);
+        setStep('midCycle');
+      } else {
+        // Move to avatar selection for new profiles at start of cycle
+        setStep('avatar');
+      }
     }
+  };
+
+  const handleMidCycleSubmit = () => {
+    // US 1.5.2: Validate remaining amount
+    const remaining = parseFloat(remainingAmount);
+    
+    if (isNaN(remaining) || remaining < 0) {
+      Alert.alert(i18n.t('configWizard.errors.title'), i18n.t('configWizard.errors.invalidRemainingAmount'));
+      return;
+    }
+    
+    // Move to avatar selection
+    setStep('avatar');
   };
 
   const handleComplete = async () => {
@@ -97,6 +153,14 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
       cycleStartDay: parseInt(cycleStartDay),
     };
 
+    // US 1.5.3: Add mid-cycle onboarding data if applicable
+    if (isMidCycle && cycleEndDate && remainingAmount) {
+      config.midCycleOnboarding = {
+        remainingAmount: parseFloat(remainingAmount),
+        cycleEndDate: cycleEndDate.toISOString(),
+      };
+    }
+
     // Include profile ID if editing
     if (mode === 'edit' && existingProfile) {
       (config as any).profileId = existingProfile.id;
@@ -108,6 +172,68 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
   const handleAvatarComplete = async () => {
     await handleComplete();
   };
+
+  // US 1.5.2: Mid-cycle catch-up screen
+  if (step === 'midCycle' && cycleEndDate) {
+    const endDateFormatted = cycleEndDate.toLocaleDateString(i18n.locale, { 
+      day: 'numeric', 
+      month: 'long' 
+    });
+    const nextCycleDate = getNextCycleStartDate(parseInt(cycleStartDay));
+    const nextCycleDateFormatted = nextCycleDate.toLocaleDateString(i18n.locale, { 
+      day: 'numeric', 
+      month: 'long' 
+    });
+
+    return (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <Text style={styles.title}>{i18n.t('configWizard.midCycleTitle')}</Text>
+          <Text style={styles.subtitle}>
+            {i18n.t('configWizard.midCycleQuestion', { endDate: endDateFormatted })}
+          </Text>
+          
+          <View style={styles.formSection}>
+            <Text style={styles.label}>{i18n.t('configWizard.remainingAmount')}</Text>
+            <Text style={styles.hint}>
+              {i18n.t('configWizard.midCycleHint')}
+            </Text>
+            <TextInput
+              style={[
+                styles.input,
+                focusedField === 'remaining' && styles.inputFocused,
+              ]}
+              placeholder={i18n.t('configWizard.remainingAmountPlaceholder')}
+              placeholderTextColor={colors.textDisabled}
+              keyboardType="decimal-pad"
+              value={remainingAmount}
+              onChangeText={setRemainingAmount}
+              onFocus={() => setFocusedField('remaining')}
+              onBlur={() => setFocusedField(null)}
+            />
+          </View>
+
+          {/* US 1.5.4: Information about full budget starting next cycle */}
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>
+              {i18n.t('configWizard.midCycleInfo', { nextCycleDate: nextCycleDateFormatted })}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleMidCycleSubmit}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.buttonText}>{i18n.t('configWizard.saveButton')}</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    );
+  }
 
   if (step === 'avatar') {
     return (
@@ -299,6 +425,19 @@ const styles = StyleSheet.create({
   inputFocused: {
     borderColor: colors.primary,
     borderWidth: 2,
+  },
+  infoBox: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+  },
+  infoText: {
+    fontSize: typography.fontSize.bodySmall,
+    color: colors.textSecondary,
+    lineHeight: typography.fontSize.bodySmall * 1.5,
   },
   button: {
     backgroundColor: colors.primary,

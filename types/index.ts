@@ -21,6 +21,10 @@ export interface BudgetProfile {
   savingsGoal: number;
   cycleStartDay: number;
   createdAt: string; // ISO date string
+  midCycleOnboarding?: {
+    remainingAmount: number; // Amount remaining for the first incomplete cycle
+    cycleEndDate: string; // ISO date string of when the first cycle ends
+  };
 }
 
 /**
@@ -34,6 +38,10 @@ export interface BudgetConfig {
   budgetName?: string; // Optional custom budget name
   isHouseholdBudget?: boolean; // True if this is a household/family budget
   householdName?: string; // Optional household name (e.g., "Foyer Dupont")
+  midCycleOnboarding?: {
+    remainingAmount: number; // Amount remaining for the first incomplete cycle
+    cycleEndDate: string; // ISO date string of when the first cycle ends
+  };
 }
 
 /**

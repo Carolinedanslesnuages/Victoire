@@ -127,6 +127,7 @@ function AppContent() {
         fixedCharges: config.fixedCharges,
         savingsGoal: config.savingsGoal,
         cycleStartDay: config.cycleStartDay,
+        midCycleOnboarding: config.midCycleOnboarding,
       });
       
       if (profile) {
@@ -203,7 +204,8 @@ function AppContent() {
           budgetProfile.savingsGoal,
           totalSpent,
           budgetProfile.cycleStartDay,
-          totalIncome
+          totalIncome,
+          budgetProfile.midCycleOnboarding
         );
         
         // US 11.2.1: Haptic feedback based on budget state
