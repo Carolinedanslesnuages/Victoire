@@ -188,7 +188,9 @@ export const updateMorningBudgetContent = async (): Promise<void> => {
       budgetConfig.fixedCharges,
       budgetConfig.savingsGoal,
       totalSpent,
-      budgetConfig.cycleStartDay
+      budgetConfig.cycleStartDay,
+      0,
+      budgetConfig.midCycleOnboarding
     );
 
     const [hours, minutes] = preferences.notificationSettings.morningBudgetTime.split(':').map(Number);

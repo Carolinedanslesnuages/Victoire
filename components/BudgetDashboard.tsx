@@ -205,7 +205,8 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
     profile.savingsGoal,
     totalSpent,
     profile.cycleStartDay,
-    totalIncome
+    totalIncome,
+    profile.midCycleOnboarding
   );
   const daysRemaining = getDaysRemainingInCycle(profile.cycleStartDay);
   const budgetStatus = calculateBudgetStatus(

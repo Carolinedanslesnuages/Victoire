@@ -253,7 +253,8 @@ export const useJoker = async (): Promise<boolean> => {
       config.savingsGoal,
       totalSpent,
       config.cycleStartDay,
-      totalIncome
+      totalIncome,
+      config.midCycleOnboarding
     );
 
     // Only allow joker if budget is negative but by less than 5€
@@ -308,7 +309,8 @@ export const canUseJoker = async (): Promise<boolean> => {
       config.savingsGoal,
       totalSpent,
       config.cycleStartDay,
-      totalIncome
+      totalIncome,
+      config.midCycleOnboarding
     );
 
     // Can use joker if budget is negative but by less than 5€

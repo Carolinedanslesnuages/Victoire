@@ -64,7 +64,8 @@ export async function updateWidgetData(): Promise<void> {
       profile.savingsGoal,
       totalSpent,
       profile.cycleStartDay,
-      totalIncome
+      totalIncome,
+      profile.midCycleOnboarding
     );
 
     // Get user's preferred currency
