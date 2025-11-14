@@ -19,12 +19,14 @@ import {
   deleteBudgetProfile,
 } from '../utils/storage';
 import { shareAchievement } from '../utils/sharing';
+import { useSubscription } from '../contexts/SubscriptionContext';
 
 interface ProfileScreenProps {
   onBudgetChange?: () => void;
 }
 
 export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
+  const { isPremium } = useSubscription();
   const [gamificationData, setGamificationData] = useState<GamificationData | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [canUseJokerNow, setCanUseJokerNow] = useState(false);
@@ -168,19 +170,23 @@ export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
     );
   };
 
-  const handleCreateHouseholdBudget = async () => {
-    const householdExists = profiles.some(p => p.type === 'household');
-    if (householdExists) {
+  const handleCreateNewBudget = async () => {
+    // Check budget limit for freemium users
+    if (!isPremium && profiles.length >= 1) {
       Alert.alert(
-        i18n.t('budgetSwitcher.householdExists'),
-        i18n.t('budgetSwitcher.householdExistsMessage')
+        i18n.t('budgetSwitcher.budgetLimitReached'),
+        i18n.t('budgetSwitcher.budgetLimitFreemium')
       );
       return;
     }
 
+    // Generate the next budget name
+    const budgetNumber = profiles.length + 1;
+    const budgetName = `Mon budget ${budgetNumber}`;
+
     Alert.alert(
-      i18n.t('budgetSwitcher.createHousehold'),
-      i18n.t('budgetSwitcher.createHouseholdMessage'),
+      i18n.t('budgetSwitcher.createNewBudget'),
+      i18n.t('budgetSwitcher.createNewBudgetMessage'),
       [
         {
           text: i18n.t('common.cancel'),
@@ -190,8 +196,8 @@ export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
           text: i18n.t('common.create'),
           onPress: async () => {
             const newProfile = await createBudgetProfile({
-              type: 'household',
-              name: i18n.t('budgetSwitcher.household'),
+              type: 'personal',
+              name: budgetName,
               monthlyIncome: 0,
               fixedCharges: 0,
               savingsGoal: 0,
@@ -202,7 +208,7 @@ export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
               await loadProfiles();
               Alert.alert(
                 i18n.t('budgetSwitcher.created'),
-                i18n.t('budgetSwitcher.householdCreated')
+                i18n.t('budgetSwitcher.budgetCreated')
               );
             }
           },
@@ -377,16 +383,14 @@ export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
               ))}
             </View>
 
-            {!profiles.some(p => p.type === 'household') && (
-              <TouchableOpacity
-                style={styles.createButton}
-                onPress={handleCreateHouseholdBudget}
-              >
-                <Text style={styles.createButtonText}>
-                  + {i18n.t('budgetSwitcher.createHousehold')}
-                </Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={styles.createButton}
+              onPress={handleCreateNewBudget}
+            >
+              <Text style={styles.createButtonText}>
+                + {i18n.t('budgetSwitcher.createNewBudget')}
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* Streak Section */}

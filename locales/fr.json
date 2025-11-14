@@ -520,6 +520,7 @@
     "created": "Budget créé",
     "householdCreated": "Votre budget Foyer a été créé avec succès ! Configurez-le dans les Paramètres.",
     "createNewBudget": "Créer un nouveau budget",
+    "createNewBudgetMessage": "Créez un nouveau budget pour organiser vos finances. Vous pourrez le renommer et le personnaliser après sa création.",
     "budgetCreated": "Votre nouveau budget a été créé avec succès ! Configurez-le dans les Paramètres.",
     "budgetLimitReached": "Limite atteinte",
     "budgetLimitFreemium": "En version gratuite, vous ne pouvez créer qu'un seul budget. Passez à la version Premium pour créer des budgets illimités.",

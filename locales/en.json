@@ -520,6 +520,7 @@
     "created": "Budget Created",
     "householdCreated": "Your Household budget has been successfully created! Configure it in Settings.",
     "createNewBudget": "Create New Budget",
+    "createNewBudgetMessage": "Create a new budget to organize your finances. You can rename and customize it after creation.",
     "budgetCreated": "Your new budget has been successfully created! Configure it in Settings.",
     "budgetLimitReached": "Limit Reached",
     "budgetLimitFreemium": "In the free version, you can only create one budget. Upgrade to Premium to create unlimited budgets.",
