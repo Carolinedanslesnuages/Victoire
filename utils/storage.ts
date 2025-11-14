@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BudgetConfig, BudgetProfile, Transaction, UserPreferences } from '../types';
+import { BudgetConfig, BudgetProfile, Transaction, UserPreferences, BonusPiggyBank } from '../types';
 import { getDefaultNotificationSettings } from './notifications';
 
 const BUDGET_CONFIG_KEY = '@pace_budget_config';
@@ -7,6 +7,7 @@ const TRANSACTIONS_KEY = '@pace_transactions';
 const USER_PREFERENCES_KEY = '@pace_user_preferences';
 const BUDGET_PROFILES_KEY = '@pace_budget_profiles';
 const ACTIVE_BUDGET_ID_KEY = '@pace_active_budget_id';
+const BONUS_PIGGY_BANK_KEY = '@pace_bonus_piggy_bank';
 
 /**
  * Save budget configuration to local storage
@@ -613,5 +614,123 @@ export const getTransactionsForBudget = async (
   } catch (error) {
     console.error('Error getting transactions for budget:', error);
     return [];
+  }
+};
+
+// =============================================================================
+// Bonus Piggy Bank Functions (Epic 10.4)
+// =============================================================================
+
+/**
+ * Get the bonus piggy bank data for a specific budget
+ * @param budgetId - Budget profile ID (optional, uses active if not provided)
+ * @returns Bonus piggy bank data or default values
+ */
+export const getBonusPiggyBank = async (budgetId?: string): Promise<BonusPiggyBank> => {
+  try {
+    const finalBudgetId = budgetId || await getActiveBudgetId() || 'personal-default';
+    const key = `${BONUS_PIGGY_BANK_KEY}_${finalBudgetId}`;
+    const jsonValue = await AsyncStorage.getItem(key);
+    
+    if (jsonValue != null) {
+      return JSON.parse(jsonValue);
+    }
+    
+    // Return default piggy bank
+    return {
+      amount: 0,
+      lastProcessedDate: '',
+      monthlyHistory: [],
+    };
+  } catch (error) {
+    console.error('Error getting bonus piggy bank:', error);
+    return {
+      amount: 0,
+      lastProcessedDate: '',
+      monthlyHistory: [],
+    };
+  }
+};
+
+/**
+ * Save the bonus piggy bank data for a specific budget
+ * @param piggyBank - Bonus piggy bank data
+ * @param budgetId - Budget profile ID (optional, uses active if not provided)
+ * @returns Success status
+ */
+export const saveBonusPiggyBank = async (
+  piggyBank: BonusPiggyBank,
+  budgetId?: string
+): Promise<boolean> => {
+  try {
+    const finalBudgetId = budgetId || await getActiveBudgetId() || 'personal-default';
+    const key = `${BONUS_PIGGY_BANK_KEY}_${finalBudgetId}`;
+    const jsonValue = JSON.stringify(piggyBank);
+    await AsyncStorage.setItem(key, jsonValue);
+    return true;
+  } catch (error) {
+    console.error('Error saving bonus piggy bank:', error);
+    return false;
+  }
+};
+
+/**
+ * Add amount to the bonus piggy bank
+ * @param amount - Amount to add to the piggy bank
+ * @param budgetId - Budget profile ID (optional, uses active if not provided)
+ * @returns Updated piggy bank or null on error
+ */
+export const addToBonusPiggyBank = async (
+  amount: number,
+  budgetId?: string
+): Promise<BonusPiggyBank | null> => {
+  try {
+    if (amount <= 0) return null;
+    
+    const piggyBank = await getBonusPiggyBank(budgetId);
+    const today = new Date();
+    const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+    
+    // Update amount
+    piggyBank.amount += amount;
+    piggyBank.lastProcessedDate = today.toISOString();
+    
+    // Update monthly history
+    const monthIndex = piggyBank.monthlyHistory.findIndex(h => h.month === currentMonth);
+    if (monthIndex >= 0) {
+      piggyBank.monthlyHistory[monthIndex].totalAccumulated += amount;
+    } else {
+      piggyBank.monthlyHistory.push({
+        month: currentMonth,
+        totalAccumulated: amount,
+      });
+    }
+    
+    const success = await saveBonusPiggyBank(piggyBank, budgetId);
+    return success ? piggyBank : null;
+  } catch (error) {
+    console.error('Error adding to bonus piggy bank:', error);
+    return null;
+  }
+};
+
+/**
+ * Break the piggy bank (reset to zero)
+ * @param budgetId - Budget profile ID (optional, uses active if not provided)
+ * @returns The amount that was in the piggy bank before breaking it
+ */
+export const breakBonusPiggyBank = async (budgetId?: string): Promise<number> => {
+  try {
+    const piggyBank = await getBonusPiggyBank(budgetId);
+    const amount = piggyBank.amount;
+    
+    // Reset the piggy bank
+    piggyBank.amount = 0;
+    await saveBonusPiggyBank(piggyBank, budgetId);
+    
+    return amount;
+  } catch (error) {
+    console.error('Error breaking bonus piggy bank:', error);
+    return 0;
   }
 };

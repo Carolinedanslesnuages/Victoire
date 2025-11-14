@@ -173,3 +173,15 @@ export interface GamificationData {
     totalCyclesCompleted: number; // Total number of completed cycles
   };
 }
+
+/**
+ * Bonus Piggy Bank interface - accumulates unspent daily budget
+ */
+export interface BonusPiggyBank {
+  amount: number; // Current accumulated bonus amount
+  lastProcessedDate: string; // ISO date string of last day processed (to avoid double-processing)
+  monthlyHistory: {
+    month: string; // Format: YYYY-MM
+    totalAccumulated: number; // Total bonus accumulated in this month
+  }[];
+}

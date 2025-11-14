@@ -205,6 +205,20 @@
       "orSave": "Vous pouvez aussi choisir d'épargner ce montant !",
       "potentialSavings": "Économies potentielles",
       "close": "Super !"
+    },
+    "bonusPiggyBank": {
+      "title": "Cagnotte Bonus",
+      "displayLabel": "🎉 {{amount}} de bonus ce mois-ci !",
+      "emptyLabel": "Aucune cagnotte bonus pour l'instant",
+      "description": "Votre argent non dépensé s'accumule ici",
+      "breakButton": "🔨 Casser la tirelire",
+      "breakModalTitle": "Casser la Cagnotte Bonus",
+      "breakModalMessage": "Vous avez accumulé {{amount}} dans votre cagnotte bonus ce mois-ci !\n\nVoulez-vous l'utiliser pour un achat plaisir ? Cela réinitialisera la cagnotte à zéro sans impacter votre budget de base.",
+      "breakConfirm": "Oui, utiliser la cagnotte",
+      "breakCancel": "Annuler",
+      "breakSuccess": "Cagnotte utilisée ! Profitez bien de votre achat plaisir ! 🎉",
+      "howItWorks": "Comment ça marche ?",
+      "howItWorksText": "Chaque jour où vous ne dépensez rien, votre budget quotidien est automatiquement transféré dans cette cagnotte. Accumulez et cassez-la quand vous voulez vous faire plaisir !"
     }
   },
   "addExpense": {
