@@ -111,8 +111,15 @@
   "configWizard": {
     "title": "Budget Configuration",
     "subtitle": "Define your budget framework to get started",
+    "cycleMode": "Budget Cycle Mode",
+    "cycleModeMonthly": "Monthly (Recurring)",
+    "cycleModeCustom": "Custom (Flexible)",
+    "cycleModeHint": "Choose how you want to manage your budget",
     "monthlyIncome": "Monthly net income (€)",
     "monthlyIncomePlaceholder": "E.g.: 2500",
+    "budgetAvailable": "Budget available for this period (€)",
+    "budgetAvailablePlaceholder": "E.g.: 800",
+    "budgetAvailableHint": "The total amount you have to manage during this period",
     "fixedCharges": "Total fixed charges (€)",
     "fixedChargesPlaceholder": "E.g.: 1200",
     "savingsGoal": "Savings goal (€)",
@@ -120,6 +127,9 @@
     "cycleStartDay": "Budget cycle start day (1-31)",
     "cycleStartDayHint": "The day of the month you receive your salary",
     "cycleStartDayPlaceholder": "E.g.: 5",
+    "customStartDate": "Period start date",
+    "customEndDate": "Period end date (Next income)",
+    "customEndDateHint": "The date you'll receive your next income",
     "saveButton": "Save",
     "cancel": "Back",
     "midCycleTitle": "Mid-Cycle Catch-up",
@@ -131,10 +141,13 @@
     "errors": {
       "title": "Error",
       "invalidIncome": "Please enter a valid monthly income",
+      "invalidBudget": "Please enter a valid budget amount",
       "invalidCharges": "Please enter a valid charges amount",
       "invalidSavings": "Please enter a valid savings goal",
       "invalidCycleDay": "Please enter a day between 1 and 31",
-      "invalidRemainingAmount": "Please enter a valid remaining amount"
+      "invalidRemainingAmount": "Please enter a valid remaining amount",
+      "invalidCustomDates": "Please select both start and end dates",
+      "invalidDateRange": "End date must be after start date"
     }
   },
   "onboarding": {
