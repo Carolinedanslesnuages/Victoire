@@ -34,7 +34,7 @@ describe('AddExpenseModal Component Tests', () => {
     });
 
     it('should render all required input fields', () => {
-      const { getByPlaceholderText, getAllByText } = render(
+      const { getByPlaceholderText } = render(
         <AddExpenseModal
           visible={true}
           onClose={mockOnClose}
@@ -74,7 +74,7 @@ describe('AddExpenseModal Component Tests', () => {
 
   describe('Form Input and Validation', () => {
     it('should update amount input when user types', () => {
-      const { getByPlaceholderText, getAllByText } = render(
+      const { getByPlaceholderText } = render(
         <AddExpenseModal
           visible={true}
           onClose={mockOnClose}
@@ -89,7 +89,7 @@ describe('AddExpenseModal Component Tests', () => {
     });
 
     it('should update description input when user types', () => {
-      const { getByPlaceholderText, getAllByText } = render(
+      const { getByPlaceholderText } = render(
         <AddExpenseModal
           visible={true}
           onClose={mockOnClose}
@@ -104,7 +104,7 @@ describe('AddExpenseModal Component Tests', () => {
     });
 
     it('should update category input when user types', () => {
-      const { getByPlaceholderText, getAllByText } = render(
+      const { getByPlaceholderText } = render(
         <AddExpenseModal
           visible={true}
           onClose={mockOnClose}
@@ -334,7 +334,7 @@ describe('AddExpenseModal Component Tests', () => {
     it('should display custom category chips when provided', () => {
       const customCategories = ['Alimentation', 'Transport', 'Loisirs'];
 
-      const { getAllByText } = render(
+      const { getByText } = render(
         <AddExpenseModal
           visible={true}
           onClose={mockOnClose}

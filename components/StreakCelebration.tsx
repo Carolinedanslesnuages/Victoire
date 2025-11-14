@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Modal, View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
-import { colors, typography, spacing, borderRadius } from '../constants/theme';
+import { Modal, View, Text, StyleSheet, Animated } from 'react-native';
+import { colors, typography, spacing } from '../constants/theme';
 import i18n from '../utils/i18n';
 
 interface StreakCelebrationProps {
@@ -8,8 +8,6 @@ interface StreakCelebrationProps {
   streakCount: number;
   onComplete: () => void;
 }
-
-const { width } = Dimensions.get('window');
 
 export default function StreakCelebration({ visible, streakCount, onComplete }: StreakCelebrationProps) {
   const scaleAnim = useRef(new Animated.Value(0)).current;
