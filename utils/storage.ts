@@ -290,16 +290,18 @@ export const getTransactionsForPreviousCycleSameDay = async (
 };
 
 /**
- * Reset all application data (budget config, transactions, and preferences)
+ * Reset all application data (complete factory reset)
+ * Removes all keys starting with @pace_ prefix
  * @returns Success status
  */
 export const resetAllData = async (): Promise<boolean> => {
   try {
-    await AsyncStorage.multiRemove([
-      BUDGET_CONFIG_KEY,
-      TRANSACTIONS_KEY,
-      USER_PREFERENCES_KEY,
-    ]);
+    // Get all keys from AsyncStorage
+    const allKeys = await AsyncStorage.getAllKeys();
+    // Filter keys that start with @pace_ prefix
+    const keysToRemove = allKeys.filter(key => key.startsWith('@pace_'));
+    // Remove all application keys
+    await AsyncStorage.multiRemove(keysToRemove);
     return true;
   } catch (error) {
     console.error('Error resetting all data:', error);
