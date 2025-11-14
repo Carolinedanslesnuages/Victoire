@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     marginHorizontal: spacing.md,
     marginBottom: spacing.md,
-    ...elevation.small,
+    ...elevation.low,
     borderWidth: 2,
     borderColor: colors.success,
   },
@@ -79,18 +79,18 @@ const styles = StyleSheet.create({
     marginRight: spacing.xs,
   },
   title: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.bold,
-    color: colors.text,
+    fontSize: typography.fontSize.h4,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
   },
   amount: {
-    fontSize: typography.sizes.xxxl,
-    fontWeight: typography.weights.bold,
+    fontSize: 32,
+    fontWeight: typography.fontWeight.bold,
     color: colors.success,
     marginBottom: spacing.xs,
   },
   description: {
-    fontSize: typography.sizes.sm,
+    fontSize: typography.fontSize.bodySmall,
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.md,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: typography.sizes.md,
-    fontWeight: typography.weights.semibold,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
   },
 });

@@ -4,7 +4,7 @@
  */
 
 import { BudgetProfile } from '../types';
-import { calculateDailyBudget, getDaysRemainingInCycle } from './budgetCalculations';
+import { getDaysRemainingInCycle } from './budgetCalculations';
 import { getTransactionsForBudget, getBonusPiggyBank, addToBonusPiggyBank } from './storage';
 
 /**

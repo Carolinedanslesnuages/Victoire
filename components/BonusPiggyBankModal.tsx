@@ -91,14 +91,14 @@ const styles = StyleSheet.create({
     ...elevation.medium,
   },
   modalTitle: {
-    fontSize: typography.sizes.xxl,
-    fontWeight: typography.weights.bold,
-    color: colors.text,
+    fontSize: typography.fontSize.h3,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
     marginBottom: spacing.md,
     textAlign: 'center',
   },
   modalMessage: {
-    fontSize: typography.sizes.md,
+    fontSize: typography.fontSize.body,
     color: colors.textSecondary,
     marginBottom: spacing.lg,
     lineHeight: 24,
@@ -113,13 +113,13 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.primary,
   },
   infoTitle: {
-    fontSize: typography.sizes.md,
-    fontWeight: typography.weights.semibold,
-    color: colors.text,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   infoText: {
-    fontSize: typography.sizes.sm,
+    fontSize: typography.fontSize.bodySmall,
     color: colors.textSecondary,
     lineHeight: 20,
   },
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
   },
   breakButtonText: {
     color: '#FFFFFF',
-    fontSize: typography.sizes.md,
-    fontWeight: typography.weights.semibold,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
   },
   cancelButton: {
     backgroundColor: colors.surface,
@@ -146,8 +146,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   cancelButtonText: {
-    color: colors.text,
-    fontSize: typography.sizes.md,
-    fontWeight: typography.weights.medium,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.medium,
   },
 });
