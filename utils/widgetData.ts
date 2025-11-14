@@ -58,6 +58,7 @@ export async function updateWidgetData(): Promise<void> {
     }, 0);
 
     // Calculate daily budget (Reste à Vivre)
+    const cycleMode = profile.cycleMode || 'monthly';
     const dailyBudget = calculateDailyBudget(
       profile.monthlyIncome,
       profile.fixedCharges,
@@ -65,7 +66,10 @@ export async function updateWidgetData(): Promise<void> {
       totalSpent,
       profile.cycleStartDay,
       totalIncome,
-      profile.midCycleOnboarding
+      profile.midCycleOnboarding,
+      cycleMode,
+      profile.customStartDate,
+      profile.customEndDate
     );
 
     // Get user's preferred currency
