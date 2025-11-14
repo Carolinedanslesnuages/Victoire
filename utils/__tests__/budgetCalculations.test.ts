@@ -375,4 +375,177 @@ describe('budgetCalculations', () => {
       jest.useRealTimers();
     });
   });
+
+  describe('calculateDailyBudget with Mid-Cycle Onboarding', () => {
+    it('should use remaining amount from mid-cycle onboarding during first cycle', () => {
+      // User onboards on Jan 20, cycle started on Jan 5
+      const mockDate = new Date(2024, 0, 20); // January 20, 2024
+      jest.useFakeTimers();
+      jest.setSystemTime(mockDate);
+
+      const midCycleOnboarding = {
+        remainingAmount: 450,
+        cycleEndDate: new Date(2024, 1, 4).toISOString(), // Feb 4 (day before cycle restarts)
+      };
+
+      const dailyBudget = calculateDailyBudget(
+        3000, // monthlyIncome
+        1500, // fixedCharges
+        500,  // savingsGoal
+        0,    // totalSpent (no spending yet)
+        5,    // cycleStartDay
+        0,    // totalIncome
+        midCycleOnboarding
+      );
+
+      // Should use the remaining amount (450) divided by days remaining
+      const daysRemaining = getDaysRemainingInCycle(5);
+      const expectedDailyBudget = 450 / daysRemaining;
+      expect(dailyBudget).toBeCloseTo(expectedDailyBudget, 2);
+
+      jest.useRealTimers();
+    });
+
+    it('should adjust remaining amount based on spending during first cycle', () => {
+      const mockDate = new Date(2024, 0, 20);
+      jest.useFakeTimers();
+      jest.setSystemTime(mockDate);
+
+      const midCycleOnboarding = {
+        remainingAmount: 450,
+        cycleEndDate: new Date(2024, 1, 4).toISOString(),
+      };
+
+      const dailyBudget = calculateDailyBudget(
+        3000, // monthlyIncome
+        1500, // fixedCharges
+        500,  // savingsGoal
+        100,  // totalSpent (100 spent already)
+        5,    // cycleStartDay
+        0,    // totalIncome
+        midCycleOnboarding
+      );
+
+      // Should use (remaining - spent) / days remaining
+      const daysRemaining = getDaysRemainingInCycle(5);
+      const expectedDailyBudget = (450 - 100) / daysRemaining;
+      expect(dailyBudget).toBeCloseTo(expectedDailyBudget, 2);
+
+      jest.useRealTimers();
+    });
+
+    it('should consider income during first cycle with mid-cycle onboarding', () => {
+      const mockDate = new Date(2024, 0, 20);
+      jest.useFakeTimers();
+      jest.setSystemTime(mockDate);
+
+      const midCycleOnboarding = {
+        remainingAmount: 450,
+        cycleEndDate: new Date(2024, 1, 4).toISOString(),
+      };
+
+      const dailyBudget = calculateDailyBudget(
+        3000, // monthlyIncome
+        1500, // fixedCharges
+        500,  // savingsGoal
+        100,  // totalSpent
+        5,    // cycleStartDay
+        50,   // totalIncome (received 50 extra)
+        midCycleOnboarding
+      );
+
+      // Should use (remaining - spent + income) / days remaining
+      const daysRemaining = getDaysRemainingInCycle(5);
+      const expectedDailyBudget = (450 - 100 + 50) / daysRemaining;
+      expect(dailyBudget).toBeCloseTo(expectedDailyBudget, 2);
+
+      jest.useRealTimers();
+    });
+
+    it('should revert to normal calculation after first cycle ends', () => {
+      // User is now in the next cycle (after Feb 5)
+      const mockDate = new Date(2024, 1, 10); // February 10, 2024
+      jest.useFakeTimers();
+      jest.setSystemTime(mockDate);
+
+      const midCycleOnboarding = {
+        remainingAmount: 450,
+        cycleEndDate: new Date(2024, 1, 4).toISOString(), // Cycle ended on Feb 4
+      };
+
+      const dailyBudget = calculateDailyBudget(
+        3000, // monthlyIncome
+        1500, // fixedCharges
+        500,  // savingsGoal
+        100,  // totalSpent in new cycle
+        5,    // cycleStartDay
+        0,    // totalIncome
+        midCycleOnboarding
+      );
+
+      // Should use normal calculation now
+      const resteAVivre = 3000 - 1500 - 500;
+      const remainingBudget = resteAVivre - 100;
+      const daysRemaining = getDaysRemainingInCycle(5);
+      const expectedDailyBudget = remainingBudget / daysRemaining;
+      expect(dailyBudget).toBeCloseTo(expectedDailyBudget, 2);
+
+      jest.useRealTimers();
+    });
+
+    it('should handle normal calculation when no mid-cycle data provided', () => {
+      const mockDate = new Date(2024, 0, 15);
+      jest.useFakeTimers();
+      jest.setSystemTime(mockDate);
+
+      const dailyBudget = calculateDailyBudget(
+        3000, // monthlyIncome
+        1500, // fixedCharges
+        500,  // savingsGoal
+        200,  // totalSpent
+        10,   // cycleStartDay
+        0,    // totalIncome
+        undefined // No mid-cycle onboarding
+      );
+
+      // Should use normal calculation
+      const resteAVivre = 3000 - 1500 - 500;
+      const remainingBudget = resteAVivre - 200;
+      const daysRemaining = getDaysRemainingInCycle(10);
+      const expectedDailyBudget = remainingBudget / daysRemaining;
+      expect(dailyBudget).toBeCloseTo(expectedDailyBudget, 2);
+
+      jest.useRealTimers();
+    });
+
+    it('should handle edge case: no days remaining in first cycle', () => {
+      // On the last day of the mid-cycle period, early in the morning
+      const mockDate = new Date(2024, 1, 4, 6, 0); // Feb 4, 2024 at 6 AM
+      jest.useFakeTimers();
+      jest.setSystemTime(mockDate);
+
+      const midCycleOnboarding = {
+        remainingAmount: 450,
+        cycleEndDate: new Date(2024, 1, 4, 23, 59).toISOString(), // End of Feb 4
+      };
+
+      const dailyBudget = calculateDailyBudget(
+        3000, // monthlyIncome
+        1500, // fixedCharges
+        500,  // savingsGoal
+        100,  // totalSpent
+        5,    // cycleStartDay
+        0,    // totalIncome
+        midCycleOnboarding
+      );
+
+      // Should return the remaining budget (not divide by zero)
+      // Since we're on the last day with getDaysRemainingInCycle returning 0 or 1,
+      // the function should return the adjusted remaining amount
+      expect(dailyBudget).toBeGreaterThan(0);
+      expect(dailyBudget).toBeLessThanOrEqual(450 - 100);
+
+      jest.useRealTimers();
+    });
+  });
 });
