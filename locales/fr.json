@@ -130,6 +130,40 @@
       "invalidCycleDay": "Veuillez saisir un jour entre 1 et 31"
     }
   },
+  "onboarding": {
+    "skip": "Passer",
+    "next": "Suivant",
+    "start": "Commencer",
+    "slide1": {
+      "title": "Ne regardez plus votre compte en banque",
+      "description": "Découvrez votre Reste à Vivre Quotidien : la seule chose dont vous avez besoin pour maîtriser votre budget sans stress."
+    },
+    "slide2": {
+      "title": "Une boussole financière simple",
+      "description": "Chaque matin, PACE calcule ce que vous pouvez dépenser aujourd'hui. Plus besoin de vous inquiéter du reste du mois."
+    },
+    "slide3": {
+      "title": "Gardez le cap jour après jour",
+      "description": "Enregistrez vos dépenses, suivez votre progression, et atteignez vos objectifs d'épargne sans effort."
+    }
+  },
+  "tooltips": {
+    "skip": "Passer",
+    "next": "Suivant",
+    "done": "Compris !",
+    "dailyBudget": {
+      "title": "Votre boussole du jour 🧭",
+      "description": "C'est le montant que vous pouvez dépenser aujourd'hui sans compromettre votre budget mensuel."
+    },
+    "addExpense": {
+      "title": "Enregistrez vos dépenses",
+      "description": "Appuyez sur le bouton '+' pour noter rapidement chaque dépense et garder votre budget à jour."
+    },
+    "history": {
+      "title": "Suivez votre progression",
+      "description": "Consultez l'historique de vos transactions et vos statistiques pour voir comment vous gérez votre budget."
+    }
+  },
   "dashboard": {
     "title": "Mon Budget PACE",
     "cycleSubtitle": "Cycle du {{day}} de chaque mois",

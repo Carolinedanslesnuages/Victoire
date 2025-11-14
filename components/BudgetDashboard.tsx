@@ -8,6 +8,7 @@ import ZeroSpendingModal from './ZeroSpendingModal';
 import BudgetSwitcher from './BudgetSwitcher';
 import BonusPiggyBankDisplay from './BonusPiggyBankDisplay';
 import BonusPiggyBankModal from './BonusPiggyBankModal';
+import TooltipOverlay from './TooltipOverlay';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -21,6 +22,8 @@ import {
   getTransactionsForBudget,
   getBonusPiggyBank,
   breakBonusPiggyBank,
+  hasCompletedOnboardingTooltips,
+  markOnboardingTooltipsCompleted,
 } from '../utils/storage';
 import {
   calculateCategorySpending,
@@ -71,13 +74,30 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
   });
   const [showBonusPiggyBankModal, setShowBonusPiggyBankModal] = useState(false);
   const [monthlyBonus, setMonthlyBonus] = useState(0);
+  const [showTooltips, setShowTooltips] = useState(false);
 
   useEffect(() => {
     loadTransactions();
     loadPreferences();
     loadStreak();
     loadBonusPiggyBank();
+    checkTooltips();
   }, [profile.id, profile.cycleStartDay, refreshKey]);
+
+  const checkTooltips = async () => {
+    const tooltipsCompleted = await hasCompletedOnboardingTooltips();
+    if (!tooltipsCompleted) {
+      // Small delay to let the dashboard render first
+      setTimeout(() => {
+        setShowTooltips(true);
+      }, 1000);
+    }
+  };
+
+  const handleTooltipsComplete = async () => {
+    await markOnboardingTooltipsCompleted();
+    setShowTooltips(false);
+  };
 
   const loadPreferences = async () => {
     const prefs = await loadUserPreferences();
@@ -310,6 +330,12 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
             onBudgetChange();
           }
         }}
+      />
+
+      {/* Onboarding Tooltips Overlay */}
+      <TooltipOverlay
+        visible={showTooltips}
+        onComplete={handleTooltipsComplete}
       />
 
       <ScrollView

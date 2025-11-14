@@ -130,6 +130,40 @@
       "invalidCycleDay": "Please enter a day between 1 and 31"
     }
   },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Get Started",
+    "slide1": {
+      "title": "Stop checking your bank account",
+      "description": "Discover your Daily Living Budget: the only thing you need to master your finances without stress."
+    },
+    "slide2": {
+      "title": "A simple financial compass",
+      "description": "Every morning, PACE calculates what you can spend today. No more worrying about the rest of the month."
+    },
+    "slide3": {
+      "title": "Stay on track day by day",
+      "description": "Record your expenses, track your progress, and reach your savings goals effortlessly."
+    }
+  },
+  "tooltips": {
+    "skip": "Skip",
+    "next": "Next",
+    "done": "Got it!",
+    "dailyBudget": {
+      "title": "Your daily compass 🧭",
+      "description": "This is the amount you can spend today without compromising your monthly budget."
+    },
+    "addExpense": {
+      "title": "Record your expenses",
+      "description": "Tap the '+' button to quickly log each expense and keep your budget up to date."
+    },
+    "history": {
+      "title": "Track your progress",
+      "description": "Check the history of your transactions and statistics to see how you're managing your budget."
+    }
+  },
   "dashboard": {
     "title": "My PACE Budget",
     "cycleSubtitle": "Cycle from the {{day}} of each month",
