@@ -205,6 +205,20 @@
       "orSave": "You can also choose to save this amount!",
       "potentialSavings": "Potential savings",
       "close": "Great!"
+    },
+    "bonusPiggyBank": {
+      "title": "Bonus Pot",
+      "displayLabel": "🎉 {{amount}} bonus this month!",
+      "emptyLabel": "No bonus pot yet",
+      "description": "Your unspent money accumulates here",
+      "breakButton": "🔨 Break the pot",
+      "breakModalTitle": "Break the Bonus Pot",
+      "breakModalMessage": "You've accumulated {{amount}} in your bonus pot this month!\n\nDo you want to use it for a pleasure purchase? This will reset the pot to zero without impacting your base budget.",
+      "breakConfirm": "Yes, use the pot",
+      "breakCancel": "Cancel",
+      "breakSuccess": "Pot used! Enjoy your pleasure purchase! 🎉",
+      "howItWorks": "How it works?",
+      "howItWorksText": "Every day you don't spend anything, your daily budget is automatically transferred to this pot. Accumulate and break it when you want to treat yourself!"
     }
   },
   "addExpense": {

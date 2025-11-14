@@ -6,6 +6,8 @@ import MascotDisplay from './MascotDisplay';
 import BadgeUnlockModal from './BadgeUnlockModal';
 import ZeroSpendingModal from './ZeroSpendingModal';
 import BudgetSwitcher from './BudgetSwitcher';
+import BonusPiggyBankDisplay from './BonusPiggyBankDisplay';
+import BonusPiggyBankModal from './BonusPiggyBankModal';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -17,6 +19,8 @@ import {
   deleteTransaction,
   loadUserPreferences,
   getTransactionsForBudget,
+  getBonusPiggyBank,
+  breakBonusPiggyBank,
 } from '../utils/storage';
 import {
   calculateCategorySpending,
@@ -24,13 +28,14 @@ import {
   compareMonthlySpending,
 } from '../utils/analytics';
 import { getMascotState } from '../utils/mascot';
-import { BudgetProfile, Transaction, UserPreferences, StreakInfo, Badge } from '../types';
+import { BudgetProfile, Transaction, UserPreferences, StreakInfo, Badge, BonusPiggyBank } from '../types';
 import { colors, typography, spacing, borderRadius, elevation, opacity } from '../constants/theme';
 import i18n from '../utils/i18n';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
 import { calculateStreak } from '../utils/streaks';
 import { checkAndUnlockBadges, unlockBadge } from '../utils/gamification';
 import { getAvatarEmoji } from '../constants/avatars';
+import { processUnspentDailyBudget, getCurrentMonthBonus } from '../utils/bonusPiggyBank';
 
 interface BudgetDashboardProps {
   profile: BudgetProfile;
@@ -59,11 +64,19 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
   const [showBadgeModal, setShowBadgeModal] = useState(false);
   const [showZeroSpendingModal, setShowZeroSpendingModal] = useState(false);
   const [showBudgetSwitcher, setShowBudgetSwitcher] = useState(false);
+  const [bonusPiggyBank, setBonusPiggyBank] = useState<BonusPiggyBank>({
+    amount: 0,
+    lastProcessedDate: '',
+    monthlyHistory: [],
+  });
+  const [showBonusPiggyBankModal, setShowBonusPiggyBankModal] = useState(false);
+  const [monthlyBonus, setMonthlyBonus] = useState(0);
 
   useEffect(() => {
     loadTransactions();
     loadPreferences();
     loadStreak();
+    loadBonusPiggyBank();
   }, [profile.id, profile.cycleStartDay, refreshKey]);
 
   const loadPreferences = async () => {
@@ -82,6 +95,19 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
       setUnlockedBadge(newBadges[0]);
       setShowBadgeModal(true);
     }
+  };
+
+  const loadBonusPiggyBank = async () => {
+    // Process any unspent budget from yesterday
+    await processUnspentDailyBudget(profile);
+    
+    // Load the current piggy bank state
+    const piggyBank = await getBonusPiggyBank(profile.id);
+    setBonusPiggyBank(piggyBank);
+    
+    // Load current month's bonus
+    const currentBonus = await getCurrentMonthBonus(profile.id);
+    setMonthlyBonus(currentBonus);
   };
 
   const loadTransactions = async () => {
@@ -107,6 +133,7 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
     await loadTransactions();
     await loadPreferences();
     await loadStreak();
+    await loadBonusPiggyBank();
     setRefreshing(false);
   };
 
@@ -206,6 +233,29 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
     setShowZeroSpendingModal(true);
   };
 
+  // Handler for bonus piggy bank
+  const handleBonusPiggyBankClick = () => {
+    if (bonusPiggyBank.amount > 0) {
+      setShowBonusPiggyBankModal(true);
+    }
+  };
+
+  const handleBreakPiggyBank = async () => {
+    const amount = await breakBonusPiggyBank(profile.id);
+    setShowBonusPiggyBankModal(false);
+    
+    if (amount > 0) {
+      Alert.alert(
+        '🎉',
+        i18n.t('dashboard.bonusPiggyBank.breakSuccess'),
+        [{ text: 'OK' }]
+      );
+      
+      // Reload piggy bank state
+      await loadBonusPiggyBank();
+    }
+  };
+
   // Check if user has spent anything today
   const hasSpentToday = () => {
     const today = new Date().toDateString();
@@ -239,6 +289,15 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
         newDailyBudget={dailyBudget}
         daysRemaining={daysRemaining}
         formatCurrency={formatCurrency}
+      />
+
+      {/* Bonus Piggy Bank Modal */}
+      <BonusPiggyBankModal
+        visible={showBonusPiggyBankModal}
+        amount={bonusPiggyBank.amount}
+        formatCurrency={formatCurrency}
+        onBreak={handleBreakPiggyBank}
+        onClose={() => setShowBonusPiggyBankModal(false)}
       />
 
       {/* Budget Switcher Modal - shown when avatar is clicked */}
@@ -343,6 +402,14 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
             </Text>
           </TouchableOpacity>
         )}
+
+        {/* Bonus Piggy Bank Display - Show if there's accumulated bonus */}
+        <BonusPiggyBankDisplay
+          amount={bonusPiggyBank.amount}
+          monthlyBonus={monthlyBonus}
+          formatCurrency={formatCurrency}
+          onPress={handleBonusPiggyBankClick}
+        />
 
         {/* Feature 2.2: Monthly Health Indicator */}
         <View style={styles.monthlyHealthCard}>
