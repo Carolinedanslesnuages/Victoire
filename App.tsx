@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import ConfigWizard from './components/ConfigWizard';
+import OnboardingCarousel from './components/OnboardingCarousel';
 import MainTabNavigator from './navigation/MainTabNavigator';
 import AddExpenseModal from './components/AddExpenseModal';
 import StreakCelebration from './components/StreakCelebration';
@@ -16,7 +17,9 @@ import {
   getActiveBudgetProfile,
   createBudgetProfile,
   updateBudgetProfile,
-  getTransactionsForBudget
+  getTransactionsForBudget,
+  hasCompletedOnboardingCarousel,
+  markOnboardingCarouselCompleted,
 } from './utils/storage';
 import { BudgetConfig, BudgetProfile, Transaction, UserPreferences } from './types';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
@@ -33,6 +36,7 @@ function AppContent() {
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [budgetProfile, setBudgetProfile] = useState<BudgetProfile | null>(null);
+  const [showOnboardingCarousel, setShowOnboardingCarousel] = useState(false);
   const [isAddExpenseVisible, setIsAddExpenseVisible] = useState(false);
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     currency: 'EUR',
@@ -53,6 +57,9 @@ function AppContent() {
   }, []);
 
   const loadProfile = async () => {
+    // Check if onboarding carousel should be shown
+    const carouselCompleted = await hasCompletedOnboardingCarousel();
+    
     // Try to load the active budget profile
     const profile = await getActiveBudgetProfile();
     
@@ -70,6 +77,9 @@ function AppContent() {
           setBudgetProfile(profiles[0]);
           await updateWidgetData();
         }
+      } else if (!carouselCompleted) {
+        // New user - show onboarding carousel
+        setShowOnboardingCarousel(true);
       }
     }
     
@@ -218,6 +228,11 @@ function AppContent() {
     }
   };
 
+  const handleOnboardingCarouselComplete = async () => {
+    await markOnboardingCarouselCompleted();
+    setShowOnboardingCarousel(false);
+  };
+
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -230,7 +245,9 @@ function AppContent() {
     <SubscriptionProvider>
       <NavigationContainer>
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-          {budgetProfile ? (
+          {showOnboardingCarousel ? (
+            <OnboardingCarousel onComplete={handleOnboardingCarouselComplete} />
+          ) : budgetProfile ? (
             <>
               <MainTabNavigator
                 budgetProfile={budgetProfile}

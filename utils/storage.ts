@@ -734,3 +734,66 @@ export const breakBonusPiggyBank = async (budgetId?: string): Promise<number> =>
     return 0;
   }
 };
+
+// =============================================================================
+// Onboarding State Functions (Epic 19)
+// =============================================================================
+
+const ONBOARDING_CAROUSEL_KEY = '@pace_onboarding_carousel_completed';
+const ONBOARDING_TOOLTIPS_KEY = '@pace_onboarding_tooltips_completed';
+
+/**
+ * Check if the user has completed the onboarding carousel
+ * @returns True if carousel has been completed
+ */
+export const hasCompletedOnboardingCarousel = async (): Promise<boolean> => {
+  try {
+    const value = await AsyncStorage.getItem(ONBOARDING_CAROUSEL_KEY);
+    return value === 'true';
+  } catch (error) {
+    console.error('Error checking onboarding carousel status:', error);
+    return false;
+  }
+};
+
+/**
+ * Mark the onboarding carousel as completed
+ * @returns Success status
+ */
+export const markOnboardingCarouselCompleted = async (): Promise<boolean> => {
+  try {
+    await AsyncStorage.setItem(ONBOARDING_CAROUSEL_KEY, 'true');
+    return true;
+  } catch (error) {
+    console.error('Error marking onboarding carousel as completed:', error);
+    return false;
+  }
+};
+
+/**
+ * Check if the user has completed the onboarding tooltips
+ * @returns True if tooltips have been completed
+ */
+export const hasCompletedOnboardingTooltips = async (): Promise<boolean> => {
+  try {
+    const value = await AsyncStorage.getItem(ONBOARDING_TOOLTIPS_KEY);
+    return value === 'true';
+  } catch (error) {
+    console.error('Error checking onboarding tooltips status:', error);
+    return false;
+  }
+};
+
+/**
+ * Mark the onboarding tooltips as completed
+ * @returns Success status
+ */
+export const markOnboardingTooltipsCompleted = async (): Promise<boolean> => {
+  try {
+    await AsyncStorage.setItem(ONBOARDING_TOOLTIPS_KEY, 'true');
+    return true;
+  } catch (error) {
+    console.error('Error marking onboarding tooltips as completed:', error);
+    return false;
+  }
+};
