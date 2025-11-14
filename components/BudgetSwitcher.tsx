@@ -27,9 +27,11 @@ import i18n from '../utils/i18n';
 interface BudgetSwitcherProps {
   onBudgetChange: () => void;
   navigation?: any; // Navigation object (not used in current implementation)
+  visible?: boolean; // Optional: Control modal visibility externally
+  onClose?: () => void; // Optional: Called when modal should close
 }
 
-export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) {
+export default function BudgetSwitcher({ onBudgetChange, visible: externalVisible, onClose }: BudgetSwitcherProps) {
   const { colors: themeColors } = useTheme();
   const { isPremium } = useSubscription();
   const [profiles, setProfiles] = useState<BudgetProfile[]>([]);
@@ -38,6 +40,13 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [renamingProfile, setRenamingProfile] = useState<BudgetProfile | null>(null);
   const [newName, setNewName] = useState('');
+
+  // Sync external visible prop with internal state
+  useEffect(() => {
+    if (externalVisible !== undefined) {
+      setShowPicker(externalVisible);
+    }
+  }, [externalVisible]);
 
   useEffect(() => {
     loadProfiles();
@@ -54,10 +63,17 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
     }
   };
 
+  const handleClosePicker = () => {
+    setShowPicker(false);
+    if (onClose) {
+      onClose();
+    }
+  };
+
   const handleSelectBudget = async (profile: BudgetProfile) => {
     await setActiveBudgetId(profile.id);
     setActiveProfile(profile);
-    setShowPicker(false);
+    handleClosePicker();
     onBudgetChange();
   };
 
@@ -145,7 +161,7 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
             
             if (success) {
               await loadProfiles();
-              setShowPicker(false);
+              handleClosePicker();
               onBudgetChange();
               Alert.alert(
                 i18n.t('budgetSwitcher.deleted'),
@@ -258,6 +274,9 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
     setShowPicker(true);
   };
 
+  // When used externally with visible prop, only render modals, not the avatar
+  const isExternallyControlled = externalVisible !== undefined;
+
   if (profiles.length <= 1) {
     // Always show avatar, even with single budget
     // Clicking opens the modal to create or switch budgets
@@ -265,25 +284,27 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
     
     return (
       <>
-        <TouchableOpacity
-          style={styles.avatarContainer}
-          onPress={handleAvatarClick}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.avatarIcon}>{icon}</Text>
-        </TouchableOpacity>
+        {!isExternallyControlled && (
+          <TouchableOpacity
+            style={styles.avatarContainer}
+            onPress={handleAvatarClick}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.avatarIcon}>{icon}</Text>
+          </TouchableOpacity>
+        )}
 
         {/* Modal for single budget - still shows option to create new budget */}
         <Modal
           visible={showPicker}
           transparent
           animationType="fade"
-          onRequestClose={() => setShowPicker(false)}
+          onRequestClose={handleClosePicker}
         >
           <TouchableOpacity
             style={styles.modalOverlay}
             activeOpacity={1}
-            onPress={() => setShowPicker(false)}
+            onPress={handleClosePicker}
           >
             <View style={[styles.modalContent, { backgroundColor: themeColors.surface }]}>
               <Text style={[styles.modalTitle, { color: themeColors.textPrimary }]}>
@@ -363,7 +384,7 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
 
               <TouchableOpacity
                 style={[styles.closeButton, { borderColor: themeColors.border }]}
-                onPress={() => setShowPicker(false)}
+                onPress={handleClosePicker}
               >
                 <Text style={[styles.closeButtonText, { color: themeColors.textPrimary }]}>
                   {i18n.t('common.close')}
@@ -378,24 +399,26 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
 
   return (
     <>
-      <TouchableOpacity
-        style={styles.avatarContainer}
-        onPress={handleAvatarClick}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.avatarIcon}>{activeProfile ? getBudgetIcon(activeProfile.type) : '📊'}</Text>
-      </TouchableOpacity>
+      {!isExternallyControlled && (
+        <TouchableOpacity
+          style={styles.avatarContainer}
+          onPress={handleAvatarClick}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.avatarIcon}>{activeProfile ? getBudgetIcon(activeProfile.type) : '📊'}</Text>
+        </TouchableOpacity>
+      )}
 
       <Modal
         visible={showPicker}
         transparent
         animationType="fade"
-        onRequestClose={() => setShowPicker(false)}
+        onRequestClose={handleClosePicker}
       >
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
-          onPress={() => setShowPicker(false)}
+          onPress={handleClosePicker}
         >
           <View style={[styles.modalContent, { backgroundColor: themeColors.surface }]}>
             <Text style={[styles.modalTitle, { color: themeColors.textPrimary }]}>
@@ -475,7 +498,7 @@ export default function BudgetSwitcher({ onBudgetChange }: BudgetSwitcherProps) 
 
             <TouchableOpacity
               style={[styles.closeButton, { borderColor: themeColors.border }]}
-              onPress={() => setShowPicker(false)}
+              onPress={handleClosePicker}
             >
               <Text style={[styles.closeButtonText, { color: themeColors.textPrimary }]}>
                 {i18n.t('common.close')}
