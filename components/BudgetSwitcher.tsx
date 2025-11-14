@@ -221,50 +221,6 @@ export default function BudgetSwitcher({ onBudgetChange, visible: externalVisibl
     );
   };
 
-  const handleCreateHouseholdBudget = async () => {
-    // Check if household budget already exists
-    const householdExists = profiles.some(p => p.type === 'household');
-    if (householdExists) {
-      Alert.alert(
-        i18n.t('budgetSwitcher.householdExists'),
-        i18n.t('budgetSwitcher.householdExistsMessage')
-      );
-      return;
-    }
-
-    Alert.alert(
-      i18n.t('budgetSwitcher.createHousehold'),
-      i18n.t('budgetSwitcher.createHouseholdMessage'),
-      [
-        {
-          text: i18n.t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: i18n.t('common.create'),
-          onPress: async () => {
-            const newProfile = await createBudgetProfile({
-              type: 'household',
-              name: i18n.t('budgetSwitcher.household'),
-              monthlyIncome: 0,
-              fixedCharges: 0,
-              savingsGoal: 0,
-              cycleStartDay: activeProfile?.cycleStartDay || 1,
-            });
-
-            if (newProfile) {
-              await loadProfiles();
-              Alert.alert(
-                i18n.t('budgetSwitcher.created'),
-                i18n.t('budgetSwitcher.householdCreated')
-              );
-            }
-          },
-        },
-      ]
-    );
-  };
-
   const getBudgetIcon = (type: 'personal' | 'household') => {
     return type === 'personal' ? '👤' : '👨‍👩‍👧‍👦';
   };
@@ -371,17 +327,6 @@ export default function BudgetSwitcher({ onBudgetChange, visible: externalVisibl
                 </Text>
               </TouchableOpacity>
 
-              {!profiles.some(p => p.type === 'household') && (
-                <TouchableOpacity
-                  style={[styles.createButton, { backgroundColor: themeColors.primary, marginTop: spacing.sm }]}
-                  onPress={handleCreateHouseholdBudget}
-                >
-                  <Text style={styles.createButtonText}>
-                    + {i18n.t('budgetSwitcher.createHousehold')}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
               <TouchableOpacity
                 style={[styles.closeButton, { borderColor: themeColors.border }]}
                 onPress={handleClosePicker}
@@ -484,17 +429,6 @@ export default function BudgetSwitcher({ onBudgetChange, visible: externalVisibl
                 + {i18n.t('budgetSwitcher.createNewBudget')}
               </Text>
             </TouchableOpacity>
-
-            {!profiles.some(p => p.type === 'household') && (
-              <TouchableOpacity
-                style={[styles.createButton, { backgroundColor: themeColors.primary, marginTop: spacing.sm }]}
-                onPress={handleCreateHouseholdBudget}
-              >
-                <Text style={styles.createButtonText}>
-                  + {i18n.t('budgetSwitcher.createHousehold')}
-                </Text>
-              </TouchableOpacity>
-            )}
 
             <TouchableOpacity
               style={[styles.closeButton, { borderColor: themeColors.border }]}
