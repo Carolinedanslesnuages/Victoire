@@ -35,6 +35,11 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarId>(DEFAULT_AVATAR);
   const [isMidCycle, setIsMidCycle] = useState(false);
   const [cycleEndDate, setCycleEndDate] = useState<Date | null>(null);
+  
+  // US 1.6.1: Cycle mode state
+  const [cycleMode, setCycleMode] = useState<'monthly' | 'custom'>('monthly');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
 
   // Pre-populate form fields when in edit mode
   useEffect(() => {
@@ -43,6 +48,17 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
       setFixedCharges(existingProfile.fixedCharges.toString());
       setSavingsGoal(existingProfile.savingsGoal.toString());
       setCycleStartDay(existingProfile.cycleStartDay.toString());
+      
+      // Load cycle mode and custom dates if present
+      if (existingProfile.cycleMode) {
+        setCycleMode(existingProfile.cycleMode);
+      }
+      if (existingProfile.customStartDate) {
+        setCustomStartDate(existingProfile.customStartDate);
+      }
+      if (existingProfile.customEndDate) {
+        setCustomEndDate(existingProfile.customEndDate);
+      }
     }
   }, [mode, existingProfile]);
 
@@ -76,7 +92,39 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
   };
 
   const handleBudgetSubmit = () => {
-    // Validation
+    // US 1.6.2: Validation for custom mode
+    if (cycleMode === 'custom') {
+      const income = parseFloat(monthlyIncome);
+      
+      if (isNaN(income) || income <= 0) {
+        Alert.alert(i18n.t('configWizard.errors.title'), i18n.t('configWizard.errors.invalidBudget'));
+        return;
+      }
+      
+      // Validate custom dates
+      if (!customStartDate || !customEndDate) {
+        Alert.alert(i18n.t('configWizard.errors.title'), i18n.t('configWizard.errors.invalidCustomDates'));
+        return;
+      }
+      
+      const startDate = new Date(customStartDate);
+      const endDate = new Date(customEndDate);
+      
+      if (endDate <= startDate) {
+        Alert.alert(i18n.t('configWizard.errors.title'), i18n.t('configWizard.errors.invalidDateRange'));
+        return;
+      }
+      
+      // In custom mode, skip mid-cycle and go directly to avatar or complete
+      if (mode === 'edit') {
+        handleComplete();
+      } else {
+        setStep('avatar');
+      }
+      return;
+    }
+    
+    // Monthly mode validation
     const income = parseFloat(monthlyIncome);
     const charges = parseFloat(fixedCharges);
     const savings = parseFloat(savingsGoal);
@@ -148,13 +196,20 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
     // Complete configuration with budget data
     const config: BudgetConfig = {
       monthlyIncome: parseFloat(monthlyIncome),
-      fixedCharges: parseFloat(fixedCharges),
-      savingsGoal: parseFloat(savingsGoal),
-      cycleStartDay: parseInt(cycleStartDay),
+      fixedCharges: cycleMode === 'monthly' ? parseFloat(fixedCharges) : 0,
+      savingsGoal: cycleMode === 'monthly' ? parseFloat(savingsGoal) : 0,
+      cycleStartDay: cycleMode === 'monthly' ? parseInt(cycleStartDay) : 1,
+      cycleMode: cycleMode,
     };
 
-    // US 1.5.3: Add mid-cycle onboarding data if applicable
-    if (isMidCycle && cycleEndDate && remainingAmount) {
+    // US 1.6.2: Add custom dates if in custom mode
+    if (cycleMode === 'custom' && customStartDate && customEndDate) {
+      config.customStartDate = new Date(customStartDate).toISOString();
+      config.customEndDate = new Date(customEndDate).toISOString();
+    }
+
+    // US 1.5.3: Add mid-cycle onboarding data if applicable (only in monthly mode)
+    if (cycleMode === 'monthly' && isMidCycle && cycleEndDate && remainingAmount) {
       config.midCycleOnboarding = {
         remainingAmount: parseFloat(remainingAmount),
         cycleEndDate: cycleEndDate.toISOString(),
@@ -279,14 +334,68 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
           {i18n.t('configWizard.subtitle')}
         </Text>
 
+        {/* US 1.6.1: Cycle Mode Selection */}
         <View style={styles.formSection}>
-          <Text style={styles.label}>{i18n.t('configWizard.monthlyIncome')}</Text>
+          <Text style={styles.label}>{i18n.t('configWizard.cycleMode')}</Text>
+          <Text style={styles.hint}>{i18n.t('configWizard.cycleModeHint')}</Text>
+          <View style={styles.toggleContainer}>
+            <TouchableOpacity
+              style={[
+                styles.toggleButton,
+                cycleMode === 'monthly' && styles.toggleButtonActive,
+              ]}
+              onPress={() => setCycleMode('monthly')}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.toggleButtonText,
+                  cycleMode === 'monthly' && styles.toggleButtonTextActive,
+                ]}
+              >
+                {i18n.t('configWizard.cycleModeMonthly')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.toggleButton,
+                cycleMode === 'custom' && styles.toggleButtonActive,
+              ]}
+              onPress={() => setCycleMode('custom')}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.toggleButtonText,
+                  cycleMode === 'custom' && styles.toggleButtonTextActive,
+                ]}
+              >
+                {i18n.t('configWizard.cycleModeCustom')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* US 1.6.2: Budget/Income field with conditional label */}
+        <View style={styles.formSection}>
+          <Text style={styles.label}>
+            {cycleMode === 'custom'
+              ? i18n.t('configWizard.budgetAvailable')
+              : i18n.t('configWizard.monthlyIncome')}
+          </Text>
+          {cycleMode === 'custom' && (
+            <Text style={styles.hint}>{i18n.t('configWizard.budgetAvailableHint')}</Text>
+          )}
           <TextInput
             style={[
               styles.input,
               focusedField === 'income' && styles.inputFocused,
             ]}
-            placeholder={i18n.t('configWizard.monthlyIncomePlaceholder')}
+            placeholder={
+              cycleMode === 'custom'
+                ? i18n.t('configWizard.budgetAvailablePlaceholder')
+                : i18n.t('configWizard.monthlyIncomePlaceholder')
+            }
             placeholderTextColor={colors.textDisabled}
             keyboardType="decimal-pad"
             value={monthlyIncome}
@@ -296,62 +405,109 @@ export default function ConfigWizard({ onComplete, onCancel, mode = 'create', ex
           />
         </View>
 
-        <View style={styles.formSection}>
-          <Text style={styles.label}>{i18n.t('configWizard.fixedCharges')}</Text>
-          <TextInput
-            style={[
-              styles.input,
-              focusedField === 'charges' && styles.inputFocused,
-            ]}
-            placeholder={i18n.t('configWizard.fixedChargesPlaceholder')}
-            placeholderTextColor={colors.textDisabled}
-            keyboardType="decimal-pad"
-            value={fixedCharges}
-            onChangeText={setFixedCharges}
-            onFocus={() => setFocusedField('charges')}
-            onBlur={() => setFocusedField(null)}
-          />
-        </View>
+        {/* US 1.6.2: Hide fixed charges in custom mode */}
+        {cycleMode === 'monthly' && (
+          <View style={styles.formSection}>
+            <Text style={styles.label}>{i18n.t('configWizard.fixedCharges')}</Text>
+            <TextInput
+              style={[
+                styles.input,
+                focusedField === 'charges' && styles.inputFocused,
+              ]}
+              placeholder={i18n.t('configWizard.fixedChargesPlaceholder')}
+              placeholderTextColor={colors.textDisabled}
+              keyboardType="decimal-pad"
+              value={fixedCharges}
+              onChangeText={setFixedCharges}
+              onFocus={() => setFocusedField('charges')}
+              onBlur={() => setFocusedField(null)}
+            />
+          </View>
+        )}
 
-        <View style={styles.formSection}>
-          <Text style={styles.label}>{i18n.t('configWizard.savingsGoal')}</Text>
-          <TextInput
-            style={[
-              styles.input,
-              focusedField === 'savings' && styles.inputFocused,
-            ]}
-            placeholder={i18n.t('configWizard.savingsGoalPlaceholder')}
-            placeholderTextColor={colors.textDisabled}
-            keyboardType="decimal-pad"
-            value={savingsGoal}
-            onChangeText={setSavingsGoal}
-            onFocus={() => setFocusedField('savings')}
-            onBlur={() => setFocusedField(null)}
-          />
-        </View>
+        {/* US 1.6.2: Hide savings goal in custom mode */}
+        {cycleMode === 'monthly' && (
+          <View style={styles.formSection}>
+            <Text style={styles.label}>{i18n.t('configWizard.savingsGoal')}</Text>
+            <TextInput
+              style={[
+                styles.input,
+                focusedField === 'savings' && styles.inputFocused,
+              ]}
+              placeholder={i18n.t('configWizard.savingsGoalPlaceholder')}
+              placeholderTextColor={colors.textDisabled}
+              keyboardType="decimal-pad"
+              value={savingsGoal}
+              onChangeText={setSavingsGoal}
+              onFocus={() => setFocusedField('savings')}
+              onBlur={() => setFocusedField(null)}
+            />
+          </View>
+        )}
 
-        <View style={styles.formSection}>
-          <Text style={styles.label}>
-            {i18n.t('configWizard.cycleStartDay')}
-          </Text>
-          <Text style={styles.hint}>
-            {i18n.t('configWizard.cycleStartDayHint')}
-          </Text>
-          <TextInput
-            style={[
-              styles.input,
-              focusedField === 'cycle' && styles.inputFocused,
-            ]}
-            placeholder={i18n.t('configWizard.cycleStartDayPlaceholder')}
-            placeholderTextColor={colors.textDisabled}
-            keyboardType="number-pad"
-            value={cycleStartDay}
-            onChangeText={setCycleStartDay}
-            maxLength={2}
-            onFocus={() => setFocusedField('cycle')}
-            onBlur={() => setFocusedField(null)}
-          />
-        </View>
+        {/* US 1.6.1: Show cycle start day only in monthly mode */}
+        {cycleMode === 'monthly' && (
+          <View style={styles.formSection}>
+            <Text style={styles.label}>
+              {i18n.t('configWizard.cycleStartDay')}
+            </Text>
+            <Text style={styles.hint}>
+              {i18n.t('configWizard.cycleStartDayHint')}
+            </Text>
+            <TextInput
+              style={[
+                styles.input,
+                focusedField === 'cycle' && styles.inputFocused,
+              ]}
+              placeholder={i18n.t('configWizard.cycleStartDayPlaceholder')}
+              placeholderTextColor={colors.textDisabled}
+              keyboardType="number-pad"
+              value={cycleStartDay}
+              onChangeText={setCycleStartDay}
+              maxLength={2}
+              onFocus={() => setFocusedField('cycle')}
+              onBlur={() => setFocusedField(null)}
+            />
+          </View>
+        )}
+
+        {/* US 1.6.2: Show custom dates in custom mode */}
+        {cycleMode === 'custom' && (
+          <>
+            <View style={styles.formSection}>
+              <Text style={styles.label}>{i18n.t('configWizard.customStartDate')}</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  focusedField === 'customStart' && styles.inputFocused,
+                ]}
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor={colors.textDisabled}
+                value={customStartDate}
+                onChangeText={setCustomStartDate}
+                onFocus={() => setFocusedField('customStart')}
+                onBlur={() => setFocusedField(null)}
+              />
+            </View>
+
+            <View style={styles.formSection}>
+              <Text style={styles.label}>{i18n.t('configWizard.customEndDate')}</Text>
+              <Text style={styles.hint}>{i18n.t('configWizard.customEndDateHint')}</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  focusedField === 'customEnd' && styles.inputFocused,
+                ]}
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor={colors.textDisabled}
+                value={customEndDate}
+                onChangeText={setCustomEndDate}
+                onFocus={() => setFocusedField('customEnd')}
+                onBlur={() => setFocusedField(null)}
+              />
+            </View>
+          </>
+        )}
 
         <TouchableOpacity
           style={styles.button}
@@ -450,6 +606,34 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.textInverse,
     fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toggleButtonActive: {
+    backgroundColor: colors.primary,
+  },
+  toggleButtonText: {
+    fontSize: typography.fontSize.body,
+    color: colors.textSecondary,
+    fontWeight: typography.fontWeight.medium,
+    textAlign: 'center',
+  },
+  toggleButtonTextActive: {
+    color: colors.textInverse,
     fontWeight: typography.fontWeight.semibold,
   },
 });
