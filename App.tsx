@@ -47,6 +47,7 @@ function AppContent() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isEditMode, setIsEditMode] = useState(false);
   const [profileToEdit, setProfileToEdit] = useState<BudgetProfile | null>(null);
+  const [hasCelebratedThisSession, setHasCelebratedThisSession] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -164,6 +165,24 @@ function AppContent() {
     setRefreshKey(prev => prev + 1);
   };
 
+  const handleAppReset = async () => {
+    // Reset all state variables to initial values
+    setBudgetProfile(null);
+    setShowOnboardingCarousel(true);
+    setIsAddExpenseVisible(false);
+    setUserPreferences({
+      currency: 'EUR',
+      customCategories: [],
+    });
+    setShowStreakCelebration(false);
+    setCurrentStreak(0);
+    setRefreshKey(0);
+    setIsEditMode(false);
+    setProfileToEdit(null);
+    setHasCelebratedThisSession(false);
+    // Note: resetAllData() is called by SettingsScreen before calling this handler
+  };
+
   const handleQuickAction = (actionType: string) => {
     if (actionType === 'add_expense') {
       setIsAddExpenseVisible(true);
@@ -175,11 +194,12 @@ function AppContent() {
     if (success) {
       setIsAddExpenseVisible(false);
       
-      // Update streak and show celebration
+      // Update streak and show celebration (only once per session)
       const streakInfo = await updateStreakAfterActivity();
-      if (streakInfo.isActive && streakInfo.currentStreak > 0) {
+      if (streakInfo.isActive && streakInfo.currentStreak > 0 && !hasCelebratedThisSession) {
         setCurrentStreak(streakInfo.currentStreak);
         setShowStreakCelebration(true);
+        setHasCelebratedThisSession(true);
       }
       
       // US 17.1.1: Request review after positive moments (3-day streak or 10th expense)
@@ -256,6 +276,7 @@ function AppContent() {
                 onReconfigure={handleReconfigure}
                 onAddExpense={() => setIsAddExpenseVisible(true)}
                 onBudgetChange={handleBudgetChange}
+                onAppReset={handleAppReset}
                 refreshKey={refreshKey}
               />
               <AddExpenseModal

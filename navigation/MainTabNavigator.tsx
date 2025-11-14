@@ -16,6 +16,7 @@ interface MainTabNavigatorProps {
   onReconfigure: () => void;
   onAddExpense: () => void;
   onBudgetChange: () => void;
+  onAppReset: () => void;
   refreshKey: number;
 }
 
@@ -24,6 +25,7 @@ export default function MainTabNavigator({
   onReconfigure, 
   onAddExpense, 
   onBudgetChange,
+  onAppReset,
   refreshKey 
 }: MainTabNavigatorProps) {
   const [isSettingsVisible, setIsSettingsVisible] = React.useState(false);
@@ -134,7 +136,7 @@ export default function MainTabNavigator({
       <SettingsScreen
         visible={isSettingsVisible}
         onClose={() => setIsSettingsVisible(false)}
-        onResetComplete={onReconfigure}
+        onResetComplete={onAppReset}
       />
     </>
   );
