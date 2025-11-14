@@ -5,6 +5,7 @@ import PieChart from './PieChart';
 import MascotDisplay from './MascotDisplay';
 import BadgeUnlockModal from './BadgeUnlockModal';
 import ZeroSpendingModal from './ZeroSpendingModal';
+import BudgetSwitcher from './BudgetSwitcher';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -35,9 +36,10 @@ interface BudgetDashboardProps {
   profile: BudgetProfile;
   onReconfigure: () => void;
   refreshKey?: number;
+  onBudgetChange?: () => void;
 }
 
-export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: BudgetDashboardProps) {
+export default function BudgetDashboard({ profile, onReconfigure, refreshKey, onBudgetChange }: BudgetDashboardProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [previousTransactions, setPreviousTransactions] = useState<Transaction[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -56,6 +58,7 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: 
   const [unlockedBadge, setUnlockedBadge] = useState<Badge | null>(null);
   const [showBadgeModal, setShowBadgeModal] = useState(false);
   const [showZeroSpendingModal, setShowZeroSpendingModal] = useState(false);
+  const [showBudgetSwitcher, setShowBudgetSwitcher] = useState(false);
 
   useEffect(() => {
     loadTransactions();
@@ -238,6 +241,18 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: 
         formatCurrency={formatCurrency}
       />
 
+      {/* Budget Switcher Modal - shown when avatar is clicked */}
+      <BudgetSwitcher
+        visible={showBudgetSwitcher}
+        onClose={() => setShowBudgetSwitcher(false)}
+        onBudgetChange={() => {
+          setShowBudgetSwitcher(false);
+          if (onBudgetChange) {
+            onBudgetChange();
+          }
+        }}
+      />
+
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
@@ -246,10 +261,15 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey }: 
         {/* Epic UI 4: Duolingo-style Header with Gamification */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            {/* Avatar display */}
-            <View style={styles.avatarContainer}>
+            {/* Avatar display - clickable to open BudgetSwitcher */}
+            <TouchableOpacity 
+              style={styles.avatarContainer}
+              onPress={() => setShowBudgetSwitcher(true)}
+              activeOpacity={0.7}
+              testID="avatar-button"
+            >
               <Text style={styles.avatarEmoji}>{getAvatarEmoji(userPreferences.avatarId)}</Text>
-            </View>
+            </TouchableOpacity>
             {/* Feature UI 4.1.1 & UI 4.2: Budget name with streak indicator */}
             <View style={styles.headerLeft}>
               <Text style={styles.headerTitle}>{getBudgetDisplayName()}</Text>

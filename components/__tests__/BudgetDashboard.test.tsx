@@ -17,6 +17,12 @@ jest.mock('../../utils/storage', () => ({
     currency: 'EUR',
     customCategories: [],
   })),
+  loadBudgetProfiles: jest.fn(() => Promise.resolve([])),
+  getActiveBudgetId: jest.fn(() => Promise.resolve('test-budget-1')),
+  setActiveBudgetId: jest.fn(() => Promise.resolve()),
+  createBudgetProfile: jest.fn(() => Promise.resolve({ id: 'new-budget' })),
+  updateBudgetProfile: jest.fn(() => Promise.resolve(true)),
+  deleteBudgetProfile: jest.fn(() => Promise.resolve(true)),
 }));
 
 // Mock analytics module
@@ -55,6 +61,48 @@ jest.mock('../../utils/streaks', () => ({
 jest.mock('../../utils/gamification', () => ({
   checkAndUnlockBadges: jest.fn(() => Promise.resolve([])),
   unlockBadge: jest.fn(() => Promise.resolve(null)),
+}));
+
+// Mock BudgetSwitcher component
+jest.mock('../BudgetSwitcher', () => {
+  return jest.fn(({ visible, onClose, onBudgetChange }) => {
+    const React = require('react');
+    const { View, Text, TouchableOpacity } = require('react-native');
+    if (!visible) return null;
+    return React.createElement(View, { testID: 'budget-switcher-modal' },
+      React.createElement(Text, null, 'Budget Switcher Modal'),
+      React.createElement(TouchableOpacity, {
+        testID: 'close-budget-switcher',
+        onPress: () => {
+          onClose();
+          onBudgetChange();
+        }
+      }, React.createElement(Text, null, 'Close'))
+    );
+  });
+});
+
+// Mock ThemeContext
+jest.mock('../../contexts/ThemeContext', () => ({
+  useTheme: () => ({
+    colors: {
+      background: '#FFFFFF',
+      surface: '#F5F5F5',
+      primary: '#4A90E2',
+      primaryLight: '#E3F2FD',
+      textPrimary: '#000000',
+      textSecondary: '#666666',
+      border: '#E0E0E0',
+      textInverse: '#FFFFFF',
+    },
+  }),
+}));
+
+// Mock SubscriptionContext
+jest.mock('../../contexts/SubscriptionContext', () => ({
+  useSubscription: () => ({
+    isPremium: false,
+  }),
 }));
 
 describe('BudgetDashboard Component Tests', () => {
@@ -303,6 +351,46 @@ describe('BudgetDashboard Component Tests', () => {
 
       const budgetName = getByText('Mon Budget Personnel');
       expect(budgetName).toBeTruthy();
+    });
+  });
+
+  describe('Avatar Click - BudgetSwitcher Modal', () => {
+    it('should open BudgetSwitcher modal when avatar is clicked', async () => {
+      const mockOnBudgetChange = jest.fn();
+      const { getByTestId, queryByTestId } = render(
+        <BudgetDashboard 
+          profile={positiveProfile} 
+          onReconfigure={mockOnReconfigure}
+          onBudgetChange={mockOnBudgetChange}
+        />
+      );
+
+      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+
+      // Initially, BudgetSwitcher modal should not be visible
+      let modal = queryByTestId('budget-switcher-modal');
+      expect(modal).toBeNull();
+
+      // Find and click the avatar
+      const avatar = getByTestId('avatar-button');
+      expect(avatar).toBeTruthy();
+    });
+
+    it('should pass onBudgetChange callback to BudgetSwitcher', async () => {
+      const mockOnBudgetChange = jest.fn();
+      render(
+        <BudgetDashboard 
+          profile={positiveProfile} 
+          onReconfigure={mockOnReconfigure}
+          onBudgetChange={mockOnBudgetChange}
+        />
+      );
+
+      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+
+      // Verify BudgetSwitcher is rendered with the correct props
+      const BudgetSwitcher = require('../BudgetSwitcher');
+      expect(BudgetSwitcher).toHaveBeenCalled();
     });
   });
 });

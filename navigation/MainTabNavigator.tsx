@@ -68,7 +68,7 @@ export default function MainTabNavigator({
             ),
           }}
         >
-          {() => <BudgetDashboard profile={budgetProfile} onReconfigure={onReconfigure} refreshKey={refreshKey} />}
+          {() => <BudgetDashboard profile={budgetProfile} onReconfigure={onReconfigure} refreshKey={refreshKey} onBudgetChange={onBudgetChange} />}
         </Tab.Screen>
 
         <Tab.Screen
