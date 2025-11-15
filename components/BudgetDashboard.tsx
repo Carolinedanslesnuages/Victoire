@@ -260,7 +260,6 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
     customEndDate
   );
 
-  const isDailyBudgetNegative = dailyBudget < 0;
   const isOverDailyQuota = dailySpendingState.status === 'over';
 
   // Epic UI 3: Calculate mascot state based on "Reste à Vivre"
