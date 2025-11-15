@@ -471,6 +471,20 @@ export const createBudgetProfile = async (
     };
     profiles.push(newProfile);
     const success = await saveBudgetProfiles(profiles);
+    
+    if (success) {
+      // Initialize bonus piggy bank to 0 for new profile
+      // Use local date format to prevent timezone issues
+      const today = new Date();
+      const localDateStr = today.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+      
+      await saveBonusPiggyBank({
+        amount: 0,
+        lastProcessedDate: localDateStr,
+        monthlyHistory: [],
+      }, newProfile.id);
+    }
+    
     return success ? newProfile : null;
   } catch (error) {
     console.error('Error creating budget profile:', error);
