@@ -11,6 +11,8 @@ export type BudgetProfileType = 'personal' | 'household';
 
 /**
  * Budget cycle mode - monthly recurring or custom period
+ * - 'monthly': Traditional fixed monthly cycle based on cycleStartDay
+ * - 'custom': Flexible period with specific start and end dates for irregular income
  */
 export type BudgetCycleMode = 'monthly' | 'custom';
 
