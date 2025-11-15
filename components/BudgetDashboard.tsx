@@ -14,6 +14,7 @@ import {
   getDaysRemainingInCycle,
   calculateBudgetStatus,
   calculateSpentPercentage,
+  getDailySpendingState,
 } from '../utils/budgetCalculations';
 import {
   getTransactionsForPreviousCycleSameDay,
@@ -244,7 +245,22 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
     cycleMode
   );
 
-  const isDailyBudgetNegative = dailyBudget < 0;
+  // US 2.3.1: Get daily spending state to determine if over/under budget
+  const dailySpendingState = getDailySpendingState(
+    profile.monthlyIncome,
+    profile.fixedCharges,
+    profile.savingsGoal,
+    totalSpent,
+    profile.cycleStartDay,
+    transactions,
+    totalIncome,
+    profile.midCycleOnboarding,
+    cycleMode,
+    customStartDate,
+    customEndDate
+  );
+
+  const isOverDailyQuota = dailySpendingState.status === 'over';
 
   // Epic UI 3: Calculate mascot state based on "Reste à Vivre"
   const mascotState = getMascotState(
@@ -411,29 +427,46 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
         </View>
 
         {/* Feature 2.1.1 & 2.1.2: Budget du Jour - Very Prominent Display */}
+        {/* US 2.3.2 & US 2.3.3: Visual distinction between under/over budget states */}
         <View
           style={[
             styles.dailyBudgetCard,
-            isDailyBudgetNegative && styles.dailyBudgetCardNegative,
+            isOverDailyQuota ? styles.dailyBudgetCardExceeded : styles.dailyBudgetCardUnder,
           ]}
         >
-          <Text style={styles.dailyBudgetLabel}>{i18n.t('dashboard.dailyBudget.label')}</Text>
+          {/* US 2.3.2: Show "Budget Dépassé" when over quota */}
+          {/* US 2.3.3: Show "Reste pour aujourd'hui" when under quota */}
+          <Text style={styles.dailyBudgetLabel}>
+            {isOverDailyQuota
+              ? i18n.t('dashboard.dailyBudget.exceededLabel')
+              : i18n.t('dashboard.dailyBudget.remainingLabel')}
+          </Text>
+          
+          {/* Display the amount (negative if over, positive if under) */}
           <Text
             style={[
               styles.dailyBudgetAmount,
-              isDailyBudgetNegative && styles.dailyBudgetAmountNegative,
+              isOverDailyQuota && styles.dailyBudgetAmountNegative,
             ]}
           >
-            {formatCurrency(dailyBudget)}
+            {isOverDailyQuota
+              ? formatCurrency(dailySpendingState.amount) // Negative amount
+              : formatCurrency(dailySpendingState.amount)} {/* Positive amount */}
           </Text>
-          {isDailyBudgetNegative && (
+          
+          {/* US 2.3.2: Show warning message when over budget */}
+          {isOverDailyQuota && (
             <Text style={styles.dailyBudgetWarning}>
-              {i18n.t('dashboard.dailyBudget.warning')}
+              {i18n.t('dashboard.dailyBudget.exceededHint')}
             </Text>
           )}
-          <Text style={styles.dailyBudgetHint}>
-            {i18n.t('dashboard.dailyBudget.hint')}
-          </Text>
+          
+          {/* US 2.3.3: Show hint message when under budget */}
+          {!isOverDailyQuota && (
+            <Text style={styles.dailyBudgetHint}>
+              {i18n.t('dashboard.dailyBudget.remainingHint')}
+            </Text>
+          )}
         </View>
 
         {/* Zero Spending Button - Show only if user hasn't spent today and budget is positive */}
@@ -768,6 +801,7 @@ const styles = StyleSheet.create({
     opacity: opacity.active,
   },
   // Feature 2.1: Daily Budget Card - Flat design with minimal elevation
+  // US 2.3.2 & 2.3.3: Visual distinction between budget states
   dailyBudgetCard: {
     backgroundColor: colors.surface,
     margin: spacing.md,
@@ -777,8 +811,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     ...elevation.low,
     borderLeftWidth: 4,
-    borderLeftColor: colors.success,
   },
+  // US 2.3.3: Style for "under budget" state (green/blue)
+  dailyBudgetCardUnder: {
+    borderLeftColor: colors.success,
+    backgroundColor: colors.surface,
+  },
+  // US 2.3.2: Style for "exceeded budget" state (orange/red)
+  dailyBudgetCardExceeded: {
+    borderLeftColor: colors.warning, // Orange for alert
+    backgroundColor: '#FFF8E1', // Light yellow/orange background
+  },
+  // Legacy support for negative daily budget (when global budget is exhausted)
   dailyBudgetCardNegative: {
     borderLeftColor: colors.error,
     backgroundColor: colors.surface,
@@ -796,11 +840,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   dailyBudgetAmountNegative: {
-    color: colors.error,
+    color: colors.warning, // Orange for exceeded state
   },
   dailyBudgetWarning: {
     fontSize: typography.fontSize.body,
-    color: colors.error,
+    color: colors.warning, // Orange for exceeded state warning
     fontWeight: typography.fontWeight.semibold,
     marginBottom: spacing.sm,
   },

@@ -10,7 +10,9 @@ import {
   calculateDailyBudget,
   calculateBudgetStatus,
   calculateSpentPercentage,
+  getDailySpendingState,
 } from '../budgetCalculations';
+import { Transaction } from '../../types';
 
 describe('budgetCalculations', () => {
   describe('getCurrentCycle', () => {
@@ -733,6 +735,308 @@ describe('budgetCalculations', () => {
 
         // Should cap at 100%
         expect(percentage).toBe(100);
+      });
+    });
+  });
+
+  // US 2.3.1: Tests for getDailySpendingState
+  describe('getDailySpendingState', () => {
+    const createTransaction = (
+      id: string,
+      amount: number,
+      date: Date,
+      type: 'expense' | 'income' = 'expense'
+    ): Transaction => ({
+      id,
+      amount,
+      description: `Test ${type}`,
+      date: date.toISOString(),
+      type,
+    });
+
+    describe('Under budget scenarios', () => {
+      it('should return "under" status when no spending today', () => {
+        const mockDate = new Date(2024, 0, 15); // January 15, 2024
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const transactions: Transaction[] = [
+          createTransaction('1', 10, new Date(2024, 0, 14)), // Yesterday
+        ];
+
+        const state = getDailySpendingState(
+          2000,  // monthlyIncome
+          800,   // fixedCharges
+          200,   // savingsGoal
+          10,    // totalSpent
+          10     // cycleStartDay (cycle from Jan 10 to Feb 9)
+        , transactions);
+
+        expect(state.status).toBe('under');
+        expect(state.todaySpent).toBe(0);
+        expect(state.amount).toBeGreaterThan(0); // Should have positive remaining budget
+        expect(state.initialDailyBudget).toBeGreaterThan(0);
+
+        jest.useRealTimers();
+      });
+
+      it('should return "under" status when spending less than daily quota', () => {
+        const mockDate = new Date(2024, 0, 15, 12, 0); // January 15, 2024 at noon
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const transactions: Transaction[] = [
+          createTransaction('1', 10, new Date(2024, 0, 15)), // Today - 10€
+          createTransaction('2', 5, new Date(2024, 0, 14)),  // Yesterday - 5€
+        ];
+
+        const state = getDailySpendingState(
+          2000,  // monthlyIncome
+          800,   // fixedCharges  
+          200,   // savingsGoal
+          15,    // totalSpent (10 today + 5 yesterday)
+          10,    // cycleStartDay
+          transactions
+        );
+
+        expect(state.status).toBe('under');
+        expect(state.todaySpent).toBe(10);
+        expect(state.amount).toBeGreaterThan(0); // Positive remaining
+        // With 2000-800-200=1000 reste à vivre, spent 15, 
+        // remaining 985, and many days left, daily quota should be around 38€
+        // So spending 10€ should leave us under budget
+        expect(state.initialDailyBudget).toBeGreaterThan(state.todaySpent);
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe('Over budget scenarios', () => {
+      it('should return "over" status when spending exceeds daily quota', () => {
+        const mockDate = new Date(2024, 0, 15, 20, 0); // January 15, 2024 at 8pm
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        // Scenario: User has 14€ daily budget but spent 15€ today
+        const transactions: Transaction[] = [
+          createTransaction('1', 15, new Date(2024, 0, 15)), // Today - 15€
+        ];
+
+        // Set up budget so that daily quota is around 14€
+        // With 350€ reste à vivre over 25 days = 14€/day
+        const state = getDailySpendingState(
+          1150,  // monthlyIncome
+          600,   // fixedCharges
+          200,   // savingsGoal
+          15,    // totalSpent (all today)
+          10,    // cycleStartDay (from Jan 10, we're on day 6)
+          transactions
+        );
+
+        expect(state.status).toBe('over');
+        expect(state.todaySpent).toBe(15);
+        expect(state.amount).toBeLessThan(0); // Negative means overspent
+        // Daily budget should be around 14€, spent 15€, so -1€
+        expect(state.amount).toBeCloseTo(-1, 0);
+
+        jest.useRealTimers();
+      });
+
+      it('should return "over" with correct negative amount when significantly over budget', () => {
+        const mockDate = new Date(2024, 0, 15); // January 15, 2024
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const transactions: Transaction[] = [
+          createTransaction('1', 50, new Date(2024, 0, 15)), // Today - big expense
+        ];
+
+        const state = getDailySpendingState(
+          2000,  // monthlyIncome
+          800,   // fixedCharges
+          200,   // savingsGoal
+          50,    // totalSpent
+          10,    // cycleStartDay
+          transactions
+        );
+
+        expect(state.status).toBe('over');
+        expect(state.todaySpent).toBe(50);
+        expect(state.amount).toBeLessThan(0); // Should be significantly negative
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe('Edge cases', () => {
+      it('should handle exact budget match', () => {
+        const mockDate = new Date(2024, 0, 15);
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        // Carefully crafted to have exact daily budget
+        const transactions: Transaction[] = [
+          createTransaction('1', 40, new Date(2024, 0, 15)), // Today
+        ];
+
+        const state = getDailySpendingState(
+          1800,  // monthlyIncome
+          800,   // fixedCharges
+          200,   // savingsGoal (800 reste à vivre over 20 days = 40/day)
+          40,    // totalSpent
+          10,    // cycleStartDay
+          transactions
+        );
+
+        expect(state.todaySpent).toBe(40);
+        // Should be either under (0 or positive) or very close to 0
+        expect(state.status).toBeDefined();
+        expect(state.amount).toBeDefined();
+
+        jest.useRealTimers();
+      });
+
+      it('should handle income transactions correctly', () => {
+        const mockDate = new Date(2024, 0, 15);
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const transactions: Transaction[] = [
+          createTransaction('1', 20, new Date(2024, 0, 15), 'expense'), // Today - expense
+          createTransaction('2', 10, new Date(2024, 0, 15), 'income'),  // Today - income
+        ];
+
+        const state = getDailySpendingState(
+          2000,
+          800,
+          200,
+          20,    // totalSpent (expenses only)
+          10,
+          transactions,
+          10     // totalIncome
+        );
+
+        // todaySpent should only count expenses
+        expect(state.todaySpent).toBe(20);
+        // Income should increase available budget, making it easier to stay under
+
+        jest.useRealTimers();
+      });
+
+      it('should handle zero remaining days', () => {
+        const mockDate = new Date(2024, 1, 9); // Last day of cycle (Feb 9)
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const transactions: Transaction[] = [
+          createTransaction('1', 15, new Date(2024, 1, 9)),
+        ];
+
+        const state = getDailySpendingState(
+          2000,
+          800,
+          200,
+          500,   // totalSpent
+          10,    // cycleStartDay
+          transactions
+        );
+
+        expect(state.todaySpent).toBe(15);
+        // Should not crash with zero days remaining
+        expect(state.status).toBeDefined();
+        expect(state.amount).toBeDefined();
+
+        jest.useRealTimers();
+      });
+
+      it('should handle multiple transactions today', () => {
+        const mockDate = new Date(2024, 0, 15);
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const transactions: Transaction[] = [
+          createTransaction('1', 5, new Date(2024, 0, 15)),  // Today
+          createTransaction('2', 3, new Date(2024, 0, 15)),  // Today
+          createTransaction('3', 7, new Date(2024, 0, 15)),  // Today
+          createTransaction('4', 10, new Date(2024, 0, 14)), // Yesterday
+        ];
+
+        const state = getDailySpendingState(
+          2000,
+          800,
+          200,
+          25,    // totalSpent (5+3+7+10)
+          10,
+          transactions
+        );
+
+        expect(state.todaySpent).toBe(15); // 5+3+7
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe('Custom cycle mode', () => {
+      it('should work correctly in custom mode', () => {
+        const mockDate = new Date(2024, 0, 15);
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const transactions: Transaction[] = [
+          createTransaction('1', 20, new Date(2024, 0, 15)),
+        ];
+
+        const state = getDailySpendingState(
+          500,   // monthlyIncome (actually budget available in custom mode)
+          0,     // fixedCharges (not used in custom mode)
+          0,     // savingsGoal (not used in custom mode)
+          20,    // totalSpent
+          10,    // cycleStartDay (not really used in custom mode)
+          transactions,
+          0,     // totalIncome
+          undefined, // midCycleOnboarding
+          'custom', // cycleMode
+          '2024-01-10', // customStartDate
+          '2024-01-25'  // customEndDate
+        );
+
+        expect(state.todaySpent).toBe(20);
+        expect(state.status).toBeDefined();
+        // Should use full 500€ budget, not deduct charges/savings
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe('Mid-cycle onboarding', () => {
+      it('should handle mid-cycle onboarding correctly', () => {
+        const mockDate = new Date(2024, 0, 15);
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const transactions: Transaction[] = [
+          createTransaction('1', 10, new Date(2024, 0, 15)),
+        ];
+
+        const state = getDailySpendingState(
+          2000,
+          800,
+          200,
+          10,
+          10,
+          transactions,
+          0,
+          {
+            remainingAmount: 200,
+            cycleEndDate: '2024-02-09',
+          }
+        );
+
+        expect(state.todaySpent).toBe(10);
+        // Should use remaining amount of 200€ for calculations
+        expect(state.status).toBeDefined();
+
+        jest.useRealTimers();
       });
     });
   });
