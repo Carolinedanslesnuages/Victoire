@@ -23,6 +23,14 @@ jest.mock('../../utils/storage', () => ({
   createBudgetProfile: jest.fn(() => Promise.resolve({ id: 'new-budget' })),
   updateBudgetProfile: jest.fn(() => Promise.resolve(true)),
   deleteBudgetProfile: jest.fn(() => Promise.resolve(true)),
+  getBonusPiggyBank: jest.fn(() => Promise.resolve({
+    amount: 0,
+    lastProcessedDate: '',
+    monthlyHistory: [],
+  })),
+  breakBonusPiggyBank: jest.fn(() => Promise.resolve(0)),
+  hasCompletedOnboardingTooltips: jest.fn(() => Promise.resolve(true)),
+  markOnboardingTooltipsCompleted: jest.fn(() => Promise.resolve()),
 }));
 
 // Mock analytics module
@@ -61,6 +69,12 @@ jest.mock('../../utils/streaks', () => ({
 jest.mock('../../utils/gamification', () => ({
   checkAndUnlockBadges: jest.fn(() => Promise.resolve([])),
   unlockBadge: jest.fn(() => Promise.resolve(null)),
+}));
+
+// Mock bonusPiggyBank module
+jest.mock('../../utils/bonusPiggyBank', () => ({
+  processUnspentDailyBudget: jest.fn(() => Promise.resolve()),
+  getCurrentMonthBonus: jest.fn(() => Promise.resolve(0)),
 }));
 
 // Mock BudgetSwitcher component
@@ -137,7 +151,7 @@ describe('BudgetDashboard Component Tests', () => {
       );
 
       // Wait for the component to render
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // The daily budget should be displayed (1500 reste à vivre / ~16 days remaining)
       // We're checking that a positive amount is shown
@@ -150,7 +164,7 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // With positive budget, warning text should not be present
       const warningText = queryByText(/Attention|dépassé|exceeded/i);
@@ -180,7 +194,7 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={overspentProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // Should display some budget amount
       const budgetElements = getByText(/€|EUR/i);
@@ -194,7 +208,7 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // Should show no transactions message
       const noTransactionsText = getByText(/Aucune transaction|Aucune dépense|No transactions/i);
@@ -234,7 +248,7 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // Should display transaction descriptions
       await screen.findByText('Café', {}, { timeout: 2000 });
@@ -272,7 +286,7 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // Should display the transaction
       await screen.findByText('Test Expense', {}, { timeout: 2000 });
@@ -291,7 +305,7 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // Should display days remaining information
       const daysRemainingText = getByText(/jour|day/i);
@@ -315,7 +329,7 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // Should display a percentage (reste à vivre is 1500, spent 500 = 33%)
       const percentageText = getByText(/\d+%/);
@@ -329,10 +343,10 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={positiveProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // The component should render with accessible text
-      const budgetLabel = getByText(/Budget du Jour|Reste à Vivre/i);
+      const budgetLabel = getByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i);
       expect(budgetLabel).toBeTruthy();
       expect(budgetLabel.props.style).toBeDefined();
     });
@@ -347,7 +361,7 @@ describe('BudgetDashboard Component Tests', () => {
         <BudgetDashboard profile={namedProfile} onReconfigure={mockOnReconfigure} />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       const budgetName = getByText('Mon Budget Personnel');
       expect(budgetName).toBeTruthy();
@@ -365,7 +379,7 @@ describe('BudgetDashboard Component Tests', () => {
         />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // Initially, BudgetSwitcher modal should not be visible
       let modal = queryByTestId('budget-switcher-modal');
@@ -386,7 +400,7 @@ describe('BudgetDashboard Component Tests', () => {
         />
       );
 
-      await screen.findByText(/Budget du Jour|Reste à Vivre/i, {}, { timeout: 2000 });
+      await screen.findByText(/Budget du Jour|Reste à Vivre|Reste pour aujourd'hui|Budget Dépassé|Remaining for today|Budget Exceeded/i, {}, { timeout: 2000 });
 
       // Verify BudgetSwitcher is rendered with the correct props
       const BudgetSwitcher = require('../BudgetSwitcher');
