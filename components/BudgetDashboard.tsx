@@ -9,6 +9,7 @@ import BudgetSwitcher from './BudgetSwitcher';
 import BonusPiggyBankDisplay from './BonusPiggyBankDisplay';
 import BonusPiggyBankModal from './BonusPiggyBankModal';
 import TooltipOverlay from './TooltipOverlay';
+import PaywallScreen from './PaywallScreen';
 import {
   calculateDailyBudget,
   getDaysRemainingInCycle,
@@ -37,9 +38,10 @@ import { colors, typography, spacing, borderRadius, elevation, opacity } from '.
 import i18n from '../utils/i18n';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
 import { calculateStreak } from '../utils/streaks';
-import { checkAndUnlockBadges, unlockBadge } from '../utils/gamification';
+import { checkAndUnlockBadges, unlockBadge, loadGamificationData, useJoker } from '../utils/gamification';
 import { getAvatarEmoji } from '../constants/avatars';
 import { processUnspentDailyBudget, getCurrentMonthBonus } from '../utils/bonusPiggyBank';
+import { useSubscription } from '../contexts/SubscriptionContext';
 
 interface BudgetDashboardProps {
   profile: BudgetProfile;
@@ -49,6 +51,7 @@ interface BudgetDashboardProps {
 }
 
 export default function BudgetDashboard({ profile, onReconfigure, refreshKey, onBudgetChange }: BudgetDashboardProps) {
+  const { isPremium, refreshSubscription } = useSubscription();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [previousTransactions, setPreviousTransactions] = useState<Transaction[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -76,6 +79,7 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
   const [showBonusPiggyBankModal, setShowBonusPiggyBankModal] = useState(false);
   const [monthlyBonus, setMonthlyBonus] = useState(0);
   const [showTooltips, setShowTooltips] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   useEffect(() => {
     loadTransactions();
@@ -107,7 +111,10 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
 
   const loadStreak = async () => {
     const streak = await calculateStreak();
-    setStreakInfo(streak);
+    
+    // Load gamification data with proper joker quota based on subscription
+    const gamificationData = await loadGamificationData(isPremium);
+    setStreakInfo(gamificationData.streakInfo);
     
     // Check for newly unlocked badges
     const newBadges = await checkAndUnlockBadges();
@@ -325,6 +332,52 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
     return profile.name;
   };
 
+  // Handler for using a joker
+  const handleUseJoker = async () => {
+    if (streakInfo.jokersRemaining <= 0) {
+      // No jokers remaining, open paywall
+      setShowPaywall(true);
+      return;
+    }
+
+    const success = await useJoker();
+    if (success) {
+      Alert.alert(
+        '✅',
+        i18n.t('dashboard.jokers.usedSuccess'),
+        [{ text: 'OK' }]
+      );
+      // Reload gamification data to update joker count
+      await loadStreak();
+      // Refresh dashboard
+      await loadTransactions();
+    } else {
+      Alert.alert(
+        '❌',
+        i18n.t('profile.streakSection.jokerNotEligible'),
+        [{ text: 'OK' }]
+      );
+    }
+  };
+
+  // Check if joker button should be shown
+  const shouldShowJokerButton = () => {
+    // Show button if daily budget is negative but by less than 5€
+    return dailyBudget < 0 && dailyBudget >= -5;
+  };
+
+  // Get joker indicator text
+  const getJokerIndicatorText = () => {
+    const count = streakInfo.jokersRemaining;
+    if (count === 0) {
+      return i18n.t('dashboard.jokers.indicator.none');
+    } else if (count === 1) {
+      return i18n.t('dashboard.jokers.indicator.remaining', { count });
+    } else {
+      return i18n.t('dashboard.jokers.indicator.remainingPlural', { count });
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Badge Unlock Modal */}
@@ -372,6 +425,16 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
       <TooltipOverlay
         visible={showTooltips}
         onComplete={handleTooltipsComplete}
+      />
+
+      {/* Paywall Modal for Jokers */}
+      <PaywallScreen
+        visible={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        onPurchaseComplete={async () => {
+          await refreshSubscription();
+          await loadStreak(); // Reload to get new joker quota
+        }}
       />
 
       <ScrollView
@@ -468,6 +531,41 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
             </Text>
           )}
         </View>
+
+        {/* Joker Indicator and Button */}
+        {shouldShowJokerButton() && (
+          <View style={styles.jokerContainer}>
+            {/* Joker Indicator */}
+            <View style={styles.jokerIndicator}>
+              <Text style={styles.jokerIndicatorLabel}>
+                {getJokerIndicatorText()}
+              </Text>
+              <View style={styles.jokerHeartsContainer}>
+                {Array.from({ length: isPremium ? 5 : 1 }).map((_, index) => (
+                  <Text key={index} style={styles.jokerHeart}>
+                    {index < streakInfo.jokersRemaining ? '❤️' : '🖤'}
+                  </Text>
+                ))}
+              </View>
+            </View>
+
+            {/* Use Joker Button */}
+            <TouchableOpacity
+              style={[
+                styles.jokerButton,
+                streakInfo.jokersRemaining === 0 && styles.jokerButtonLocked
+              ]}
+              onPress={handleUseJoker}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.jokerButtonText}>
+                {streakInfo.jokersRemaining > 0
+                  ? i18n.t('dashboard.jokers.useButton')
+                  : i18n.t('dashboard.jokers.lockedButton')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Zero Spending Button - Show only if user hasn't spent today and budget is positive */}
         {!hasSpentToday() && dailyBudget > 0 && daysRemaining > 0 && (
@@ -1169,6 +1267,52 @@ const styles = StyleSheet.create({
     ...elevation.medium,
   },
   zeroSpendingButtonText: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.bold,
+  },
+  // Joker UI Styles
+  jokerContainer: {
+    backgroundColor: colors.surface,
+    margin: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    ...elevation.low,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.warning,
+  },
+  jokerIndicator: {
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  jokerIndicatorLabel: {
+    fontSize: typography.fontSize.body,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  jokerHeartsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.xs,
+  },
+  jokerHeart: {
+    fontSize: 24,
+  },
+  jokerButton: {
+    backgroundColor: colors.warning,
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    alignItems: 'center',
+    ...elevation.medium,
+  },
+  jokerButtonLocked: {
+    backgroundColor: colors.textSecondary,
+    opacity: opacity.disabled,
+  },
+  jokerButtonText: {
     color: colors.textInverse,
     fontSize: typography.fontSize.body,
     fontWeight: typography.fontWeight.bold,

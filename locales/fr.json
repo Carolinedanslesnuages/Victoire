@@ -278,6 +278,26 @@
       "breakSuccess": "Cagnotte utilisée ! Profitez bien de votre achat plaisir ! 🎉",
       "howItWorks": "Comment ça marche ?",
       "howItWorksText": "Chaque jour où vous ne dépensez rien, votre budget quotidien est automatiquement transféré dans cette cagnotte. Accumulez et cassez-la quand vous voulez vous faire plaisir !"
+    },
+    "jokers": {
+      "indicator": {
+        "remaining": "{{count}} joker restant",
+        "remainingPlural": "{{count}} jokers restants",
+        "none": "Aucun joker"
+      },
+      "useButton": "❤️ Utiliser un Joker",
+      "lockedButton": "🔒 Plus de Jokers",
+      "usedSuccess": "Joker utilisé ! L'écureuil est rassuré 🐿️",
+      "paywallTitle": "Plus de Jokers Disponibles",
+      "paywallMessage": "Passez Premium pour obtenir plus de Jokers et sauver votre série !",
+      "premium": {
+        "quota": "5 jokers par mois",
+        "description": "Bénéficiez de 5 jokers par mois pour plus de souplesse"
+      },
+      "free": {
+        "quota": "1 joker par mois",
+        "description": "Version gratuite : 1 joker par mois"
+      }
     }
   },
   "addExpense": {

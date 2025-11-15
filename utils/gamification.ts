@@ -7,8 +7,9 @@ const GAMIFICATION_DATA_KEY = '@pace_gamification_data';
 
 /**
  * Get default gamification data
+ * @param isPremium - Whether user has premium subscription (affects joker quota)
  */
-const getDefaultGamificationData = (): GamificationData => ({
+const getDefaultGamificationData = (isPremium: boolean = false): GamificationData => ({
   badges: [],
   streakInfo: {
     currentStreak: 0,
@@ -16,7 +17,7 @@ const getDefaultGamificationData = (): GamificationData => ({
     lastActivityDate: '',
     isActive: false,
     streakFreezes: 2, // Start with 2 streak freezes
-    jokersRemaining: 3, // 3 jokers per month
+    jokersRemaining: isPremium ? 5 : 1, // Premium: 5 jokers, Free: 1 joker per month
     lastJokerResetDate: new Date().toISOString().split('T')[0],
   },
   monthlyStats: {
@@ -50,8 +51,9 @@ const validateGamificationData = (data: any): boolean => {
 
 /**
  * Load gamification data from storage
+ * @param isPremium - Whether user has premium subscription (affects joker quota)
  */
-export const loadGamificationData = async (): Promise<GamificationData> => {
+export const loadGamificationData = async (isPremium: boolean = false): Promise<GamificationData> => {
   try {
     const jsonValue = await AsyncStorage.getItem(GAMIFICATION_DATA_KEY);
     if (jsonValue != null) {
@@ -60,16 +62,16 @@ export const loadGamificationData = async (): Promise<GamificationData> => {
       // Validate the loaded data structure
       if (!validateGamificationData(data)) {
         console.error('Invalid gamification data structure, resetting to defaults');
-        return getDefaultGamificationData();
+        return getDefaultGamificationData(isPremium);
       }
       
       // Ensure jokers are reset monthly
-      return resetJokersIfNeeded(data);
+      return resetJokersIfNeeded(data, isPremium);
     }
-    return getDefaultGamificationData();
+    return getDefaultGamificationData(isPremium);
   } catch (error) {
     console.error('Error loading gamification data:', error);
-    return getDefaultGamificationData();
+    return getDefaultGamificationData(isPremium);
   }
 };
 
@@ -89,8 +91,10 @@ export const saveGamificationData = async (data: GamificationData): Promise<bool
 
 /**
  * Reset jokers if a new month has started
+ * @param data - Gamification data to check and potentially reset
+ * @param isPremium - Whether user has premium subscription (affects joker quota)
  */
-const resetJokersIfNeeded = (data: GamificationData): GamificationData => {
+const resetJokersIfNeeded = (data: GamificationData, isPremium: boolean = false): GamificationData => {
   const today = new Date();
   const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
   
@@ -103,7 +107,8 @@ const resetJokersIfNeeded = (data: GamificationData): GamificationData => {
   const lastResetMonth = `${lastResetDate.getFullYear()}-${String(lastResetDate.getMonth() + 1).padStart(2, '0')}`;
 
   if (currentMonth !== lastResetMonth) {
-    data.streakInfo.jokersRemaining = 3;
+    // Premium users get 5 jokers, free users get 1 joker per month
+    data.streakInfo.jokersRemaining = isPremium ? 5 : 1;
     data.streakInfo.lastJokerResetDate = today.toISOString().split('T')[0];
   }
 
