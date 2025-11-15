@@ -9,22 +9,26 @@ const GAMIFICATION_DATA_KEY = '@pace_gamification_data';
  * Get default gamification data
  * @param isPremium - Whether user has premium subscription (affects joker quota)
  */
-const getDefaultGamificationData = (isPremium: boolean = false): GamificationData => ({
-  badges: [],
-  streakInfo: {
-    currentStreak: 0,
-    longestStreak: 0,
-    lastActivityDate: '',
-    isActive: false,
-    streakFreezes: 2, // Start with 2 streak freezes
-    jokersRemaining: isPremium ? 5 : 1, // Premium: 5 jokers, Free: 1 joker per month
-    lastJokerResetDate: new Date().toISOString().split('T')[0],
-  },
-  monthlyStats: {
-    cyclesWithPositiveBalance: 0,
-    totalCyclesCompleted: 0,
-  },
-});
+const getDefaultGamificationData = (isPremium: boolean = false): GamificationData => {
+  const jokerQuota = isPremium ? 5 : 1;
+  return {
+    badges: [],
+    streakInfo: {
+      currentStreak: 0,
+      longestStreak: 0,
+      lastActivityDate: '',
+      isActive: false,
+      streakFreezes: 2, // Start with 2 streak freezes
+      jokersRemaining: jokerQuota,
+      lastJokerResetDate: new Date().toISOString().split('T')[0],
+      jokerQuota: jokerQuota, // Store the quota for future resets
+    },
+    monthlyStats: {
+      cyclesWithPositiveBalance: 0,
+      totalCyclesCompleted: 0,
+    },
+  };
+};
 
 /**
  * Validate that loaded gamification data has the expected structure
@@ -98,6 +102,22 @@ const resetJokersIfNeeded = (data: GamificationData, isPremium: boolean = false)
   const today = new Date();
   const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
   
+  // Determine the joker quota (use stored quota if available, otherwise use isPremium)
+  const jokerQuota = data.streakInfo.jokerQuota !== undefined 
+    ? data.streakInfo.jokerQuota 
+    : (isPremium ? 5 : 1);
+  
+  // Update quota if isPremium status changed
+  if (isPremium && jokerQuota < 5) {
+    data.streakInfo.jokerQuota = 5;
+  } else if (!isPremium && jokerQuota > 1) {
+    // If user was premium but is now free, downgrade quota
+    data.streakInfo.jokerQuota = 1;
+  } else if (data.streakInfo.jokerQuota === undefined) {
+    // Store the quota for future use
+    data.streakInfo.jokerQuota = jokerQuota;
+  }
+  
   if (!data.streakInfo.lastJokerResetDate) {
     data.streakInfo.lastJokerResetDate = today.toISOString().split('T')[0];
     return data;
@@ -107,8 +127,8 @@ const resetJokersIfNeeded = (data: GamificationData, isPremium: boolean = false)
   const lastResetMonth = `${lastResetDate.getFullYear()}-${String(lastResetDate.getMonth() + 1).padStart(2, '0')}`;
 
   if (currentMonth !== lastResetMonth) {
-    // Premium users get 5 jokers, free users get 1 joker per month
-    data.streakInfo.jokersRemaining = isPremium ? 5 : 1;
+    // Use the stored or updated quota
+    data.streakInfo.jokersRemaining = data.streakInfo.jokerQuota || jokerQuota;
     data.streakInfo.lastJokerResetDate = today.toISOString().split('T')[0];
   }
 

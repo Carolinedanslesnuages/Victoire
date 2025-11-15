@@ -42,7 +42,7 @@ describe('Gamification Badge Persistence', () => {
           currentStreak: 0,
           longestStreak: 0,
           streakFreezes: 2,
-          jokersRemaining: 3,
+          jokersRemaining: 1, // Free users get 1 joker by default
         }),
         monthlyStats: {
           cyclesWithPositiveBalance: 0,
@@ -307,6 +307,105 @@ describe('Gamification Badge Persistence', () => {
       expect(finalData.badges).toHaveLength(2);
       expect(finalData.badges.find((b: any) => b.type === 'first_step')).toBeDefined();
       expect(finalData.badges.find((b: any) => b.type === 'streak_7')).toBeDefined();
+    });
+  });
+
+  describe('Premium Joker Quota Differentiation', () => {
+    it('should give 1 joker to free users by default', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
+      const data = await loadGamificationData(false);
+
+      expect(data.streakInfo.jokersRemaining).toBe(1);
+    });
+
+    it('should give 5 jokers to premium users', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
+      const data = await loadGamificationData(true);
+
+      expect(data.streakInfo.jokersRemaining).toBe(5);
+    });
+
+    it('should reset jokers to 1 for free users at month change', async () => {
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      
+      const storedData: GamificationData = {
+        badges: [],
+        streakInfo: {
+          currentStreak: 0,
+          longestStreak: 0,
+          lastActivityDate: '',
+          isActive: false,
+          streakFreezes: 2,
+          jokersRemaining: 0, // User had used all jokers last month
+          lastJokerResetDate: lastMonth.toISOString().split('T')[0],
+        },
+        monthlyStats: {
+          cyclesWithPositiveBalance: 0,
+          totalCyclesCompleted: 0,
+        },
+      };
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedData));
+
+      const data = await loadGamificationData(false);
+
+      expect(data.streakInfo.jokersRemaining).toBe(1);
+    });
+
+    it('should reset jokers to 5 for premium users at month change', async () => {
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      
+      const storedData: GamificationData = {
+        badges: [],
+        streakInfo: {
+          currentStreak: 0,
+          longestStreak: 0,
+          lastActivityDate: '',
+          isActive: false,
+          streakFreezes: 2,
+          jokersRemaining: 0, // User had used all jokers last month
+          lastJokerResetDate: lastMonth.toISOString().split('T')[0],
+        },
+        monthlyStats: {
+          cyclesWithPositiveBalance: 0,
+          totalCyclesCompleted: 0,
+        },
+      };
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedData));
+
+      const data = await loadGamificationData(true);
+
+      expect(data.streakInfo.jokersRemaining).toBe(5);
+    });
+
+    it('should not reset jokers in the same month', async () => {
+      const today = new Date();
+      
+      const storedData: GamificationData = {
+        badges: [],
+        streakInfo: {
+          currentStreak: 0,
+          longestStreak: 0,
+          lastActivityDate: '',
+          isActive: false,
+          streakFreezes: 2,
+          jokersRemaining: 2, // User has 2 jokers remaining
+          lastJokerResetDate: today.toISOString().split('T')[0],
+        },
+        monthlyStats: {
+          cyclesWithPositiveBalance: 0,
+          totalCyclesCompleted: 0,
+        },
+      };
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedData));
+
+      const data = await loadGamificationData(true);
+
+      // Should keep the 2 remaining jokers, not reset to 5
+      expect(data.streakInfo.jokersRemaining).toBe(2);
     });
   });
 });
