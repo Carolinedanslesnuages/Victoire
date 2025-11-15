@@ -8,10 +8,27 @@ import i18n from './i18n';
 
 /**
  * Get the current budget cycle dates
- * @param cycleStartDay - Day of month when cycle starts (1-31)
+ * @param cycleStartDay - Day of month when cycle starts (1-31) - used in monthly mode
+ * @param cycleMode - 'monthly' or 'custom' mode
+ * @param customStartDate - ISO date string for custom period start
+ * @param customEndDate - ISO date string for custom period end
  * @returns Object with cycleStart and cycleEnd dates
  */
-export const getCurrentCycle = (cycleStartDay: number): BudgetCycle => {
+export const getCurrentCycle = (
+  cycleStartDay: number,
+  cycleMode: 'monthly' | 'custom' = 'monthly',
+  customStartDate?: string,
+  customEndDate?: string
+): BudgetCycle => {
+  // Custom mode: use provided dates
+  if (cycleMode === 'custom' && customStartDate && customEndDate) {
+    return {
+      cycleStart: new Date(customStartDate),
+      cycleEnd: new Date(customEndDate),
+    };
+  }
+
+  // Monthly mode: calculate based on cycle start day
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
@@ -33,12 +50,20 @@ export const getCurrentCycle = (cycleStartDay: number): BudgetCycle => {
 
 /**
  * Calculate days remaining in current cycle
- * @param cycleStartDay - Day of month when cycle starts (1-31)
+ * @param cycleStartDay - Day of month when cycle starts (1-31) - used in monthly mode
+ * @param cycleMode - 'monthly' or 'custom' mode
+ * @param customStartDate - ISO date string for custom period start
+ * @param customEndDate - ISO date string for custom period end
  * @returns Number of days remaining in cycle
  */
-export const getDaysRemainingInCycle = (cycleStartDay: number): number => {
+export const getDaysRemainingInCycle = (
+  cycleStartDay: number,
+  cycleMode: 'monthly' | 'custom' = 'monthly',
+  customStartDate?: string,
+  customEndDate?: string
+): number => {
   const today = new Date();
-  const { cycleEnd } = getCurrentCycle(cycleStartDay);
+  const { cycleEnd } = getCurrentCycle(cycleStartDay, cycleMode, customStartDate, customEndDate);
   
   const diffTime = cycleEnd.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -48,37 +73,56 @@ export const getDaysRemainingInCycle = (cycleStartDay: number): number => {
 
 /**
  * Calculate days elapsed in current cycle
- * @param cycleStartDay - Day of month when cycle starts (1-31)
+ * @param cycleStartDay - Day of month when cycle starts (1-31) - used in monthly mode
+ * @param cycleMode - 'monthly' or 'custom' mode
+ * @param customStartDate - ISO date string for custom period start
+ * @param customEndDate - ISO date string for custom period end
  * @returns Number of days elapsed in cycle
  */
-export const getDaysElapsedInCycle = (cycleStartDay: number): number => {
-  const { cycleStart, cycleEnd } = getCurrentCycle(cycleStartDay);
+export const getDaysElapsedInCycle = (
+  cycleStartDay: number,
+  cycleMode: 'monthly' | 'custom' = 'monthly',
+  customStartDate?: string,
+  customEndDate?: string
+): number => {
+  const { cycleStart, cycleEnd } = getCurrentCycle(cycleStartDay, cycleMode, customStartDate, customEndDate);
   
   const totalDays = Math.ceil((cycleEnd.getTime() - cycleStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  const daysRemaining = getDaysRemainingInCycle(cycleStartDay);
+  const daysRemaining = getDaysRemainingInCycle(cycleStartDay, cycleMode, customStartDate, customEndDate);
   
   return totalDays - daysRemaining;
 };
 
 /**
  * Calculate total days in current cycle
- * @param cycleStartDay - Day of month when cycle starts (1-31)
+ * @param cycleStartDay - Day of month when cycle starts (1-31) - used in monthly mode
+ * @param cycleMode - 'monthly' or 'custom' mode
+ * @param customStartDate - ISO date string for custom period start
+ * @param customEndDate - ISO date string for custom period end
  * @returns Total number of days in cycle
  */
-export const getTotalDaysInCycle = (cycleStartDay: number): number => {
-  const { cycleStart, cycleEnd } = getCurrentCycle(cycleStartDay);
+export const getTotalDaysInCycle = (
+  cycleStartDay: number,
+  cycleMode: 'monthly' | 'custom' = 'monthly',
+  customStartDate?: string,
+  customEndDate?: string
+): number => {
+  const { cycleStart, cycleEnd } = getCurrentCycle(cycleStartDay, cycleMode, customStartDate, customEndDate);
   return Math.ceil((cycleEnd.getTime() - cycleStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 };
 
 /**
  * Calculate daily budget based on remaining budget and days
- * @param monthlyIncome - Monthly income
- * @param fixedCharges - Fixed charges
- * @param savingsGoal - Savings goal
+ * @param monthlyIncome - Monthly income (or budget available for custom period)
+ * @param fixedCharges - Fixed charges (not used in custom mode)
+ * @param savingsGoal - Savings goal (not used in custom mode)
  * @param totalSpent - Total amount spent in current cycle
  * @param cycleStartDay - Day of month when cycle starts
  * @param totalIncome - Total income received in current cycle (optional)
  * @param midCycleOnboarding - Mid-cycle onboarding data (optional)
+ * @param cycleMode - 'monthly' or 'custom' mode
+ * @param customStartDate - ISO date string for custom period start
+ * @param customEndDate - ISO date string for custom period end
  * @returns Daily budget for today
  */
 export const calculateDailyBudget = (
@@ -88,8 +132,25 @@ export const calculateDailyBudget = (
   totalSpent: number,
   cycleStartDay: number,
   totalIncome: number = 0,
-  midCycleOnboarding?: { remainingAmount: number; cycleEndDate: string }
+  midCycleOnboarding?: { remainingAmount: number; cycleEndDate: string },
+  cycleMode: 'monthly' | 'custom' = 'monthly',
+  customStartDate?: string,
+  customEndDate?: string
 ): number => {
+  // Custom mode: use monthlyIncome as total budget available (no charges/savings deductions)
+  if (cycleMode === 'custom') {
+    const totalBudget = monthlyIncome; // In custom mode, this is the "Budget Available for Period"
+    const remainingBudget = totalBudget - totalSpent + totalIncome;
+    const daysRemaining = getDaysRemainingInCycle(cycleStartDay, cycleMode, customStartDate, customEndDate);
+    
+    // Avoid division by zero
+    if (daysRemaining === 0) {
+      return remainingBudget;
+    }
+    
+    return remainingBudget / daysRemaining;
+  }
+
   // US 1.5.3: If we have mid-cycle onboarding data and we're still in the first incomplete cycle
   if (midCycleOnboarding) {
     const today = new Date();
@@ -111,7 +172,7 @@ export const calculateDailyBudget = (
     // If we've passed the first cycle, fall through to normal calculation
   }
   
-  // Normal calculation for complete cycles
+  // Normal calculation for complete cycles (monthly mode)
   const resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
   // Income increases the budget, expenses decrease it
   const remainingBudget = resteAVivre - totalSpent + totalIncome;
@@ -127,12 +188,15 @@ export const calculateDailyBudget = (
 
 /**
  * Calculate budget status based on spending pace
- * @param monthlyIncome - Monthly income
- * @param fixedCharges - Fixed charges
- * @param savingsGoal - Savings goal
+ * @param monthlyIncome - Monthly income (or budget available for custom period)
+ * @param fixedCharges - Fixed charges (not used in custom mode)
+ * @param savingsGoal - Savings goal (not used in custom mode)
  * @param totalSpent - Total amount spent in current cycle
  * @param cycleStartDay - Day of month when cycle starts
  * @param totalIncome - Total income received in current cycle (optional)
+ * @param cycleMode - 'monthly' or 'custom' mode
+ * @param customStartDate - ISO date string for custom period start
+ * @param customEndDate - ISO date string for custom period end
  * @returns Status object with type and label
  */
 export const calculateBudgetStatus = (
@@ -141,11 +205,18 @@ export const calculateBudgetStatus = (
   savingsGoal: number,
   totalSpent: number,
   cycleStartDay: number,
-  totalIncome: number = 0
+  totalIncome: number = 0,
+  cycleMode: 'monthly' | 'custom' = 'monthly',
+  customStartDate?: string,
+  customEndDate?: string
 ): BudgetStatus => {
-  const resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
-  const daysElapsed = getDaysElapsedInCycle(cycleStartDay);
-  const totalDays = getTotalDaysInCycle(cycleStartDay);
+  // Determine reste à vivre based on mode
+  const resteAVivre = cycleMode === 'custom' 
+    ? monthlyIncome // In custom mode, use full budget
+    : monthlyIncome - fixedCharges - savingsGoal; // In monthly mode, deduct charges/savings
+    
+  const daysElapsed = getDaysElapsedInCycle(cycleStartDay, cycleMode, customStartDate, customEndDate);
+  const totalDays = getTotalDaysInCycle(cycleStartDay, cycleMode, customStartDate, customEndDate);
   
   // Calculate percentage of time elapsed vs percentage of budget spent
   const timeElapsedPercent = (daysElapsed / totalDays) * 100;
@@ -181,11 +252,12 @@ export const calculateBudgetStatus = (
 
 /**
  * Calculate percentage of budget spent
- * @param monthlyIncome - Monthly income
- * @param fixedCharges - Fixed charges
- * @param savingsGoal - Savings goal
+ * @param monthlyIncome - Monthly income (or budget available for custom period)
+ * @param fixedCharges - Fixed charges (not used in custom mode)
+ * @param savingsGoal - Savings goal (not used in custom mode)
  * @param totalSpent - Total amount spent in current cycle
  * @param totalIncome - Total income received in current cycle (optional)
+ * @param cycleMode - 'monthly' or 'custom' mode
  * @returns Percentage of budget spent (0-100)
  */
 export const calculateSpentPercentage = (
@@ -193,9 +265,14 @@ export const calculateSpentPercentage = (
   fixedCharges: number,
   savingsGoal: number,
   totalSpent: number,
-  totalIncome: number = 0
+  totalIncome: number = 0,
+  cycleMode: 'monthly' | 'custom' = 'monthly'
 ): number => {
-  const resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
+  // Determine reste à vivre based on mode
+  const resteAVivre = cycleMode === 'custom'
+    ? monthlyIncome // In custom mode, use full budget
+    : monthlyIncome - fixedCharges - savingsGoal; // In monthly mode, deduct charges/savings
+  
   if (resteAVivre === 0) return 0;
   // Net spending: expenses minus income
   const netSpending = totalSpent - totalIncome;

@@ -198,7 +198,14 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
     return t.type === 'income' ? sum + t.amount : sum;
   }, 0);
   
-  const resteAVivre = profile.monthlyIncome - profile.fixedCharges - profile.savingsGoal;
+  const resteAVivre = (profile.cycleMode === 'custom')
+    ? profile.monthlyIncome // In custom mode, use full budget
+    : profile.monthlyIncome - profile.fixedCharges - profile.savingsGoal; // In monthly mode, deduct charges/savings
+  
+  const cycleMode = profile.cycleMode || 'monthly';
+  const customStartDate = profile.customStartDate;
+  const customEndDate = profile.customEndDate;
+  
   const dailyBudget = calculateDailyBudget(
     profile.monthlyIncome,
     profile.fixedCharges,
@@ -206,23 +213,35 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
     totalSpent,
     profile.cycleStartDay,
     totalIncome,
-    profile.midCycleOnboarding
+    profile.midCycleOnboarding,
+    cycleMode,
+    customStartDate,
+    customEndDate
   );
-  const daysRemaining = getDaysRemainingInCycle(profile.cycleStartDay);
+  const daysRemaining = getDaysRemainingInCycle(
+    profile.cycleStartDay,
+    cycleMode,
+    customStartDate,
+    customEndDate
+  );
   const budgetStatus = calculateBudgetStatus(
     profile.monthlyIncome,
     profile.fixedCharges,
     profile.savingsGoal,
     totalSpent,
     profile.cycleStartDay,
-    totalIncome
+    totalIncome,
+    cycleMode,
+    customStartDate,
+    customEndDate
   );
   const spentPercentage = calculateSpentPercentage(
     profile.monthlyIncome,
     profile.fixedCharges,
     profile.savingsGoal,
     totalSpent,
-    totalIncome
+    totalIncome,
+    cycleMode
   );
 
   const isDailyBudgetNegative = dailyBudget < 0;

@@ -70,10 +70,18 @@ export const processUnspentDailyBudget = async (profile: BudgetProfile): Promise
       // This is: remaining budget at start of yesterday / days remaining at that point
       
       // Get days remaining as of yesterday
-      const daysRemainingYesterday = getDaysRemainingInCycle(profile.cycleStartDay) + 1;
+      const cycleMode = profile.cycleMode || 'monthly';
+      const daysRemainingYesterday = getDaysRemainingInCycle(
+        profile.cycleStartDay,
+        cycleMode,
+        profile.customStartDate,
+        profile.customEndDate
+      ) + 1;
       
       if (daysRemainingYesterday > 0) {
-        const resteAVivre = profile.monthlyIncome - profile.fixedCharges - profile.savingsGoal;
+        const resteAVivre = (cycleMode === 'custom')
+          ? profile.monthlyIncome // In custom mode, use full budget
+          : profile.monthlyIncome - profile.fixedCharges - profile.savingsGoal; // In monthly mode, deduct charges/savings
         const remainingBudgetYesterday = resteAVivre - totalSpent + totalIncome;
         const dailyBudgetYesterday = remainingBudgetYesterday / daysRemainingYesterday;
         

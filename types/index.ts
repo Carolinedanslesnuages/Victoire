@@ -10,6 +10,13 @@ import { AvatarId } from '../constants/avatars';
 export type BudgetProfileType = 'personal' | 'household';
 
 /**
+ * Budget cycle mode - monthly recurring or custom period
+ * - 'monthly': Traditional fixed monthly cycle based on cycleStartDay
+ * - 'custom': Flexible period with specific start and end dates for irregular income
+ */
+export type BudgetCycleMode = 'monthly' | 'custom';
+
+/**
  * Budget profile interface - represents a single budget (personal or household)
  */
 export interface BudgetProfile {
@@ -20,6 +27,9 @@ export interface BudgetProfile {
   fixedCharges: number;
   savingsGoal: number;
   cycleStartDay: number;
+  cycleMode?: BudgetCycleMode; // Mode: 'monthly' (default) or 'custom'
+  customStartDate?: string; // ISO date string - start of custom period
+  customEndDate?: string; // ISO date string - end of custom period
   createdAt: string; // ISO date string
   midCycleOnboarding?: {
     remainingAmount: number; // Amount remaining for the first incomplete cycle
@@ -35,6 +45,9 @@ export interface BudgetConfig {
   fixedCharges: number;
   savingsGoal: number;
   cycleStartDay: number;
+  cycleMode?: BudgetCycleMode; // Mode: 'monthly' (default) or 'custom'
+  customStartDate?: string; // ISO date string - start of custom period
+  customEndDate?: string; // ISO date string - end of custom period
   budgetName?: string; // Optional custom budget name
   isHouseholdBudget?: boolean; // True if this is a household/family budget
   householdName?: string; // Optional household name (e.g., "Foyer Dupont")

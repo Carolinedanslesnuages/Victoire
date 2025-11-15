@@ -111,8 +111,15 @@
   "configWizard": {
     "title": "Configuration Budgétaire",
     "subtitle": "Définissez votre cadre budgétaire pour commencer",
+    "cycleMode": "Mode de Cycle Budgétaire",
+    "cycleModeMonthly": "Mensuel (Récurrent)",
+    "cycleModeCustom": "Personnalisé (Flexible)",
+    "cycleModeHint": "Choisissez comment vous souhaitez gérer votre budget",
     "monthlyIncome": "Revenus mensuels nets (€)",
     "monthlyIncomePlaceholder": "Ex: 2500",
+    "budgetAvailable": "Budget disponible pour cette période (€)",
+    "budgetAvailablePlaceholder": "Ex: 800",
+    "budgetAvailableHint": "Le montant total dont vous disposez pour cette période",
     "fixedCharges": "Charges fixes totales (€)",
     "fixedChargesPlaceholder": "Ex: 1200",
     "savingsGoal": "Objectif d'épargne (€)",
@@ -120,6 +127,9 @@
     "cycleStartDay": "Jour de début du cycle budgétaire (1-31)",
     "cycleStartDayHint": "Le jour du mois où vous recevez votre salaire",
     "cycleStartDayPlaceholder": "Ex: 5",
+    "customStartDate": "Date de début de période",
+    "customEndDate": "Date de fin de période (Prochaine rentrée d'argent)",
+    "customEndDateHint": "La date à laquelle vous recevrez votre prochain revenu",
     "saveButton": "Enregistrer",
     "cancel": "Retour",
     "midCycleTitle": "Rattrapage du Cycle en Cours",
@@ -131,10 +141,13 @@
     "errors": {
       "title": "Erreur",
       "invalidIncome": "Veuillez saisir un revenu mensuel valide",
+      "invalidBudget": "Veuillez saisir un montant de budget valide",
       "invalidCharges": "Veuillez saisir un montant de charges valide",
       "invalidSavings": "Veuillez saisir un objectif d'épargne valide",
       "invalidCycleDay": "Veuillez saisir un jour entre 1 et 31",
-      "invalidRemainingAmount": "Veuillez saisir un montant restant valide"
+      "invalidRemainingAmount": "Veuillez saisir un montant restant valide",
+      "invalidCustomDates": "Veuillez sélectionner les dates de début et de fin",
+      "invalidDateRange": "La date de fin doit être postérieure à la date de début"
     }
   },
   "onboarding": {

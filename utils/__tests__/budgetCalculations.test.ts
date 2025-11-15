@@ -548,4 +548,192 @@ describe('budgetCalculations', () => {
       jest.useRealTimers();
     });
   });
+
+  describe('Custom Budget Cycles', () => {
+    describe('getCurrentCycle with custom mode', () => {
+      it('should return custom cycle dates when in custom mode', () => {
+        const customStartDate = '2024-01-10';
+        const customEndDate = '2024-01-25';
+
+        const cycle = getCurrentCycle(1, 'custom', customStartDate, customEndDate);
+
+        expect(cycle.cycleStart.toISOString()).toBe(new Date(customStartDate).toISOString());
+        expect(cycle.cycleEnd.toISOString()).toBe(new Date(customEndDate).toISOString());
+      });
+
+      it('should fall back to monthly mode when custom dates are not provided', () => {
+        const mockDate = new Date(2024, 0, 15);
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const cycle = getCurrentCycle(10, 'custom'); // Custom mode but no dates
+
+        // Should still return monthly calculation as fallback
+        expect(cycle.cycleStart.getDate()).toBe(10);
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe('getDaysRemainingInCycle with custom mode', () => {
+      it('should calculate days remaining based on custom end date', () => {
+        const mockDate = new Date(2024, 0, 15); // January 15, 2024
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const customStartDate = '2024-01-10';
+        const customEndDate = '2024-01-25';
+
+        const daysRemaining = getDaysRemainingInCycle(1, 'custom', customStartDate, customEndDate);
+
+        // From Jan 15 to Jan 25 is 11 days (ceil of time difference)
+        expect(daysRemaining).toBeGreaterThanOrEqual(10);
+        expect(daysRemaining).toBeLessThanOrEqual(11);
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe('getTotalDaysInCycle with custom mode', () => {
+      it('should calculate total days based on custom date range', () => {
+        const customStartDate = '2024-01-10';
+        const customEndDate = '2024-01-25';
+
+        const totalDays = getTotalDaysInCycle(1, 'custom', customStartDate, customEndDate);
+
+        // From Jan 10 to Jan 25 is 16 days
+        expect(totalDays).toBe(16);
+      });
+
+      it('should handle custom periods across month boundaries', () => {
+        const customStartDate = '2024-01-25';
+        const customEndDate = '2024-02-10';
+
+        const totalDays = getTotalDaysInCycle(1, 'custom', customStartDate, customEndDate);
+
+        // From Jan 25 to Feb 10 is 17 days
+        expect(totalDays).toBe(17);
+      });
+    });
+
+    describe('calculateDailyBudget with custom mode', () => {
+      it('should use full budget amount in custom mode (no deductions)', () => {
+        const mockDate = new Date(2024, 0, 15); // January 15, 2024
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const customStartDate = '2024-01-10';
+        const customEndDate = '2024-01-25';
+
+        const dailyBudget = calculateDailyBudget(
+          800,  // Budget available for period (no deductions)
+          200,  // fixedCharges (should be ignored in custom mode)
+          100,  // savingsGoal (should be ignored in custom mode)
+          150,  // totalSpent
+          1,    // cycleStartDay (not used in custom mode)
+          0,    // totalIncome
+          undefined, // midCycleOnboarding
+          'custom',
+          customStartDate,
+          customEndDate
+        );
+
+        // Should use full 800 as budget: (800 - 150) / days remaining
+        const daysRemaining = getDaysRemainingInCycle(1, 'custom', customStartDate, customEndDate);
+        const expectedDailyBudget = (800 - 150) / daysRemaining;
+        expect(dailyBudget).toBeCloseTo(expectedDailyBudget, 2);
+
+        jest.useRealTimers();
+      });
+
+      it('should consider income in custom mode', () => {
+        const mockDate = new Date(2024, 0, 15);
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const customStartDate = '2024-01-10';
+        const customEndDate = '2024-01-25';
+
+        const dailyBudget = calculateDailyBudget(
+          800,  // Budget available
+          0,    // fixedCharges (ignored)
+          0,    // savingsGoal (ignored)
+          150,  // totalSpent
+          1,    // cycleStartDay
+          50,   // totalIncome (received extra money)
+          undefined,
+          'custom',
+          customStartDate,
+          customEndDate
+        );
+
+        // Should be: (800 - 150 + 50) / days remaining
+        const daysRemaining = getDaysRemainingInCycle(1, 'custom', customStartDate, customEndDate);
+        const expectedDailyBudget = (800 - 150 + 50) / daysRemaining;
+        expect(dailyBudget).toBeCloseTo(expectedDailyBudget, 2);
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe('calculateBudgetStatus with custom mode', () => {
+      it('should calculate status using full budget in custom mode', () => {
+        const mockDate = new Date(2024, 0, 15);
+        jest.useFakeTimers();
+        jest.setSystemTime(mockDate);
+
+        const customStartDate = '2024-01-10';
+        const customEndDate = '2024-01-25';
+
+        const status = calculateBudgetStatus(
+          800,  // Budget available
+          0,    // fixedCharges (ignored)
+          0,    // savingsGoal (ignored)
+          100,  // totalSpent
+          1,    // cycleStartDay
+          0,    // totalIncome
+          'custom',
+          customStartDate,
+          customEndDate
+        );
+
+        // Should have a valid status type
+        expect(['ahead', 'behind', 'attention']).toContain(status.type);
+        expect(status.label).toBeDefined();
+        expect(status.color).toBeDefined();
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe('calculateSpentPercentage with custom mode', () => {
+      it('should calculate percentage using full budget in custom mode', () => {
+        const percentage = calculateSpentPercentage(
+          800,  // Budget available
+          0,    // fixedCharges (ignored)
+          0,    // savingsGoal (ignored)
+          200,  // totalSpent
+          0,    // totalIncome
+          'custom'
+        );
+
+        // Should be 200/800 = 25%
+        expect(percentage).toBe(25);
+      });
+
+      it('should handle overspending in custom mode', () => {
+        const percentage = calculateSpentPercentage(
+          800,  // Budget available
+          0,    // fixedCharges (ignored)
+          0,    // savingsGoal (ignored)
+          900,  // totalSpent (more than available)
+          0,    // totalIncome
+          'custom'
+        );
+
+        // Should cap at 100%
+        expect(percentage).toBe(100);
+      });
+    });
+  });
 });

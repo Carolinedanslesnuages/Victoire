@@ -52,25 +52,11 @@ export default function MascotDisplay({
           }
         ]}
       >
-        {mascotState.imageSource ? (
-          <Image
-            source={mascotState.imageSource}
-            // MODIFICATION ICI : On force l'image à être ronde aussi
-            style={[
-              styles.mascotImage, 
-              { 
-                width: mascotSize, 
-                height: mascotSize,
-                borderRadius: mascotSize / 2 // Cercle parfait
-              }
-            ]}
-            resizeMode="contain"
-          />
-        ) : (
-          <View style={[styles.mascotPlaceholder, { width: mascotSize, height: mascotSize }]}>
-            <Text style={styles.mascotEmoji}>🐿️</Text>
-          </View>
-        )}
+   <Image
+          source={mascotState.imageSource}
+          style={[styles.mascotImage, { width: mascotSize, height: mascotSize }]}
+          resizeMode="contain"
+        />
       </View>
       
       {showDescription && (

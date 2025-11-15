@@ -183,6 +183,8 @@ export const updateMorningBudgetContent = async (): Promise<void> => {
 
     const transactions = await getTransactionsForCurrentCycle(budgetConfig.cycleStartDay);
     const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
+    
+    const cycleMode = budgetConfig.cycleMode || 'monthly';
     const dailyBudget = calculateDailyBudget(
       budgetConfig.monthlyIncome,
       budgetConfig.fixedCharges,
@@ -190,7 +192,10 @@ export const updateMorningBudgetContent = async (): Promise<void> => {
       totalSpent,
       budgetConfig.cycleStartDay,
       0,
-      budgetConfig.midCycleOnboarding
+      budgetConfig.midCycleOnboarding,
+      cycleMode,
+      budgetConfig.customStartDate,
+      budgetConfig.customEndDate
     );
 
     const [hours, minutes] = preferences.notificationSettings.morningBudgetTime.split(':').map(Number);
