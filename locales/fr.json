@@ -196,7 +196,12 @@
     "dailyBudget": {
       "label": "Budget du Jour",
       "hint": "Ce que vous pouvez dépenser aujourd'hui",
-      "warning": "⚠️ Vous devez réduire vos dépenses"
+      "warning": "⚠️ Vous devez réduire vos dépenses",
+      "remainingLabel": "Reste pour aujourd'hui",
+      "remainingHint": "Vous pouvez encore dépenser ce montant aujourd'hui",
+      "exceededLabel": "Budget Dépassé",
+      "exceededHint": "Vous empruntez sur demain",
+      "exceededAmount": "Écart du jour"
     },
     "monthlyHealth": {
       "title": "Santé du Mois",

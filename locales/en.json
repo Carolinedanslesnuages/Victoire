@@ -196,7 +196,12 @@
     "dailyBudget": {
       "label": "Daily Budget",
       "hint": "What you can spend today",
-      "warning": "⚠️ You need to reduce your spending"
+      "warning": "⚠️ You need to reduce your spending",
+      "remainingLabel": "Remaining for today",
+      "remainingHint": "You can still spend this amount today",
+      "exceededLabel": "Budget Exceeded",
+      "exceededHint": "You're borrowing from tomorrow",
+      "exceededAmount": "Today's Overspending"
     },
     "monthlyHealth": {
       "title": "Monthly Health",

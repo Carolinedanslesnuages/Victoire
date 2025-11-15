@@ -95,6 +95,17 @@ export interface BudgetStatus {
 }
 
 /**
+ * Daily spending state interface
+ * US 2.3.1: Represents whether user is under or over their daily quota
+ */
+export interface DailySpendingState {
+  status: 'under' | 'over';
+  amount: number; // Positive (remaining) or Negative (overspent)
+  todaySpent: number; // Total spent today
+  initialDailyBudget: number; // Theoretical daily budget for today
+}
+
+/**
  * User preferences interface
  */
 export interface UserPreferences {

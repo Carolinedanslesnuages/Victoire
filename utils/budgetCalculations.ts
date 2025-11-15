@@ -2,7 +2,7 @@
  * Budget calculation utilities for the PACE app
  */
 
-import { BudgetCycle, BudgetStatus } from '../types';
+import { BudgetCycle, BudgetStatus, DailySpendingState, Transaction } from '../types';
 import { colors } from '../constants/theme';
 import i18n from './i18n';
 
@@ -277,4 +277,104 @@ export const calculateSpentPercentage = (
   // Net spending: expenses minus income
   const netSpending = totalSpent - totalIncome;
   return Math.min(100, Math.max(0, (netSpending / resteAVivre) * 100));
+};
+
+/**
+ * US 2.3.1: Get daily spending state - determines if user is under or over their daily quota
+ * 
+ * Logic:
+ * - Initial Daily Budget = (Reste à Vivre + Today's Spending) / Days Remaining
+ * - Balance = Initial Daily Budget - Today's Spending
+ * - If Balance < 0 → Status OVER (exceeded)
+ * - If Balance >= 0 → Status UNDER (within budget)
+ * 
+ * @param monthlyIncome - Monthly income (or budget available for custom period)
+ * @param fixedCharges - Fixed charges (not used in custom mode)
+ * @param savingsGoal - Savings goal (not used in custom mode)
+ * @param totalSpent - Total amount spent in current cycle
+ * @param cycleStartDay - Day of month when cycle starts
+ * @param transactions - All transactions for the current cycle
+ * @param totalIncome - Total income received in current cycle (optional)
+ * @param midCycleOnboarding - Mid-cycle onboarding data (optional)
+ * @param cycleMode - 'monthly' or 'custom' mode
+ * @param customStartDate - ISO date string for custom period start
+ * @param customEndDate - ISO date string for custom period end
+ * @returns DailySpendingState object with status and amounts
+ */
+export const getDailySpendingState = (
+  monthlyIncome: number,
+  fixedCharges: number,
+  savingsGoal: number,
+  totalSpent: number,
+  cycleStartDay: number,
+  transactions: Transaction[],
+  totalIncome: number = 0,
+  midCycleOnboarding?: { remainingAmount: number; cycleEndDate: string },
+  cycleMode: 'monthly' | 'custom' = 'monthly',
+  customStartDate?: string,
+  customEndDate?: string
+): DailySpendingState => {
+  // Calculate today's spending (expenses only, not income)
+  const today = new Date().toDateString();
+  const todayTransactions = transactions.filter(t => 
+    new Date(t.date).toDateString() === today
+  );
+  
+  const todaySpent = todayTransactions.reduce((sum, t) => {
+    return t.type === 'income' ? sum : sum + t.amount;
+  }, 0);
+  
+  const todayIncome = todayTransactions.reduce((sum, t) => {
+    return t.type === 'income' ? sum + t.amount : sum;
+  }, 0);
+
+  // Calculate the initial daily budget (theoretical quota for today)
+  // This is what the budget WOULD have been before spending anything today
+  const daysRemaining = getDaysRemainingInCycle(
+    cycleStartDay,
+    cycleMode,
+    customStartDate,
+    customEndDate
+  );
+
+  // Determine reste à vivre based on mode
+  let resteAVivre: number;
+  
+  if (cycleMode === 'custom') {
+    resteAVivre = monthlyIncome; // In custom mode, use full budget
+  } else if (midCycleOnboarding) {
+    // Check if we're still in the first incomplete cycle
+    const todayDate = new Date();
+    const cycleEndDate = new Date(midCycleOnboarding.cycleEndDate);
+    
+    if (todayDate <= cycleEndDate) {
+      resteAVivre = midCycleOnboarding.remainingAmount;
+    } else {
+      resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
+    }
+  } else {
+    resteAVivre = monthlyIncome - fixedCharges - savingsGoal;
+  }
+
+  // Calculate what's globally remaining (including today's spending)
+  const globalRemaining = resteAVivre - totalSpent + totalIncome;
+  
+  // Initial daily budget = what we SHOULD spend today to stay on track
+  // This is: (Global Remaining + Today's Spending - Today's Income) / Days Remaining
+  const initialDailyBudget = daysRemaining > 0
+    ? (globalRemaining + todaySpent - todayIncome) / daysRemaining
+    : globalRemaining + todaySpent - todayIncome;
+
+  // Balance for today = Initial Daily Budget - What we actually spent today
+  const todayBalance = initialDailyBudget - todaySpent;
+
+  // Determine status
+  const status: 'under' | 'over' = todayBalance < 0 ? 'over' : 'under';
+
+  return {
+    status,
+    amount: todayBalance, // Positive if under budget, negative if over
+    todaySpent,
+    initialDailyBudget,
+  };
 };
