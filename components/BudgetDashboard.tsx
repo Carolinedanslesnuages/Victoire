@@ -110,7 +110,8 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
   };
 
   const loadStreak = async () => {
-    const streak = await calculateStreak();
+    // Calculate streak for badge unlocking
+    await calculateStreak();
     
     // Load gamification data with proper joker quota based on subscription
     const gamificationData = await loadGamificationData(isPremium);
