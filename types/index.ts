@@ -166,6 +166,7 @@ export interface StreakInfo {
   streakFreezes: number; // Number of streak freezes available
   jokersRemaining: number; // Number of jokers remaining this month
   lastJokerResetDate?: string; // Last date when jokers were reset
+  jokerQuota?: number; // Monthly joker quota (1 for free, 5 for premium)
 }
 
 /**

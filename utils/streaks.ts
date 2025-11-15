@@ -154,7 +154,9 @@ export const calculateStreak = async (): Promise<StreakInfo> => {
     }
 
     // Get gamification data for freezes and jokers
-    const gamificationData = await loadGamificationData();
+    // Note: This loads with default (free) parameter, but the actual joker count
+    // is preserved from storage unless the month has changed
+    const gamificationData = await loadGamificationData(false);
 
     const streakInfo: StreakInfo = {
       currentStreak,

@@ -42,7 +42,7 @@ export default function ProfileScreen({ onBudgetChange }: ProfileScreenProps) {
   }, []);
 
   const loadData = async () => {
-    const data = await loadGamificationData();
+    const data = await loadGamificationData(isPremium);
     setGamificationData(data);
     
     const jokerEligible = await canUseJoker();

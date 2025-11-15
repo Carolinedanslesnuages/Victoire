@@ -278,6 +278,26 @@
       "breakSuccess": "Pot used! Enjoy your pleasure purchase! 🎉",
       "howItWorks": "How it works?",
       "howItWorksText": "Every day you don't spend anything, your daily budget is automatically transferred to this pot. Accumulate and break it when you want to treat yourself!"
+    },
+    "jokers": {
+      "indicator": {
+        "remaining": "{{count}} joker remaining",
+        "remainingPlural": "{{count}} jokers remaining",
+        "none": "No jokers"
+      },
+      "useButton": "❤️ Use a Joker",
+      "lockedButton": "🔒 No More Jokers",
+      "usedSuccess": "Joker used! The squirrel is reassured 🐿️",
+      "paywallTitle": "No More Jokers Available",
+      "paywallMessage": "Upgrade to Premium to get more Jokers and save your streak!",
+      "premium": {
+        "quota": "5 jokers per month",
+        "description": "Get 5 jokers per month for more flexibility"
+      },
+      "free": {
+        "quota": "1 joker per month",
+        "description": "Free version: 1 joker per month"
+      }
     }
   },
   "addExpense": {
