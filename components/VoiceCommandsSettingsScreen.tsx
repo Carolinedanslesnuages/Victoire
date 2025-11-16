@@ -36,7 +36,6 @@ interface VoiceCommandsSettingsScreenProps {
 export default function VoiceCommandsSettingsScreen({
   visible,
   onClose,
-  customCategories,
 }: VoiceCommandsSettingsScreenProps) {
   const { colors } = useTheme();
   const [settings, setSettings] = useState<VoiceCommandSettings | null>(null);
@@ -281,7 +280,7 @@ export default function VoiceCommandsSettingsScreen({
                 style={[styles.addButton, { backgroundColor: colors.primary }]}
                 onPress={handleAddPhrase}
               >
-                <Text style={[styles.addButtonText, { color: colors.buttonText }]}>
+                <Text style={[styles.addButtonText, { color: colors.textInverse }]}>
                   + {i18n.t('voiceCommands.addPhrase')}
                 </Text>
               </TouchableOpacity>
@@ -380,7 +379,7 @@ export default function VoiceCommandsSettingsScreen({
                   style={[styles.modalButton, { backgroundColor: colors.primary }]}
                   onPress={handleSavePhrase}
                 >
-                  <Text style={[styles.modalButtonText, { color: colors.buttonText }]}>
+                  <Text style={[styles.modalButtonText, { color: colors.textInverse }]}>
                     {i18n.t('voiceCommands.save')}
                   </Text>
                 </TouchableOpacity>

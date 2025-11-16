@@ -21,6 +21,7 @@ import PaywallScreen from './PaywallScreen';
 import AvatarSelector from './AvatarSelector';
 import FeedbackScreen from './FeedbackScreen';
 import FAQScreen from './FAQScreen';
+import VoiceCommandsSettingsScreen from './VoiceCommandsSettingsScreen';
 import { 
   requestNotificationPermissions, 
   scheduleEveningReminder, 
@@ -50,6 +51,7 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
   const [showPaywall, setShowPaywall] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
+  const [showVoiceCommands, setShowVoiceCommands] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState<{
     type: 'evening' | 'morning';
     show: boolean;
@@ -503,6 +505,25 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
             </View>
           </View>
 
+          {/* Voice Commands Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>🎤 {i18n.t('voiceCommands.title')}</Text>
+            <Text style={styles.exportDescription}>
+              {i18n.t('voiceCommands.description')}
+            </Text>
+            
+            <TouchableOpacity
+              style={styles.legalButton}
+              onPress={() => setShowVoiceCommands(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.legalButtonText}>
+                ⚙️ {i18n.t('voiceCommands.customPhrases')}
+              </Text>
+              <Text style={styles.legalButtonArrow}>›</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Custom Categories Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -773,6 +794,13 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
         <FAQScreen
           visible={showFAQ}
           onClose={() => setShowFAQ(false)}
+        />
+
+        {/* Voice Commands Settings Screen */}
+        <VoiceCommandsSettingsScreen
+          visible={showVoiceCommands}
+          onClose={() => setShowVoiceCommands(false)}
+          customCategories={preferences.customCategories}
         />
 
         {/* Paywall Screen */}

@@ -227,7 +227,7 @@ export const isSiriShortcutsAvailable = (): boolean => {
 /**
  * Format a voice command example for display
  */
-export const getVoiceCommandExample = (phrase: string, amount: number): string => {
+export const getVoiceCommandExample = (phrase: string): string => {
   return `"Dis Siri, ${phrase}"`;
 };
 
