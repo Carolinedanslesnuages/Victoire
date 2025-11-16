@@ -6,16 +6,7 @@ import { AVATARS } from '../../constants/avatars';
 describe('AvatarSelector', () => {
   it('renders all 8 avatars', () => {
     const mockOnSelect = jest.fn();
-    const { getAllByA11yHint } = render(
-      <AvatarSelector
-        selectedAvatar="fox"
-        onSelectAvatar={mockOnSelect}
-      />
-    );
-
-    // Since names are translated, just check that we have 8 avatar cards
-    // by checking we have 8 Images (avatar images)
-    const component = render(
+    render(
       <AvatarSelector
         selectedAvatar="fox"
         onSelectAvatar={mockOnSelect}
