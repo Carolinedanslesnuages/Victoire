@@ -261,6 +261,30 @@ Pour configurer et utiliser le système de build automatisé, consultez la [docu
 
 ---
 
+## Epic 24 : Commandes Vocales & Assistants
+
+L'application supporte désormais les **commandes vocales** pour ajouter des dépenses en mains libres ! 🎤
+
+### 🎯 Fonctionnalités
+
+- **Support Siri Shortcuts (iOS)** : Ajoutez des dépenses via Siri
+- **Phrases personnalisées** : Configurez vos propres commandes vocales
+- **Mains libres** : Parfait en voiture ou en marchant
+- **Multi-langue** : Support français et anglais
+
+### 🚀 Utilisation
+
+1. **Accédez aux paramètres** : Ouvrez Paramètres > Commandes Vocales
+2. **Ajoutez une phrase** : Ex: "J'ai acheté du pain" = 3.50€
+3. **Créez un raccourci Siri** : Via l'app Raccourcis iOS
+4. **Utilisez vocalement** : "Dis Siri, J'ai acheté du pain"
+
+### 📚 Documentation Complète
+
+Pour plus de détails sur l'implémentation et l'utilisation, consultez [EPIC_24_IMPLEMENTATION_SUMMARY.md](EPIC_24_IMPLEMENTATION_SUMMARY.md).
+
+---
+
 ## Epic 13 : Conformité & Légal
 
 L'application respecte toutes les exigences des stores (App Store et Google Play) en matière de conformité légale :
