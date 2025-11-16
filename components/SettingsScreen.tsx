@@ -10,6 +10,7 @@ import {
   Modal,
   Linking,
   Switch,
+  Image,
 } from 'react-native';
 import { UserPreferences, NotificationSettings } from '../types';
 import { colors, typography, spacing, borderRadius, elevation } from '../constants/theme';
@@ -29,7 +30,7 @@ import {
   getDefaultNotificationSettings
 } from '../utils/notifications';
 import { exportTransactionsToCSV } from '../utils/export';
-import { AvatarId, getAvatarEmoji } from '../constants/avatars';
+import { AvatarId, getAvatarImage } from '../constants/avatars';
 
 interface SettingsScreenProps {
   visible: boolean;
@@ -398,7 +399,11 @@ export default function SettingsScreen({ visible, onClose, onResetComplete }: Se
                 onPress={() => setShowAvatarSelector(true)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.avatarEmoji}>{getAvatarEmoji(preferences.avatarId)}</Text>
+                <Image 
+                  source={getAvatarImage(preferences.avatarId)} 
+                  style={styles.avatarImage}
+                  resizeMode="contain"
+                />
                 <Text style={styles.currencyButtonArrow}>›</Text>
               </TouchableOpacity>
             </View>
@@ -1177,8 +1182,9 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.bold,
     color: colors.textInverse,
   },
-  avatarEmoji: {
-    fontSize: 28,
+  avatarImage: {
+    width: 28,
+    height: 28,
     marginRight: spacing.sm,
   },
   // Budget profiles section styles

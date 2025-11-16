@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, RefreshControl, Alert, Image } from 'react-native';
 import BudgetRing from './BudgetRing';
 import PieChart from './PieChart';
 import MascotDisplay from './MascotDisplay';
@@ -39,7 +39,7 @@ import i18n from '../utils/i18n';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
 import { calculateStreak } from '../utils/streaks';
 import { checkAndUnlockBadges, unlockBadge, loadGamificationData, useJoker } from '../utils/gamification';
-import { getAvatarEmoji } from '../constants/avatars';
+import { getAvatarImage } from '../constants/avatars';
 import { processUnspentDailyBudget, getCurrentMonthBonus } from '../utils/bonusPiggyBank';
 import { useSubscription } from '../contexts/SubscriptionContext';
 
@@ -453,7 +453,11 @@ export default function BudgetDashboard({ profile, onReconfigure, refreshKey, on
               activeOpacity={0.7}
               testID="avatar-button"
             >
-              <Text style={styles.avatarEmoji}>{getAvatarEmoji(userPreferences.avatarId)}</Text>
+              <Image 
+                source={getAvatarImage(userPreferences.avatarId)} 
+                style={styles.avatarImage}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
             {/* Feature UI 4.1.1 & UI 4.2: Budget name with streak indicator */}
             <View style={styles.headerLeft}>
@@ -852,9 +856,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.md,
+    overflow: 'hidden',
   },
-  avatarEmoji: {
-    fontSize: 32,
+  avatarImage: {
+    width: 40,
+    height: 40,
   },
   headerLeft: {
     flexDirection: 'row',
