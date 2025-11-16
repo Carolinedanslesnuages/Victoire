@@ -668,5 +668,50 @@
         "answer": "PACE can send you three types of notifications: an evening reminder if you haven't logged anything, your morning budget to start the day right, and alerts if your budget goes negative. You can customize all of this in Settings."
       }
     }
+  },
+  "voiceCommands": {
+    "title": "Voice Commands",
+    "description": "Configure custom phrases for Siri and Google Assistant",
+    "enabled": "Enable voice commands",
+    "siriSupport": "Siri Support",
+    "customPhrases": "Custom Phrases",
+    "addPhrase": "Add phrase",
+    "editPhrase": "Edit phrase",
+    "deletePhrase": "Delete phrase",
+    "phraseList": "Your phrases",
+    "noPhrases": "No phrases configured. Add your first phrase!",
+    "phraseExample": "Ex: \"I bought bread\"",
+    "amountLabel": "Amount",
+    "descriptionLabel": "Description",
+    "categoryLabel": "Category (optional)",
+    "phraseLabel": "Phrase",
+    "save": "Save",
+    "cancel": "Cancel",
+    "setupInstructions": "Setup Instructions",
+    "iosInstructions": "For iOS (Siri Shortcuts)",
+    "androidInstructions": "For Android (Google Assistant)",
+    "instructionStep1": "1. Open the Shortcuts app on your iPhone",
+    "instructionStep2": "2. Create a new shortcut",
+    "instructionStep3": "3. Add the \"Open App\" action",
+    "instructionStep4": "4. Select PACE from the list",
+    "instructionStep5": "5. Customize the activation phrase",
+    "instructionStep6": "6. Test with \"Hey Siri, [your phrase]\"",
+    "quickAddExample": "Example: \"Hey Siri, add 15 euros to my budget\"",
+    "success": "Success",
+    "phraseAdded": "Phrase added successfully",
+    "phraseUpdated": "Phrase updated",
+    "phraseDeleted": "Phrase deleted",
+    "errors": {
+      "title": "Error",
+      "emptyPhrase": "Phrase cannot be empty",
+      "invalidAmount": "Amount must be a valid number",
+      "emptyDescription": "Description cannot be empty"
+    },
+    "deleteConfirm": {
+      "title": "Delete phrase",
+      "message": "Do you really want to delete this voice phrase?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
   }
 }

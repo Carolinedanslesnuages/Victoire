@@ -31,6 +31,7 @@ import { triggerSuccessHaptic, triggerWarningHaptic } from './utils/haptics';
 import { updateWidgetData } from './utils/widgetData';
 import { setupQuickActions } from './utils/quickActions';
 import { requestReview } from './utils/storeReview';
+import { registerSiriShortcuts } from './utils/siriShortcuts';
 
 function AppContent() {
   const { colors } = useTheme();
@@ -55,6 +56,7 @@ function AppContent() {
     initializeNotifications();
     processRecurringTransactionsOnLoad();
     setupQuickActions(handleQuickAction);
+    registerSiriShortcuts(); // Register Siri Shortcuts on app start
   }, []);
 
   const loadProfile = async () => {

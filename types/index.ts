@@ -113,6 +113,7 @@ export interface UserPreferences {
   customCategories: string[];
   notificationSettings?: NotificationSettings;
   avatarId?: AvatarId; // Selected avatar for user profile
+  voiceCommandSettings?: VoiceCommandSettings; // Voice command configuration
 }
 
 /**
@@ -217,4 +218,24 @@ export interface BonusPiggyBank {
     month: string; // Format: YYYY-MM
     totalAccumulated: number; // Total bonus accumulated in this month
   }[];
+}
+
+/**
+ * Voice command phrase interface - for custom Siri/Assistant shortcuts
+ */
+export interface VoiceCommandPhrase {
+  id: string; // Unique identifier
+  phrase: string; // User-defined phrase (e.g., "J'ai acheté du pain")
+  amount: number; // Associated amount
+  category?: string; // Optional category
+  description: string; // Transaction description
+  createdAt: string; // ISO date string
+}
+
+/**
+ * Voice command settings interface
+ */
+export interface VoiceCommandSettings {
+  enabled: boolean; // Whether voice commands are enabled
+  customPhrases: VoiceCommandPhrase[]; // Array of custom voice command phrases
 }

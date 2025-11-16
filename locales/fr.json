@@ -668,5 +668,50 @@
         "answer": "PACE peut vous envoyer trois types de notifications : un rappel le soir si vous n'avez rien saisi, votre budget du matin pour bien démarrer la journée, et des alertes si votre budget devient négatif. Vous pouvez personnaliser tout cela dans les Paramètres."
       }
     }
+  },
+  "voiceCommands": {
+    "title": "Commandes Vocales",
+    "description": "Configurez des phrases personnalisées pour Siri et Google Assistant",
+    "enabled": "Activer les commandes vocales",
+    "siriSupport": "Support Siri",
+    "customPhrases": "Phrases Personnalisées",
+    "addPhrase": "Ajouter une phrase",
+    "editPhrase": "Modifier la phrase",
+    "deletePhrase": "Supprimer la phrase",
+    "phraseList": "Vos phrases",
+    "noPhrases": "Aucune phrase configurée. Ajoutez votre première phrase !",
+    "phraseExample": "Ex: \"J'ai acheté du pain\"",
+    "amountLabel": "Montant",
+    "descriptionLabel": "Description",
+    "categoryLabel": "Catégorie (optionnel)",
+    "phraseLabel": "Phrase",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "setupInstructions": "Instructions de configuration",
+    "iosInstructions": "Pour iOS (Siri Shortcuts)",
+    "androidInstructions": "Pour Android (Google Assistant)",
+    "instructionStep1": "1. Ouvrez l'app Raccourcis sur votre iPhone",
+    "instructionStep2": "2. Créez un nouveau raccourci",
+    "instructionStep3": "3. Ajoutez l'action \"Ouvrir l'app\"",
+    "instructionStep4": "4. Sélectionnez PACE dans la liste",
+    "instructionStep5": "5. Personnalisez la phrase d'activation",
+    "instructionStep6": "6. Testez avec \"Dis Siri, [votre phrase]\"",
+    "quickAddExample": "Exemple: \"Dis Siri, ajoute 15 euros à mon budget\"",
+    "success": "Succès",
+    "phraseAdded": "Phrase ajoutée avec succès",
+    "phraseUpdated": "Phrase mise à jour",
+    "phraseDeleted": "Phrase supprimée",
+    "errors": {
+      "title": "Erreur",
+      "emptyPhrase": "La phrase ne peut pas être vide",
+      "invalidAmount": "Le montant doit être un nombre valide",
+      "emptyDescription": "La description ne peut pas être vide"
+    },
+    "deleteConfirm": {
+      "title": "Supprimer la phrase",
+      "message": "Voulez-vous vraiment supprimer cette phrase vocale ?",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    }
   }
 }

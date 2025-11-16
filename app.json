@@ -16,7 +16,12 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.carolinedanslesnuages.pace",
       "infoPlist": {
-        "NSUserTrackingUsageDescription": "This app does not track you. We respect your privacy and do not collect any tracking data."
+        "NSUserTrackingUsageDescription": "This app does not track you. We respect your privacy and do not collect any tracking data.",
+        "NSSiriUsageDescription": "PACE utilise Siri pour vous permettre d'ajouter des dépenses rapidement en mains libres.",
+        "NSUserActivityTypes": [
+          "com.carolinedanslesnuages.pace.addExpense",
+          "com.carolinedanslesnuages.pace.viewBudget"
+        ]
       }
     },
     "android": {
