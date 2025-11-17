@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { AVATARS, AvatarId } from '../constants/avatars';
 import { colors, typography, spacing, borderRadius, elevation } from '../constants/theme';
 import i18n from '../utils/i18n';
@@ -35,7 +35,11 @@ export default function AvatarSelector({
               activeOpacity={0.7}
             >
               <View style={styles.avatarCircle}>
-                <Text style={styles.avatarEmoji}>{avatar.emoji}</Text>
+                <Image 
+                  source={avatar.imageSource} 
+                  style={styles.avatarImage}
+                  resizeMode="contain"
+                />
               </View>
               <Text style={styles.avatarName}>
                 {i18n.t(`avatars.${avatar.id}`, { defaultValue: avatar.name })}
@@ -105,8 +109,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
-  avatarEmoji: {
-    fontSize: 48,
+  avatarImage: {
+    width: 70,
+    height: 70,
   },
   avatarName: {
     fontSize: typography.fontSize.body,

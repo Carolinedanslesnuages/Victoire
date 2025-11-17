@@ -99,6 +99,9 @@ const styles = StyleSheet.create({
   mascotEmoji: {
     fontSize: 60,
   },
+  mascotImage: {
+    // Size is controlled by inline style props
+  },
   descriptionContainer: {
     alignItems: 'center',
     marginTop: spacing.md,
