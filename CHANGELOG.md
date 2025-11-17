@@ -1,5 +1,66 @@
 # Changelog
 
+## [1.12.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.11.0...v1.12.0) (2025-11-17)
+
+
+### Features
+
+* add bonus piggy bank feature with storage, UI, and tests ([a4d75da](https://github.com/Carolinedanslesnuages/PACE/commit/a4d75da5c2118e411ee5a0a099e9d9df8445d80e))
+* add budget creation feature with freemium/premium limits ([175b05f](https://github.com/Carolinedanslesnuages/PACE/commit/175b05fe354ae251f204d95163704cc3ffff058b))
+* add budget creation with freemium/premium limits ([9873980](https://github.com/Carolinedanslesnuages/PACE/commit/9873980061b2ade0e6387a255b0f2d4a50e37d1b))
+* Add Cagnotte Bonus (Bonus Piggy Bank) feature ([c19ca17](https://github.com/Carolinedanslesnuages/PACE/commit/c19ca174004d20ef808d9cad5bbcedfd8cf5a17c))
+* add clickable avatar to open BudgetSwitcher modal ([be7c780](https://github.com/Carolinedanslesnuages/PACE/commit/be7c7807ed5964c6c4903594fca96538b3f58fca))
+* add FAQ and Feedback screens for user support (Epic 20.1) ([33624bc](https://github.com/Carolinedanslesnuages/PACE/commit/33624bc13d89a1732d26ea1e08353b5a7a45ad31))
+* add flexible budget cycles for irregular income users ([db39a61](https://github.com/Carolinedanslesnuages/PACE/commit/db39a61e583d4017b70a9830e96cb4a44c533be4))
+* add getDailySpendingState function with tests and localization ([f2e0d3a](https://github.com/Carolinedanslesnuages/PACE/commit/f2e0d3a742d8f7fd811c6a77d51b4548652120d4))
+* add home screen widgets and quick actions (Epic 8) ([9677503](https://github.com/Carolinedanslesnuages/PACE/commit/967750328981b2487d71c26f7cd70f2d4f9c9130))
+* add interactive onboarding tutorial (Epic 19) ([845c96a](https://github.com/Carolinedanslesnuages/PACE/commit/845c96a6db54246ae55a598804385114cde0f987))
+* add jokerQuota field to persist premium status ([eb3b319](https://github.com/Carolinedanslesnuages/PACE/commit/eb3b31962d4a085e95afa9cc466c6ce57813a446))
+* add mid-cycle onboarding feature (US 1.5) ([db4846f](https://github.com/Carolinedanslesnuages/PACE/commit/db4846f5f48c982b9db9f2f201c522b3a75c8e3e))
+* add onboarding carousel and tooltip components ([94c4496](https://github.com/Carolinedanslesnuages/PACE/commit/94c449685293f1ae608f7497831ed16fbae75d0c))
+* add type definitions and budget calculation support for custom cycles ([f01086a](https://github.com/Carolinedanslesnuages/PACE/commit/f01086a78dae28fec5dab950ada18e7c9774c329))
+* add voice commands infrastructure and UI ([d341262](https://github.com/Carolinedanslesnuages/PACE/commit/d341262e92c24615d895b314b2d74f66ca91d5c8))
+* add voice commands tests and update README ([9811639](https://github.com/Carolinedanslesnuages/PACE/commit/981163956e8b79f56e497c6e2ba42b5ba18dfefd))
+* add widgets and quick actions infrastructure ([3a6f8b6](https://github.com/Carolinedanslesnuages/PACE/commit/3a6f8b6a96051575b3cc9a2fc8d26dc881330954))
+* add zero spending day tracking and budget redistribution visibility ([c34c305](https://github.com/Carolinedanslesnuages/PACE/commit/c34c30571ab895486e7e9d9340dfc276dc97547a))
+* add zero spending tracking feature ([c2aeffb](https://github.com/Carolinedanslesnuages/PACE/commit/c2aeffb9d10d880dded44ff5127c3c4fb10c54d8))
+* Epic 17 - Growth Loop with smart review prompts and social sharing ([2a206cf](https://github.com/Carolinedanslesnuages/PACE/commit/2a206cf0b3fd1756c37453213d264833e15c2e58))
+* **epic-20:** add in-app FAQ and feedback support to capture user frustrations ([81bd214](https://github.com/Carolinedanslesnuages/PACE/commit/81bd214547bc181ca08895766406ce885fc15071))
+* hands-free expense tracking via Siri Shortcuts and custom voice commands ([9a3cfea](https://github.com/Carolinedanslesnuages/PACE/commit/9a3cfeab285a77f364200d224d874f43e2591a9f))
+* implement Epic 17 - Growth Loop features ([bebb9a4](https://github.com/Carolinedanslesnuages/PACE/commit/bebb9a461895586bd56a0c1357cc1a7430b79a57))
+* implement premium joker monetization feature ([cbcc780](https://github.com/Carolinedanslesnuages/PACE/commit/cbcc78001466ae80a9f9685e74bf2433f0253d33))
+* implement premium joker monetization with quota differentiation ([b3871b0](https://github.com/Carolinedanslesnuages/PACE/commit/b3871b076f9fb602c0cea62fa50f580b5ff8c8d6))
+* integrate voice commands into settings and app flow ([d15a6fd](https://github.com/Carolinedanslesnuages/PACE/commit/d15a6fdadebd89d4708512519716a612e0e1b2c9))
+* ouvrir BudgetSwitcher en modal au clic sur l'avatar ([a161078](https://github.com/Carolinedanslesnuages/PACE/commit/a161078e982d2321c6d290f3bb6acf2e53718f07))
+* replace emoji avatars with local PNG illustrations ([b1438f2](https://github.com/Carolinedanslesnuages/PACE/commit/b1438f2bee15d373c576f3eb8510f11c69cb2a60))
+* replace emoji avatars with PNG illustrations ([88f7780](https://github.com/Carolinedanslesnuages/PACE/commit/88f778035ac18d01bde0158da9f8e9b005554a3b))
+* **ui:** avatar-based budget selector with conditional navigation ([e0e0004](https://github.com/Carolinedanslesnuages/PACE/commit/e0e0004af27d20543518872355732dbb959c5956))
+* **ui:** implement avatar-based budget selector with conditional navigation ([513790e](https://github.com/Carolinedanslesnuages/PACE/commit/513790e29946ef687458cc0a143146f5de24e2d0))
+* update all components to support custom budget cycles ([2ea3e3b](https://github.com/Carolinedanslesnuages/PACE/commit/2ea3e3b90cf7e383cf5bc798f5583500f550dcbf))
+* update BudgetDashboard to use getDailySpendingState with visual distinction ([c2bf4cf](https://github.com/Carolinedanslesnuages/PACE/commit/c2bf4cf062e1fb1417577daead555f07775b42fc))
+* update ConfigWizard with cycle mode toggle and custom period UI ([9443f1d](https://github.com/Carolinedanslesnuages/PACE/commit/9443f1d05e3aa984fd002e81961ccc9c05990678))
+* visual distinction between daily budget available vs exceeded states ([bbc8026](https://github.com/Carolinedanslesnuages/PACE/commit/bbc8026472474252f08c69aad6bf7d26f82dacfe))
+
+
+### Bug Fixes
+
+* :bug: fix links mascot ([e1d35b3](https://github.com/Carolinedanslesnuages/PACE/commit/e1d35b313717a9dd0072f4f37524acd93665179d))
+* :bug: fix links mascot ([4052dac](https://github.com/Carolinedanslesnuages/PACE/commit/4052dac7548c8be60cb7b157b8a48483712999fb))
+* add edit mode support to ConfigWizard with back button ([7a50ee4](https://github.com/Carolinedanslesnuages/PACE/commit/7a50ee4c303645eab88317928cb93dcdafe3238a))
+* add missing mascotImage style and remove unused variables ([269d73b](https://github.com/Carolinedanslesnuages/PACE/commit/269d73b6fad9974262c422935492d615b4a8bd97))
+* configuration screen navigation with edit mode support ([f70187a](https://github.com/Carolinedanslesnuages/PACE/commit/f70187aee2b2b50845608e163b1e87fe82d66609))
+* correct theme property names and remove unused import ([b19d45f](https://github.com/Carolinedanslesnuages/PACE/commit/b19d45f0678b0bef7fc9fda51d040be585864c19))
+* implement complete data reset and session-based streak celebration ([c5fa8e2](https://github.com/Carolinedanslesnuages/PACE/commit/c5fa8e291e16de96c44f2a5c707b4171d2fe1f07))
+* incomplete data reset and repeated streak celebration animation ([e6620d6](https://github.com/Carolinedanslesnuages/PACE/commit/e6620d6bf7f04a8a431119c1f7a513220e45b26f))
+* initialize bonus piggy bank to 0 for new users and prevent timezone issues ([fa37bed](https://github.com/Carolinedanslesnuages/PACE/commit/fa37bedba9c5afb40747ce995dc8cb7b236d8b4e))
+* initialize bonus piggy bank to 0 for new users to prevent timezone-based retroactive bonuses ([105cc5d](https://github.com/Carolinedanslesnuages/PACE/commit/105cc5d6201a485e592370e42af19869083c31cf))
+* move budget management to profile screen, remove header switcher ([79ce71c](https://github.com/Carolinedanslesnuages/PACE/commit/79ce71c4ab1e641e6d8bf132679541144a4ff5d9))
+* remove unused isDailyBudgetNegative variable ([0f91303](https://github.com/Carolinedanslesnuages/PACE/commit/0f91303e6157b5257d9848b1b996d295003413ad))
+* remove unused parameter in test mock ([1b49bf6](https://github.com/Carolinedanslesnuages/PACE/commit/1b49bf6417f507c3a4be0f5ff0eb4e6ddd51aac7))
+* remove unused variable in loadStreak function ([af5d49b](https://github.com/Carolinedanslesnuages/PACE/commit/af5d49b56bd15133a020cb786a0a6be5fb5d935a))
+* resolve TypeScript compilation errors and remove unused imports ([d45eaa7](https://github.com/Carolinedanslesnuages/PACE/commit/d45eaa750c3bf18e0308d170b7de6f6cc9e08b56))
+* resolve TypeScript errors and add component tests ([ccd587c](https://github.com/Carolinedanslesnuages/PACE/commit/ccd587cd5be146e57851bfaeba2dae94faba647d))
+
 ## [1.11.0](https://github.com/Carolinedanslesnuages/PACE/compare/v1.10.0...v1.11.0) (2025-11-09)
 
 
