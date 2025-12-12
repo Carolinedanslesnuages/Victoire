@@ -106,33 +106,6 @@ export const restorePurchases = async (): Promise<boolean> => {
   }
 };
 
-/**
- * Get available subscription offerings
- */
-export const getOfferings = async () => {
-  try {
-    // In production, use RevenueCat:
-    // const offerings = await Purchases.getOfferings();
-    // return offerings.current;
-    
-    // For demo, return mock data
-    return {
-      monthly: {
-        identifier: 'monthly',
-        priceString: '€2.99',
-        price: 2.99,
-      },
-      annual: {
-        identifier: 'annual',
-        priceString: '€24.99',
-        price: 24.99,
-      },
-    };
-  } catch (error) {
-    console.error('Error getting offerings:', error);
-    return null;
-  }
-};
 
 /**
  * Premium features list

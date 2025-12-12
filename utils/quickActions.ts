@@ -6,8 +6,6 @@
 import * as QuickActions from 'expo-quick-actions';
 import i18n from './i18n';
 
-export type QuickActionType = 'add_expense';
-
 /**
  * Set up quick actions for the app
  * @param onAction - Callback function when a quick action is triggered

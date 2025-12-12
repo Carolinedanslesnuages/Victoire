@@ -187,46 +187,6 @@ export const saveUserPreferences = async (preferences: UserPreferences): Promise
   }
 };
 
-/**
- * Get transactions for previous budget cycle
- * @param cycleStartDay - Day of month when cycle starts
- * @returns Array of transactions in previous cycle
- */
-export const getTransactionsForPreviousCycle = async (
-  cycleStartDay: number
-): Promise<Transaction[]> => {
-  try {
-    const transactions = await loadTransactions();
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const day = today.getDate();
-
-    // Calculate current cycle start
-    let currentCycleStart;
-    if (day < cycleStartDay) {
-      currentCycleStart = new Date(year, month - 1, cycleStartDay);
-    } else {
-      currentCycleStart = new Date(year, month, cycleStartDay);
-    }
-
-    // Calculate previous cycle start and end
-    const previousCycleEnd = new Date(currentCycleStart.getTime() - 1); // One day before current cycle
-    const previousCycleStart = new Date(
-      currentCycleStart.getFullYear(),
-      currentCycleStart.getMonth() - 1,
-      cycleStartDay
-    );
-
-    return transactions.filter(t => {
-      const transactionDate = new Date(t.date);
-      return transactionDate >= previousCycleStart && transactionDate <= previousCycleEnd;
-    });
-  } catch (error) {
-    console.error('Error getting transactions for previous cycle:', error);
-    return [];
-  }
-};
 
 /**
  * Get transactions up to same day in previous cycle (for comparison)
