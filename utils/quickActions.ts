@@ -52,13 +52,4 @@ export async function setupQuickActions(onAction: (actionType: string) => void):
   }
 }
 
-/**
- * Clear all quick actions
- */
-export async function clearQuickActions(): Promise<void> {
-  try {
-    await QuickActions.setItems([]);
-  } catch (error) {
-    console.error('Error clearing quick actions:', error);
-  }
-}
+

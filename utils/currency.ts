@@ -32,12 +32,4 @@ export const formatCurrency = (amount: number, currencyCode: string = 'EUR', loc
   }
 };
 
-/**
- * Get currency symbol from currency code
- * @param currencyCode - Currency code (ISO 4217)
- * @returns Currency symbol
- */
-export const getCurrencySymbol = (currencyCode: string): string => {
-  const currency = CURRENCY_OPTIONS.find(c => c.code === currencyCode);
-  return currency?.symbol || currencyCode;
-};
+

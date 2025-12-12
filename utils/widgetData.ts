@@ -101,21 +101,6 @@ export async function updateWidgetData(): Promise<void> {
   }
 }
 
-/**
- * Get the current widget data
- */
-export async function getWidgetData(): Promise<WidgetData | null> {
-  try {
-    const data = await AsyncStorage.getItem(WIDGET_DATA_KEY);
-    if (data) {
-      return JSON.parse(data);
-    }
-    return null;
-  } catch (error) {
-    console.error('Error getting widget data:', error);
-    return null;
-  }
-}
 
 /**
  * Format currency for display in widget

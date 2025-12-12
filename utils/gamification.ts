@@ -398,31 +398,6 @@ export const updateStreakWithGamification = async (newStreakInfo: StreakInfo): P
   }
 };
 
-/**
- * Record that a budget cycle ended with positive balance
- */
-export const recordCycleCompletion = async (hadPositiveBalance: boolean): Promise<void> => {
-  try {
-    const data = await loadGamificationData();
-    
-    data.monthlyStats.totalCyclesCompleted++;
-    if (hadPositiveBalance) {
-      data.monthlyStats.cyclesWithPositiveBalance++;
-    }
-
-    const saved = await saveGamificationData(data);
-    if (!saved) {
-      console.error('Failed to save cycle completion data to storage');
-      throw new Error('Failed to persist cycle completion');
-    }
-    
-    // Check for new badges
-    await checkAndUnlockBadges();
-  } catch (error) {
-    console.error('Error recording cycle completion:', error);
-    throw error;
-  }
-};
 
 /**
  * Get badge metadata (name, description, emoji)

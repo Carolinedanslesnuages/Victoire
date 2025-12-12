@@ -114,18 +114,6 @@ export const deleteVoiceCommandPhrase = async (id: string): Promise<boolean> => 
   }
 };
 
-/**
- * Get all custom voice command phrases
- */
-export const getVoiceCommandPhrases = async (): Promise<VoiceCommandPhrase[]> => {
-  try {
-    const settings = await loadVoiceCommandSettings();
-    return settings.customPhrases;
-  } catch (error) {
-    console.error('Error getting voice command phrases:', error);
-    return [];
-  }
-};
 
 /**
  * Find a voice command phrase by matching text
@@ -178,30 +166,4 @@ export const parseVoiceCommand = (
   }
 };
 
-/**
- * Enable voice commands
- */
-export const enableVoiceCommands = async (): Promise<boolean> => {
-  try {
-    const settings = await loadVoiceCommandSettings();
-    settings.enabled = true;
-    return await saveVoiceCommandSettings(settings);
-  } catch (error) {
-    console.error('Error enabling voice commands:', error);
-    return false;
-  }
-};
 
-/**
- * Disable voice commands
- */
-export const disableVoiceCommands = async (): Promise<boolean> => {
-  try {
-    const settings = await loadVoiceCommandSettings();
-    settings.enabled = false;
-    return await saveVoiceCommandSettings(settings);
-  } catch (error) {
-    console.error('Error disabling voice commands:', error);
-    return false;
-  }
-};

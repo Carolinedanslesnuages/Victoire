@@ -126,20 +126,4 @@ export const compareMonthlySpending = (
   };
 };
 
-/**
- * Get transactions for a specific date range
- * @param transactions - All transactions
- * @param startDate - Start date of the range
- * @param endDate - End date of the range
- * @returns Filtered transactions
- */
-export const getTransactionsInDateRange = (
-  transactions: Transaction[],
-  startDate: Date,
-  endDate: Date
-): Transaction[] => {
-  return transactions.filter(t => {
-    const transactionDate = new Date(t.date);
-    return transactionDate >= startDate && transactionDate <= endDate;
-  });
-};
+

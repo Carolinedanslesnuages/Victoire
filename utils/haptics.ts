@@ -28,36 +28,4 @@ export const triggerWarningHaptic = async () => {
   }
 };
 
-/**
- * Light haptic feedback for general interactions
- * Can be used for button presses, selections, etc.
- */
-export const triggerLightHaptic = async () => {
-  try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  } catch (error) {
-    console.log('Haptic feedback not available:', error);
-  }
-};
 
-/**
- * Medium haptic feedback for moderate interactions
- */
-export const triggerMediumHaptic = async () => {
-  try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  } catch (error) {
-    console.log('Haptic feedback not available:', error);
-  }
-};
-
-/**
- * Error haptic feedback for errors
- */
-export const triggerErrorHaptic = async () => {
-  try {
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-  } catch (error) {
-    console.log('Haptic feedback not available:', error);
-  }
-};

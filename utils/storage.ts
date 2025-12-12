@@ -39,19 +39,7 @@ export const loadBudgetConfig = async (): Promise<BudgetConfig | null> => {
   }
 };
 
-/**
- * Clear budget configuration from local storage
- * @returns Success status
- */
-export const clearBudgetConfig = async (): Promise<boolean> => {
-  try {
-    await AsyncStorage.removeItem(BUDGET_CONFIG_KEY);
-    return true;
-  } catch (error) {
-    console.error('Error clearing budget config:', error);
-    return false;
-  }
-};
+
 
 /**
  * Save a new transaction

@@ -57,16 +57,6 @@ export const requestNotificationPermissions = async (): Promise<boolean> => {
   }
 };
 
-/**
- * Cancel all scheduled notifications
- */
-export const cancelAllNotifications = async (): Promise<void> => {
-  try {
-    await Notifications.cancelAllScheduledNotificationsAsync();
-  } catch (error) {
-    console.error('Error canceling notifications:', error);
-  }
-};
 
 /**
  * Schedule evening reminder notification
@@ -168,94 +158,6 @@ export const sendBudgetAlertNotification = async (remainingBudget: number, curre
   }
 };
 
-/**
- * Update morning budget notification with actual budget data
- * This should be called daily to update the notification content
- */
-export const updateMorningBudgetContent = async (): Promise<void> => {
-  try {
-    const preferences = await loadUserPreferences();
-    const budgetConfig = await loadBudgetConfig();
-    
-    if (!preferences.notificationSettings?.morningBudgetEnabled || !budgetConfig) {
-      return;
-    }
-
-    const transactions = await getTransactionsForCurrentCycle(budgetConfig.cycleStartDay);
-    const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
-    
-    const cycleMode = budgetConfig.cycleMode || 'monthly';
-    const dailyBudget = calculateDailyBudget(
-      budgetConfig.monthlyIncome,
-      budgetConfig.fixedCharges,
-      budgetConfig.savingsGoal,
-      totalSpent,
-      budgetConfig.cycleStartDay,
-      0,
-      budgetConfig.midCycleOnboarding,
-      cycleMode,
-      budgetConfig.customStartDate,
-      budgetConfig.customEndDate
-    );
-
-    const [hours, minutes] = preferences.notificationSettings.morningBudgetTime.split(':').map(Number);
-
-    await Notifications.cancelScheduledNotificationAsync(MORNING_BUDGET_ID).catch(() => {});
-
-    await Notifications.scheduleNotificationAsync({
-      identifier: MORNING_BUDGET_ID,
-      content: {
-        title: i18n.t('notifications.morningBudget.title'),
-        body: i18n.t('notifications.morningBudget.bodyWithAmount', { 
-          amount: dailyBudget.toFixed(2),
-          currency: preferences.currency
-        }),
-        sound: true,
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-        hour: hours,
-        minute: minutes,
-        repeats: true,
-      },
-    });
-  } catch (error) {
-    console.error('Error updating morning budget notification:', error);
-  }
-};
-
-/**
- * Schedule streak save notification if user has an active streak and hasn't opened app today
- * @param streakCount - Current streak count
- */
-export const scheduleStreakSaveNotification = async (streakCount: number): Promise<void> => {
-  try {
-    if (streakCount === 0) {
-      await Notifications.cancelScheduledNotificationAsync(STREAK_SAVE_ID).catch(() => {});
-      return;
-    }
-
-    // Schedule for evening (20:00)
-    await Notifications.cancelScheduledNotificationAsync(STREAK_SAVE_ID).catch(() => {});
-
-    await Notifications.scheduleNotificationAsync({
-      identifier: STREAK_SAVE_ID,
-      content: {
-        title: i18n.t('streakNotification.saveStreak.title'),
-        body: i18n.t('streakNotification.saveStreak.body', { streak: streakCount }),
-        sound: true,
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-        hour: 20,
-        minute: 0,
-        repeats: true,
-      },
-    });
-  } catch (error) {
-    console.error('Error scheduling streak save notification:', error);
-  }
-};
 
 /**
  * Initialize all notifications based on user preferences
