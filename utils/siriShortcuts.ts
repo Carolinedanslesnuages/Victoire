@@ -6,11 +6,6 @@
 import { Platform } from 'react-native';
 
 /**
- * Siri Shortcut action types
- */
-export type SiriShortcutAction = 'addExpense' | 'viewBudget' | 'customPhrase';
-
-/**
  * Donate a Siri Shortcut to iOS
  * This makes the shortcut available for Siri to learn and suggest
  * 
