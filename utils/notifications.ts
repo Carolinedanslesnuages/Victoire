@@ -1,8 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { NotificationSettings } from '../types';
-import { loadUserPreferences, loadBudgetConfig, getTransactionsForCurrentCycle } from './storage';
-import { calculateDailyBudget } from './budgetCalculations';
+import { loadUserPreferences } from './storage';
 import i18n from './i18n';
 
 // Configure notification handler
@@ -19,7 +18,6 @@ Notifications.setNotificationHandler({
 // Notification identifiers
 const EVENING_REMINDER_ID = 'evening-reminder';
 const MORNING_BUDGET_ID = 'morning-budget';
-const STREAK_SAVE_ID = 'streak-save';
 
 /**
  * Request notification permissions
