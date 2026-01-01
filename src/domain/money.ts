@@ -25,3 +25,7 @@ export function formatEuros(cents: number): string {
   return euroFormatter.format(cents / 100)
 }
 
+export function formatEditableEuros(cents: number): string {
+  const euros = cents / 100
+  return Number.isInteger(euros) ? String(euros) : euros.toFixed(2).replace('.', ',')
+}
