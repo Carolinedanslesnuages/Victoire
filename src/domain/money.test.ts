@@ -36,3 +36,14 @@ it('ignores spaces used as thousand separators', () => {
   expect(parseEuros('1 500')).toBe(150000)
 })
 
+it('rejects empty text, letters and negatives', () => {
+  expect(parseEuros('')).toBeNull()
+  expect(parseEuros('abc')).toBeNull()
+  expect(parseEuros('-5')).toBeNull()
+  expect(parseEuros('12€')).toBeNull()
+})
+
+it('rejects more than two decimals', () => {
+  expect(parseEuros('1,234')).toBeNull()
+})
+
