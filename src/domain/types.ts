@@ -24,3 +24,8 @@ export interface ClosedCycle {
   decision: ClosingDecision
 }
 
+export interface CycleBounds {
+  start: IsoDate
+  nextStart: IsoDate
+}
+
