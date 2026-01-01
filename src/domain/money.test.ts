@@ -57,3 +57,7 @@ it('formats cents as French euros', () => {
   expect(formatEuros(0).replace(/\s/g, ' ')).toBe('0,00 €')
 })
 
+it('formats cents for input fields', () => {
+  expect(formatEditableEuros(150000)).toBe('1500')
+  expect(formatEditableEuros(1250)).toBe('12,50')
+})
