@@ -50,3 +50,10 @@ export interface ClosingProposal {
   leftoverCents: Cents
 }
 
+export interface BackupFile {
+  version: 1
+  exportedAt: string
+  settings: Settings | null
+  expenses: Expense[]
+  closedCycles: ClosedCycle[]
+}
