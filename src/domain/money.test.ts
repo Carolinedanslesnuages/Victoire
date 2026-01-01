@@ -32,3 +32,7 @@ it('parses decimals with a comma or a dot', () => {
   expect(parseEuros('0,05')).toBe(5)
 })
 
+it('ignores spaces used as thousand separators', () => {
+  expect(parseEuros('1 500')).toBe(150000)
+})
+
