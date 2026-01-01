@@ -43,3 +43,10 @@ export interface DayStatus {
   level: GaugeLevel
 }
 
+export interface ClosingProposal {
+  startDate: IsoDate
+  endDate: IsoDate
+  spentCents: Cents
+  leftoverCents: Cents
+}
+
