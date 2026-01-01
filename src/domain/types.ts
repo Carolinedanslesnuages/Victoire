@@ -29,3 +29,5 @@ export interface CycleBounds {
   nextStart: IsoDate
 }
 
+export type GaugeLevel = 'comfortable' | 'close' | 'over'
+
