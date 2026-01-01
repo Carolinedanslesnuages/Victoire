@@ -8,3 +8,5 @@ export function normalizeAmountText(text: string): string {
   return text.replace(/\s/g, '').replace(',', '.')
 }
 
+const AMOUNT_PATTERN = /^\d+(\.\d{1,2})?$/
+
