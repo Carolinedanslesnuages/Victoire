@@ -4,3 +4,7 @@ export function sumCents(values: readonly number[]): number {
   return values.reduce((total, value) => total + value, 0)
 }
 
+export function normalizeAmountText(text: string): string {
+  return text.replace(/\s/g, '').replace(',', '.')
+}
+
