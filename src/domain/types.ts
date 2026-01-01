@@ -9,3 +9,10 @@ export interface Settings {
   payday: number
 }
 
+export interface Expense {
+  identifier: string
+  date: IsoDate
+  amountCents: Cents
+  label: string
+}
+
