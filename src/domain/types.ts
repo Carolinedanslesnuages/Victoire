@@ -31,3 +31,15 @@ export interface CycleBounds {
 
 export type GaugeLevel = 'comfortable' | 'close' | 'over'
 
+export interface DayStatus {
+  bounds: CycleBounds
+  potCents: Cents
+  spentCycleCents: Cents
+  spentTodayCents: Cents
+  daysLeft: number
+  budgetTodayCents: Cents
+  remainingTodayCents: Cents
+  remainingCycleCents: Cents
+  level: GaugeLevel
+}
+
