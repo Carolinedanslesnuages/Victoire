@@ -16,3 +16,11 @@ export interface Expense {
   label: string
 }
 
+export type ClosingDecision = 'saved' | 'ignored'
+
+export interface ClosedCycle {
+  startDate: IsoDate
+  leftoverCents: Cents
+  decision: ClosingDecision
+}
+
