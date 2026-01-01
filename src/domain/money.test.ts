@@ -47,3 +47,13 @@ it('rejects more than two decimals', () => {
   expect(parseEuros('1,234')).toBeNull()
 })
 
+it('rejects amounts above one million euros', () => {
+  expect(parseEuros('1000000')).toBe(MAX_AMOUNT_CENTS)
+  expect(parseEuros('1000001')).toBeNull()
+})
+
+it('formats cents as French euros', () => {
+  expect(formatEuros(1250).replace(/\s/g, ' ')).toBe('12,50 €')
+  expect(formatEuros(0).replace(/\s/g, ' ')).toBe('0,00 €')
+})
+
