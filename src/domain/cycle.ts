@@ -33,3 +33,7 @@ export function daysLeftInCycle(today: IsoDate, bounds: CycleBounds): number {
   return diffInDays(today, bounds.nextStart)
 }
 
+export function cycleLength(bounds: CycleBounds): number {
+  return diffInDays(bounds.start, bounds.nextStart)
+}
+
