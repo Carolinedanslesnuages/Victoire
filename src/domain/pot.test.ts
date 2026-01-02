@@ -37,3 +37,13 @@ it('flags a payday out of range', () => {
   expect(findSettingsProblems({ ...SETTINGS, payday: 2.5 })).toContain('paydayOutOfRange')
 })
 
+it('flags a pot that is not positive', () => {
+  const settings = { ...SETTINGS, savingsCents: 110000 }
+  expect(findSettingsProblems(settings)).toContain('potNotPositive')
+})
+
+it('computes the share of income that is saved', () => {
+  expect(savingsShare(SETTINGS)).toBeCloseTo(0.1667, 3)
+  expect(savingsShare({ ...SETTINGS, netIncomeCents: 0 })).toBe(0)
+})
+
