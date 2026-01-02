@@ -42,3 +42,9 @@ it('adds days inside a month', () => {
   expect(addDays('2026-01-05', 3)).toBe('2026-01-08')
 })
 
+it('adds days across month and year boundaries', () => {
+  expect(addDays('2026-01-31', 1)).toBe('2026-02-01')
+  expect(addDays('2025-12-31', 1)).toBe('2026-01-01')
+  expect(addDays('2026-01-01', -1)).toBe('2025-12-31')
+})
+
