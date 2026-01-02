@@ -75,3 +75,8 @@ it('reads the local calendar date', () => {
   expect(localTodayIso(new Date(2026, 0, 5, 23, 59))).toBe('2026-01-05')
 })
 
+it('compares ISO dates', () => {
+  expect(compareIsoDates('2026-01-05', '2026-01-06')).toBe(-1)
+  expect(compareIsoDates('2026-01-06', '2026-01-05')).toBe(1)
+  expect(compareIsoDates('2026-01-05', '2026-01-05')).toBe(0)
+})
