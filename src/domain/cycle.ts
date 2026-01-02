@@ -20,3 +20,8 @@ export function cycleBounds(today: IsoDate, payday: number): CycleBounds {
   }
   const thisMonth = paydayInMonth(parts.year, parts.month, payday)
 
+  if (compareIsoDates(thisMonth, today) <= 0) {
+    const next = shiftMonth(parts.year, parts.month, 1)
+    return { start: thisMonth, nextStart: paydayInMonth(next.year, next.month, payday) }
+  }
+
