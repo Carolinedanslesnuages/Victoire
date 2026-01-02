@@ -41,3 +41,6 @@ export function isInCycle(date: IsoDate, bounds: CycleBounds): boolean {
   return compareIsoDates(date, bounds.start) >= 0 && compareIsoDates(date, bounds.nextStart) < 0
 }
 
+export function previousCycleBounds(bounds: CycleBounds, payday: number): CycleBounds {
+  return cycleBounds(addDays(bounds.start, -1), payday)
+}
