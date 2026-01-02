@@ -1,0 +1,16 @@
+import { expect, it } from 'vitest'
+import { computePot, evenDailyBudget, findSettingsProblems, savingsShare } from './pot'
+import type { Settings } from './types'
+
+const SETTINGS: Settings = {
+  netIncomeCents: 300000,
+  savingsCents: 50000,
+  jointAccountCents: 150000,
+  fixedCostsCents: 40000,
+  payday: 5,
+}
+
+it('leaves 600 euros after savings, joint account and fixed costs', () => {
+  expect(computePot(SETTINGS)).toBe(60000)
+})
+
