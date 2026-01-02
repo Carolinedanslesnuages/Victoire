@@ -21,3 +21,9 @@ it('finds the cycle in the middle of a month', () => {
   expect(cycleBounds('2026-01-10', 5)).toEqual({ start: '2026-01-05', nextStart: '2026-02-05' })
 })
 
+it('starts a new cycle on payday', () => {
+  const bounds = cycleBounds('2026-01-05', 5)
+  expect(bounds.start).toBe('2026-01-05')
+  expect(daysLeftInCycle('2026-01-05', bounds)).toBe(31)
+})
+
