@@ -48,3 +48,14 @@ it('adds days across month and year boundaries', () => {
   expect(addDays('2026-01-01', -1)).toBe('2025-12-31')
 })
 
+it('counts the days between two dates', () => {
+  expect(diffInDays('2026-01-10', '2026-02-05')).toBe(26)
+  expect(diffInDays('2026-01-10', '2026-01-10')).toBe(0)
+  expect(diffInDays('2026-02-05', '2026-01-10')).toBe(-26)
+})
+
+it('is not affected by daylight saving time', () => {
+  expect(diffInDays('2026-03-28', '2026-03-30')).toBe(2)
+  expect(diffInDays('2026-10-24', '2026-10-26')).toBe(2)
+})
+
