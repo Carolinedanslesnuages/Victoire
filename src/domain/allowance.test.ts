@@ -35,3 +35,17 @@ it('keeps only the expenses of the current cycle', () => {
   expect(kept.map((item) => item.amountCents)).toEqual([200])
 })
 
+it('ignores expenses dated after today', () => {
+  const bounds = { start: '2026-01-05', nextStart: '2026-02-05' }
+  const kept = expensesInCycle([expense('2026-01-11', 500)], bounds, '2026-01-10')
+  expect(kept).toEqual([])
+})
+
+it('gives an even budget when nothing was spent', () => {
+  const status = computeDayStatus({ settings: SETTINGS, expenses: [], today: '2026-01-10' })
+  expect(status.daysLeft).toBe(26)
+  expect(status.budgetTodayCents).toBe(2307)
+  expect(status.remainingTodayCents).toBe(2307)
+  expect(status.level).toBe('comfortable')
+})
+
