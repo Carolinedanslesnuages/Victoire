@@ -27,3 +27,13 @@ it('flags a missing income', () => {
   expect(findSettingsProblems({ ...SETTINGS, netIncomeCents: 0 })).toContain('incomeMissing')
 })
 
+it('flags negative amounts', () => {
+  expect(findSettingsProblems({ ...SETTINGS, savingsCents: -1 })).toContain('negativeAmount')
+})
+
+it('flags a payday out of range', () => {
+  expect(findSettingsProblems({ ...SETTINGS, payday: 0 })).toContain('paydayOutOfRange')
+  expect(findSettingsProblems({ ...SETTINGS, payday: 32 })).toContain('paydayOutOfRange')
+  expect(findSettingsProblems({ ...SETTINGS, payday: 2.5 })).toContain('paydayOutOfRange')
+})
+
