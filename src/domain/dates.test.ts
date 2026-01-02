@@ -25,3 +25,9 @@ it('rejects malformed text', () => {
   expect(parseIsoDate('hello')).toBeNull()
 })
 
+it('rejects impossible dates', () => {
+  expect(isValidIsoDate('2026-02-30')).toBe(false)
+  expect(isValidIsoDate('2026-13-01')).toBe(false)
+  expect(isValidIsoDate('2026-02-28')).toBe(true)
+})
+
