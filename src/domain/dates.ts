@@ -69,3 +69,9 @@ export function localTodayIso(now: Date = new Date()): IsoDate {
   return toIsoDate(now.getFullYear(), now.getMonth() + 1, now.getDate())
 }
 
+export function compareIsoDates(first: IsoDate, second: IsoDate): number {
+  if (first === second) {
+    return 0
+  }
+  return first < second ? -1 : 1
+}
