@@ -50,3 +50,7 @@ it('handles a payday on the 31st', () => {
   expect(cycleLength(bounds)).toBe(28)
 })
 
+it('handles a payday on the 30th in a leap year', () => {
+  expect(cycleBounds('2028-02-15', 30)).toEqual({ start: '2028-01-30', nextStart: '2028-02-29' })
+})
+
