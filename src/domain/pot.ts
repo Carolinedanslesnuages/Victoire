@@ -9,3 +9,9 @@ export function computePot(settings: Settings): number {
   )
 }
 
+export type SettingsProblem =
+  | 'incomeMissing'
+  | 'negativeAmount'
+  | 'paydayOutOfRange'
+  | 'potNotPositive'
+
