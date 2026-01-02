@@ -16,3 +16,7 @@ export function expensesInCycle(
   )
 }
 
+export function totalOf(expenses: readonly Expense[]): number {
+  return sumCents(expenses.map((expense) => expense.amountCents))
+}
+
