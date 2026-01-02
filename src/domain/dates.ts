@@ -65,3 +65,7 @@ export function shiftMonth(year: number, month: number, delta: number): { year: 
   return { year: Math.floor(index / 12), month: (((index % 12) + 12) % 12) + 1 }
 }
 
+export function localTodayIso(now: Date = new Date()): IsoDate {
+  return toIsoDate(now.getFullYear(), now.getMonth() + 1, now.getDate())
+}
+
