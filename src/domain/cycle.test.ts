@@ -39,3 +39,14 @@ it('reaches back into the previous year', () => {
   expect(daysLeftInCycle('2026-01-03', bounds)).toBe(2)
 })
 
+it('reaches forward into the next year', () => {
+  expect(cycleBounds('2026-12-20', 5)).toEqual({ start: '2026-12-05', nextStart: '2027-01-05' })
+})
+
+it('handles a payday on the 31st', () => {
+  const bounds = cycleBounds('2026-02-10', 31)
+  expect(bounds).toEqual({ start: '2026-01-31', nextStart: '2026-02-28' })
+  expect(daysLeftInCycle('2026-02-10', bounds)).toBe(18)
+  expect(cycleLength(bounds)).toBe(28)
+})
+
