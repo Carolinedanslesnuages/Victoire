@@ -52,3 +52,7 @@ export function addDays(value: IsoDate, count: number): IsoDate {
   return toIsoDate(shifted.getUTCFullYear(), shifted.getUTCMonth() + 1, shifted.getUTCDate())
 }
 
+export function diffInDays(from: IsoDate, to: IsoDate): number {
+  return Math.round((toUtcTime(to) - toUtcTime(from)) / MILLISECONDS_PER_DAY)
+}
+
