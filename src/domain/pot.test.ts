@@ -14,3 +14,12 @@ it('leaves 600 euros after savings, joint account and fixed costs', () => {
   expect(computePot(SETTINGS)).toBe(60000)
 })
 
+it('keeps everything when nothing is set aside', () => {
+  const settings = { ...SETTINGS, savingsCents: 0, jointAccountCents: 0, fixedCostsCents: 0 }
+  expect(computePot(settings)).toBe(300000)
+})
+
+it('finds no problem in a valid configuration', () => {
+  expect(findSettingsProblems(SETTINGS)).toEqual([])
+})
+
