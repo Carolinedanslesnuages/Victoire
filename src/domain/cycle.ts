@@ -37,3 +37,7 @@ export function cycleLength(bounds: CycleBounds): number {
   return diffInDays(bounds.start, bounds.nextStart)
 }
 
+export function isInCycle(date: IsoDate, bounds: CycleBounds): boolean {
+  return compareIsoDates(date, bounds.start) >= 0 && compareIsoDates(date, bounds.nextStart) < 0
+}
+
