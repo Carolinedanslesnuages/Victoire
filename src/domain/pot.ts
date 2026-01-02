@@ -34,3 +34,10 @@ export function findSettingsProblems(settings: Settings): SettingsProblem[] {
   return problems
 }
 
+export function savingsShare(settings: Settings): number {
+  if (settings.netIncomeCents <= 0) {
+    return 0
+  }
+  return settings.savingsCents / settings.netIncomeCents
+}
+
