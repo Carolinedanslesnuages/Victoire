@@ -66,3 +66,7 @@ it('includes the first day of a cycle and excludes the next payday', () => {
   expect(isInCycle('2026-01-04', bounds)).toBe(false)
 })
 
+it('finds the previous cycle', () => {
+  const bounds = { start: '2026-01-05', nextStart: '2026-02-05' }
+  expect(previousCycleBounds(bounds, 5)).toEqual({ start: '2025-12-05', nextStart: '2026-01-05' })
+})
