@@ -39,3 +39,16 @@ export function daysInMonth(year: number, month: number): number {
   return new Date(Date.UTC(year, month, 0)).getUTCDate()
 }
 
+function toUtcTime(value: IsoDate): number {
+  const parts = parseIsoDate(value)
+  if (!parts) {
+    throw new RangeError(`Invalid ISO date: ${value}`)
+  }
+  return Date.UTC(parts.year, parts.month - 1, parts.day)
+}
+
+export function addDays(value: IsoDate, count: number): IsoDate {
+  const shifted = new Date(toUtcTime(value) + count * MILLISECONDS_PER_DAY)
+  return toIsoDate(shifted.getUTCFullYear(), shifted.getUTCMonth() + 1, shifted.getUTCDate())
+}
+
