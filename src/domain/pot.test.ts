@@ -23,3 +23,7 @@ it('finds no problem in a valid configuration', () => {
   expect(findSettingsProblems(SETTINGS)).toEqual([])
 })
 
+it('flags a missing income', () => {
+  expect(findSettingsProblems({ ...SETTINGS, netIncomeCents: 0 })).toContain('incomeMissing')
+})
+
