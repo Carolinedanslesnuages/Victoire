@@ -41,3 +41,9 @@ export function savingsShare(settings: Settings): number {
   return settings.savingsCents / settings.netIncomeCents
 }
 
+export function evenDailyBudget(settings: Settings, cycleDays: number): number {
+  if (cycleDays <= 0) {
+    return 0
+  }
+  return Math.floor(computePot(settings) / cycleDays)
+}
