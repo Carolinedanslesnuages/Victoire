@@ -27,3 +27,15 @@ it('starts a new cycle on payday', () => {
   expect(daysLeftInCycle('2026-01-05', bounds)).toBe(31)
 })
 
+it('stays in the previous cycle the day before payday', () => {
+  const bounds = cycleBounds('2026-02-04', 5)
+  expect(bounds).toEqual({ start: '2026-01-05', nextStart: '2026-02-05' })
+  expect(daysLeftInCycle('2026-02-04', bounds)).toBe(1)
+})
+
+it('reaches back into the previous year', () => {
+  const bounds = cycleBounds('2026-01-03', 5)
+  expect(bounds).toEqual({ start: '2025-12-05', nextStart: '2026-01-05' })
+  expect(daysLeftInCycle('2026-01-03', bounds)).toBe(2)
+})
+
