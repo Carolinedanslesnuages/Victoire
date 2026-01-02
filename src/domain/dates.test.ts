@@ -59,3 +59,9 @@ it('is not affected by daylight saving time', () => {
   expect(diffInDays('2026-10-24', '2026-10-26')).toBe(2)
 })
 
+it('clamps a day to the end of a short month', () => {
+  expect(clampDayToMonth(2026, 2, 31)).toBe(28)
+  expect(clampDayToMonth(2028, 2, 31)).toBe(29)
+  expect(clampDayToMonth(2026, 3, 31)).toBe(31)
+})
+
