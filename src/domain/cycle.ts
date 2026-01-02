@@ -25,3 +25,11 @@ export function cycleBounds(today: IsoDate, payday: number): CycleBounds {
     return { start: thisMonth, nextStart: paydayInMonth(next.year, next.month, payday) }
   }
 
+  const previous = shiftMonth(parts.year, parts.month, -1)
+  return { start: paydayInMonth(previous.year, previous.month, payday), nextStart: thisMonth }
+}
+
+export function daysLeftInCycle(today: IsoDate, bounds: CycleBounds): number {
+  return diffInDays(today, bounds.nextStart)
+}
+
