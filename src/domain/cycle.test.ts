@@ -54,3 +54,15 @@ it('handles a payday on the 30th in a leap year', () => {
   expect(cycleBounds('2028-02-15', 30)).toEqual({ start: '2028-01-30', nextStart: '2028-02-29' })
 })
 
+it('counts the length of a cycle', () => {
+  expect(cycleLength({ start: '2026-01-05', nextStart: '2026-02-05' })).toBe(31)
+})
+
+it('includes the first day of a cycle and excludes the next payday', () => {
+  const bounds = { start: '2026-01-05', nextStart: '2026-02-05' }
+  expect(isInCycle('2026-01-05', bounds)).toBe(true)
+  expect(isInCycle('2026-02-04', bounds)).toBe(true)
+  expect(isInCycle('2026-02-05', bounds)).toBe(false)
+  expect(isInCycle('2026-01-04', bounds)).toBe(false)
+})
+
