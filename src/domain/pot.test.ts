@@ -47,3 +47,8 @@ it('computes the share of income that is saved', () => {
   expect(savingsShare({ ...SETTINGS, netIncomeCents: 0 })).toBe(0)
 })
 
+it('divides the pot evenly over the days of the cycle', () => {
+  expect(evenDailyBudget(SETTINGS, 30)).toBe(2000)
+  expect(evenDailyBudget(SETTINGS, 31)).toBe(1935)
+  expect(evenDailyBudget(SETTINGS, 0)).toBe(0)
+})
