@@ -56,3 +56,12 @@ export function diffInDays(from: IsoDate, to: IsoDate): number {
   return Math.round((toUtcTime(to) - toUtcTime(from)) / MILLISECONDS_PER_DAY)
 }
 
+export function clampDayToMonth(year: number, month: number, day: number): number {
+  return Math.min(day, daysInMonth(year, month))
+}
+
+export function shiftMonth(year: number, month: number, delta: number): { year: number; month: number } {
+  const index = year * 12 + (month - 1) + delta
+  return { year: Math.floor(index / 12), month: (((index % 12) + 12) % 12) + 1 }
+}
+
