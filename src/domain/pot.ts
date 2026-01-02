@@ -25,3 +25,12 @@ export function findSettingsProblems(settings: Settings): SettingsProblem[] {
     problems.push('negativeAmount')
   }
 
+  if (!Number.isInteger(settings.payday) || settings.payday < 1 || settings.payday > 31) {
+    problems.push('paydayOutOfRange')
+  }
+  if (computePot(settings) <= 0) {
+    problems.push('potNotPositive')
+  }
+  return problems
+}
+
