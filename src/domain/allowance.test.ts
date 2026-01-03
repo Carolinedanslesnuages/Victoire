@@ -96,3 +96,23 @@ it('turns to close when less than a fifth of the day is left', () => {
   expect(status.level).toBe('close')
 })
 
+it('turns to over when the daily budget is exceeded', () => {
+  const status = computeDayStatus({
+    settings: SETTINGS,
+    expenses: [expense('2026-01-10', 3000)],
+    today: '2026-01-10',
+  })
+  expect(status.remainingTodayCents).toBe(-693)
+  expect(status.level).toBe('over')
+})
+
+it('turns to over when the whole pot is spent', () => {
+  const status = computeDayStatus({
+    settings: SETTINGS,
+    expenses: [expense('2026-01-09', 60000)],
+    today: '2026-01-10',
+  })
+  expect(status.budgetTodayCents).toBe(0)
+  expect(status.level).toBe('over')
+})
+
