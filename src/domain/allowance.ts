@@ -51,3 +51,7 @@ export function computeDayStatus(input: DayStatusInput): DayStatus {
   const spentCycleCents = totalOf(cycleExpenses)
   const spentBeforeTodayCents = spentCycleCents - spentTodayCents
 
+  const daysLeft = daysLeftInCycle(today, bounds)
+  const budgetTodayCents = Math.floor((potCents - spentBeforeTodayCents) / daysLeft)
+  const remainingTodayCents = budgetTodayCents - spentTodayCents
+
