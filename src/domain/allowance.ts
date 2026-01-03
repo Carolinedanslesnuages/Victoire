@@ -55,3 +55,15 @@ export function computeDayStatus(input: DayStatusInput): DayStatus {
   const budgetTodayCents = Math.floor((potCents - spentBeforeTodayCents) / daysLeft)
   const remainingTodayCents = budgetTodayCents - spentTodayCents
 
+  return {
+    bounds,
+    potCents,
+    spentCycleCents,
+    spentTodayCents,
+    daysLeft,
+    budgetTodayCents,
+    remainingTodayCents,
+    remainingCycleCents: potCents - spentCycleCents,
+    level: gaugeLevel(budgetTodayCents, remainingTodayCents),
+  }
+}
