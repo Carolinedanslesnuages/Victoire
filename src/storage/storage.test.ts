@@ -35,3 +35,21 @@ it('returns the fallback when the content is corrupted', () => {
   expect(readJson(backend, 'broken', 'fallback')).toBe('fallback')
 })
 
+it('reports a failure when the storage refuses a write', () => {
+  const full: StorageBackend = {
+    getItem: () => null,
+    setItem: () => {
+      throw new Error('quota exceeded')
+    },
+    removeItem: () => undefined,
+  }
+  expect(writeJson(full, 'sample', 1)).toBe(false)
+})
+
+it('removes a stored key', () => {
+  const backend = createMemoryBackend()
+  writeJson(backend, 'sample', 1)
+  removeKey(backend, 'sample')
+  expect(readJson(backend, 'sample', 'gone')).toBe('gone')
+})
+
