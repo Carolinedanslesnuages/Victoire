@@ -27,3 +27,10 @@ it('accepts valid expenses', () => {
   expect(isExpense(EXPENSE)).toBe(true)
 })
 
+it('rejects malformed expenses', () => {
+  expect(isExpense({ ...EXPENSE, date: '2026-02-30' })).toBe(false)
+  expect(isExpense({ ...EXPENSE, identifier: '' })).toBe(false)
+  expect(isExpense({ ...EXPENSE, amountCents: -5 })).toBe(false)
+  expect(isExpense('expense')).toBe(false)
+})
+
