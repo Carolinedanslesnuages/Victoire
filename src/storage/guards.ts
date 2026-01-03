@@ -9,3 +9,17 @@ function isCents(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 0
 }
 
+export function isSettings(value: unknown): value is Settings {
+  return (
+    isRecord(value) &&
+    isCents(value.netIncomeCents) &&
+    isCents(value.savingsCents) &&
+    isCents(value.jointAccountCents) &&
+    isCents(value.fixedCostsCents) &&
+    typeof value.payday === 'number' &&
+    Number.isInteger(value.payday) &&
+    value.payday >= 1 &&
+    value.payday <= 31
+  )
+}
+
