@@ -19,3 +19,14 @@ export function createMemoryBackend(): StorageBackend {
   }
 }
 
+export function resolveBackend(): StorageBackend {
+  try {
+    const probeKey = `${STORAGE_PREFIX}probe`
+    window.localStorage.setItem(probeKey, '1')
+    window.localStorage.removeItem(probeKey)
+    return window.localStorage
+  } catch {
+    return createMemoryBackend()
+  }
+}
+
