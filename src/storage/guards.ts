@@ -35,3 +35,13 @@ export function isExpense(value: unknown): value is Expense {
   )
 }
 
+export function isClosedCycle(value: unknown): value is ClosedCycle {
+  return (
+    isRecord(value) &&
+    typeof value.startDate === 'string' &&
+    isValidIsoDate(value.startDate) &&
+    isCents(value.leftoverCents) &&
+    (value.decision === 'saved' || value.decision === 'ignored')
+  )
+}
+
