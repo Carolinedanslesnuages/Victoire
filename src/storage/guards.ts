@@ -23,3 +23,15 @@ export function isSettings(value: unknown): value is Settings {
   )
 }
 
+export function isExpense(value: unknown): value is Expense {
+  return (
+    isRecord(value) &&
+    typeof value.identifier === 'string' &&
+    value.identifier.length > 0 &&
+    typeof value.date === 'string' &&
+    isValidIsoDate(value.date) &&
+    isCents(value.amountCents) &&
+    typeof value.label === 'string'
+  )
+}
+
