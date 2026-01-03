@@ -30,3 +30,12 @@ export function resolveBackend(): StorageBackend {
   }
 }
 
+export function readJson<Value>(backend: StorageBackend, key: string, fallback: Value): Value {
+  try {
+    const raw = backend.getItem(STORAGE_PREFIX + key)
+    return raw === null ? fallback : (JSON.parse(raw) as Value)
+  } catch {
+    return fallback
+  }
+}
+
