@@ -116,3 +116,21 @@ it('turns to over when the whole pot is spent', () => {
   expect(status.level).toBe('over')
 })
 
+it('gives the whole remainder on the last day', () => {
+  const status = computeDayStatus({
+    settings: SETTINGS,
+    expenses: [expense('2026-02-03', 50000)],
+    today: '2026-02-04',
+  })
+  expect(status.daysLeft).toBe(1)
+  expect(status.budgetTodayCents).toBe(10000)
+})
+
+it('classifies gauge levels', () => {
+  expect(gaugeLevel(2000, 2000)).toBe('comfortable')
+  expect(gaugeLevel(2000, 400)).toBe('close')
+  expect(gaugeLevel(2000, 0)).toBe('close')
+  expect(gaugeLevel(2000, -1)).toBe('over')
+  expect(gaugeLevel(0, 0)).toBe('over')
+})
+
