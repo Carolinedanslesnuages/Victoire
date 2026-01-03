@@ -41,3 +41,7 @@ it('checks closed cycles', () => {
   expect(isClosedCycle({ ...cycle, startDate: 'soon' })).toBe(false)
 })
 
+it('keeps only valid entries of a list', () => {
+  expect(keepValid([EXPENSE, { nope: true }], isExpense)).toEqual([EXPENSE])
+  expect(keepValid('not a list', isExpense)).toEqual([])
+})
