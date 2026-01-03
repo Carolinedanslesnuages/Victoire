@@ -15,3 +15,11 @@ it('accepts valid settings', () => {
   expect(isSettings(SETTINGS)).toBe(true)
 })
 
+it('rejects incomplete or malformed settings', () => {
+  expect(isSettings(null)).toBe(false)
+  expect(isSettings({})).toBe(false)
+  expect(isSettings({ ...SETTINGS, payday: 40 })).toBe(false)
+  expect(isSettings({ ...SETTINGS, savingsCents: 1.5 })).toBe(false)
+  expect(isSettings({ ...SETTINGS, netIncomeCents: '3000' })).toBe(false)
+})
+
