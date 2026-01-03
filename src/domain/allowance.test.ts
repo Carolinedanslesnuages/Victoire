@@ -134,3 +134,10 @@ it('classifies gauge levels', () => {
   expect(gaugeLevel(0, 0)).toBe('over')
 })
 
+it('clamps the gauge fill between zero and one', () => {
+  const base = computeDayStatus({ settings: SETTINGS, expenses: [], today: '2026-01-10' })
+  expect(gaugeFillRatio(base)).toBe(1)
+  expect(gaugeFillRatio({ ...base, remainingTodayCents: -500 })).toBe(0)
+  expect(gaugeFillRatio({ ...base, remainingTodayCents: base.budgetTodayCents / 2 })).toBeCloseTo(0.5)
+  expect(gaugeFillRatio({ ...base, budgetTodayCents: 0 })).toBe(0)
+})
