@@ -53,3 +53,9 @@ it('removes a stored key', () => {
   expect(readJson(backend, 'sample', 'gone')).toBe('gone')
 })
 
+it('resolves a working backend in the browser', () => {
+  const backend = resolveBackend()
+  backend.setItem('probe-check', 'ok')
+  expect(backend.getItem('probe-check')).toBe('ok')
+  backend.removeItem('probe-check')
+})
