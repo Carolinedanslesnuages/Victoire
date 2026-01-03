@@ -20,3 +20,10 @@ export function totalOf(expenses: readonly Expense[]): number {
   return sumCents(expenses.map((expense) => expense.amountCents))
 }
 
+export function gaugeLevel(budgetTodayCents: number, remainingTodayCents: number): GaugeLevel {
+  if (budgetTodayCents <= 0 || remainingTodayCents < 0) {
+    return 'over'
+  }
+  return remainingTodayCents <= budgetTodayCents * CLOSE_THRESHOLD ? 'close' : 'comfortable'
+}
+
