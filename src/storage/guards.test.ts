@@ -34,3 +34,10 @@ it('rejects malformed expenses', () => {
   expect(isExpense('expense')).toBe(false)
 })
 
+it('checks closed cycles', () => {
+  const cycle = { startDate: '2026-01-05', leftoverCents: 15000, decision: 'saved' }
+  expect(isClosedCycle(cycle)).toBe(true)
+  expect(isClosedCycle({ ...cycle, decision: 'maybe' })).toBe(false)
+  expect(isClosedCycle({ ...cycle, startDate: 'soon' })).toBe(false)
+})
+
