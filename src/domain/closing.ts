@@ -19,3 +19,8 @@ export function proposeClosing(input: ClosingInput): ClosingProposal | null {
     return null
   }
 
+  const previousExpenses = expenses.filter((expense) => isInCycle(expense.date, previous))
+  if (previousExpenses.length === 0) {
+    return null
+  }
+
