@@ -24,3 +24,10 @@ export function proposeClosing(input: ClosingInput): ClosingProposal | null {
     return null
   }
 
+  const spentCents = totalOf(previousExpenses)
+  const leftoverCents = computePot(settings) - spentCents
+  if (leftoverCents <= 0) {
+    return null
+  }
+  return { startDate: previous.start, endDate: previous.nextStart, spentCents, leftoverCents }
+}
