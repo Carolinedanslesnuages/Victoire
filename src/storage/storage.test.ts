@@ -29,3 +29,9 @@ it('returns the fallback when nothing is stored', () => {
   expect(readJson(createMemoryBackend(), 'missing', 42)).toBe(42)
 })
 
+it('returns the fallback when the content is corrupted', () => {
+  const backend = createMemoryBackend()
+  backend.setItem(`${STORAGE_PREFIX}broken`, '{not json')
+  expect(readJson(backend, 'broken', 'fallback')).toBe('fallback')
+})
+
