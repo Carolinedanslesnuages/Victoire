@@ -45,3 +45,6 @@ export function isClosedCycle(value: unknown): value is ClosedCycle {
   )
 }
 
+export function keepValid<Item>(value: unknown, guard: (item: unknown) => item is Item): Item[] {
+  return Array.isArray(value) ? value.filter(guard) : []
+}
