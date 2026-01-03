@@ -47,3 +47,7 @@ export function computeDayStatus(input: DayStatusInput): DayStatus {
   const potCents = computePot(settings)
   const cycleExpenses = expensesInCycle(expenses, bounds, today)
 
+  const spentTodayCents = totalOf(cycleExpenses.filter((expense) => expense.date === today))
+  const spentCycleCents = totalOf(cycleExpenses)
+  const spentBeforeTodayCents = spentCycleCents - spentTodayCents
+
