@@ -35,3 +35,9 @@ export function gaugeFillRatio(status: DayStatus): number {
   return Math.min(1, Math.max(0, ratio))
 }
 
+export interface DayStatusInput {
+  settings: Settings
+  expenses: readonly Expense[]
+  today: IsoDate
+}
+
