@@ -18,3 +18,14 @@ it('keeps values in the memory backend', () => {
   expect(backend.getItem('key')).toBeNull()
 })
 
+it('writes and reads JSON under the namespace', () => {
+  const backend = createMemoryBackend()
+  expect(writeJson(backend, 'sample', { amount: 5 })).toBe(true)
+  expect(backend.getItem(`${STORAGE_PREFIX}sample`)).toBe('{"amount":5}')
+  expect(readJson(backend, 'sample', null)).toEqual({ amount: 5 })
+})
+
+it('returns the fallback when nothing is stored', () => {
+  expect(readJson(createMemoryBackend(), 'missing', 42)).toBe(42)
+})
+
