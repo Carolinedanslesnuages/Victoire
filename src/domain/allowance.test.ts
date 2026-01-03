@@ -70,3 +70,10 @@ it('lowers the budget of the following days after a heavy day', () => {
   expect(status.remainingCycleCents).toBe(57000)
 })
 
+it('raises the daily budget when earlier days were left unspent', () => {
+  const firstDay = computeDayStatus({ settings: SETTINGS, expenses: [], today: '2026-01-05' })
+  const laterDay = computeDayStatus({ settings: SETTINGS, expenses: [], today: '2026-01-10' })
+  expect(firstDay.budgetTodayCents).toBe(1935)
+  expect(laterDay.budgetTodayCents).toBe(2307)
+})
+
