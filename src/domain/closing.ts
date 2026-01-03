@@ -15,3 +15,7 @@ export function proposeClosing(input: ClosingInput): ClosingProposal | null {
   const current = cycleBounds(today, settings.payday)
   const previous = previousCycleBounds(current, settings.payday)
 
+  if (closedCycles.some((cycle) => cycle.startDate === previous.start)) {
+    return null
+  }
+
