@@ -10,3 +10,8 @@ export interface ClosingInput {
   today: IsoDate
 }
 
+export function proposeClosing(input: ClosingInput): ClosingProposal | null {
+  const { settings, expenses, closedCycles, today } = input
+  const current = cycleBounds(today, settings.payday)
+  const previous = previousCycleBounds(current, settings.payday)
+
