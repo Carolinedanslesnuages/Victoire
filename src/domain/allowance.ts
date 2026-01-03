@@ -27,3 +27,11 @@ export function gaugeLevel(budgetTodayCents: number, remainingTodayCents: number
   return remainingTodayCents <= budgetTodayCents * CLOSE_THRESHOLD ? 'close' : 'comfortable'
 }
 
+export function gaugeFillRatio(status: DayStatus): number {
+  if (status.budgetTodayCents <= 0) {
+    return 0
+  }
+  const ratio = status.remainingTodayCents / status.budgetTodayCents
+  return Math.min(1, Math.max(0, ratio))
+}
+
