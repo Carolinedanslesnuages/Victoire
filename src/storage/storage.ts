@@ -4,3 +4,5 @@ export interface StorageBackend {
   removeItem(key: string): void
 }
 
+export const STORAGE_PREFIX = 'victoire:v1:'
+
