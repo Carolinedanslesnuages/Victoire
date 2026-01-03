@@ -39,3 +39,13 @@ it('proposes nothing when no expense was tracked', () => {
   expect(proposal).toBeNull()
 })
 
+it('proposes nothing once the cycle was closed', () => {
+  const proposal = proposeClosing({
+    settings: SETTINGS,
+    expenses: [expense('2026-01-12', 30000)],
+    closedCycles: [{ startDate: '2026-01-05', leftoverCents: 30000, decision: 'saved' }],
+    today: '2026-02-10',
+  })
+  expect(proposal).toBeNull()
+})
+
