@@ -23,3 +23,7 @@ it('rejects incomplete or malformed settings', () => {
   expect(isSettings({ ...SETTINGS, netIncomeCents: '3000' })).toBe(false)
 })
 
+it('accepts valid expenses', () => {
+  expect(isExpense(EXPENSE)).toBe(true)
+})
+
