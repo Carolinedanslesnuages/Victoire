@@ -77,3 +77,22 @@ it('raises the daily budget when earlier days were left unspent', () => {
   expect(laterDay.budgetTodayCents).toBe(2307)
 })
 
+it('ignores spending from the previous cycle', () => {
+  const status = computeDayStatus({
+    settings: SETTINGS,
+    expenses: [expense('2026-01-04', 20000)],
+    today: '2026-01-10',
+  })
+  expect(status.spentCycleCents).toBe(0)
+})
+
+it('turns to close when less than a fifth of the day is left', () => {
+  const status = computeDayStatus({
+    settings: SETTINGS,
+    expenses: [expense('2026-01-10', 2000)],
+    today: '2026-01-10',
+  })
+  expect(status.remainingTodayCents).toBe(307)
+  expect(status.level).toBe('close')
+})
+
