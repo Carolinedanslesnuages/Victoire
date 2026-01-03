@@ -49,3 +49,24 @@ it('gives an even budget when nothing was spent', () => {
   expect(status.level).toBe('comfortable')
 })
 
+it('subtracts what was spent today without changing the daily budget', () => {
+  const status = computeDayStatus({
+    settings: SETTINGS,
+    expenses: [expense('2026-01-10', 1000)],
+    today: '2026-01-10',
+  })
+  expect(status.budgetTodayCents).toBe(2307)
+  expect(status.remainingTodayCents).toBe(1307)
+  expect(status.spentTodayCents).toBe(1000)
+})
+
+it('lowers the budget of the following days after a heavy day', () => {
+  const status = computeDayStatus({
+    settings: SETTINGS,
+    expenses: [expense('2026-01-09', 3000)],
+    today: '2026-01-10',
+  })
+  expect(status.budgetTodayCents).toBe(2192)
+  expect(status.remainingCycleCents).toBe(57000)
+})
+
