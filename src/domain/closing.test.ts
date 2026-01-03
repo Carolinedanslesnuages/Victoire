@@ -59,3 +59,12 @@ it('proposes nothing when the whole pot was spent', () => {
   expect(proposal).toBeNull()
 })
 
+it('ignores expenses of the current cycle', () => {
+  const proposal = proposeClosing({
+    settings: SETTINGS,
+    expenses: [expense('2026-02-07', 1000)],
+    closedCycles: [],
+    today: '2026-02-10',
+  })
+  expect(proposal).toBeNull()
+})
