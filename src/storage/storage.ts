@@ -39,3 +39,12 @@ export function readJson<Value>(backend: StorageBackend, key: string, fallback: 
   }
 }
 
+export function writeJson(backend: StorageBackend, key: string, value: unknown): boolean {
+  try {
+    backend.setItem(STORAGE_PREFIX + key, JSON.stringify(value))
+    return true
+  } catch {
+    return false
+  }
+}
+
