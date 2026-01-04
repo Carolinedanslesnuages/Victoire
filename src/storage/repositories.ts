@@ -9,3 +9,5 @@ const KEYS = {
   closedCycles: 'closed-cycles',
 } as const
 
+export function createRepositories(backend: StorageBackend) {
+  return {
