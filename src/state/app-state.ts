@@ -123,3 +123,26 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     )
   }
 
+  function importBackup(text: string): ImportResult {
+    const result = parseBackup(text)
+    if (!result.ok) {
+      return result
+    }
+    settings.value = result.backup.settings
+    expenses.value = result.backup.expenses
+    closedCycles.value = result.backup.closedCycles
+    if (result.backup.settings !== null) {
+      repositories.settings.save(result.backup.settings)
+    }
+    repositories.expenses.saveAll(expenses.value)
+    repositories.closedCycles.saveAll(closedCycles.value)
+    return { ok: true }
+  }
+
+  function resetAll(): void {
+    repositories.clear()
+    settings.value = null
+    expenses.value = []
+    closedCycles.value = []
+  }
+
