@@ -1,0 +1,22 @@
+import { expect, it } from 'vitest'
+import { BACKUP_VERSION, createBackup, parseBackup } from './backup'
+
+const CONTENT = {
+  settings: {
+    netIncomeCents: 300000,
+    savingsCents: 50000,
+    jointAccountCents: 150000,
+    fixedCostsCents: 40000,
+    payday: 5,
+  },
+  expenses: [{ identifier: 'abc', date: '2026-01-05', amountCents: 1250, label: 'resto' }],
+  closedCycles: [{ startDate: '2025-12-05', leftoverCents: 9000, decision: 'saved' as const }],
+}
+
+it('writes the version and the export date', () => {
+  const text = createBackup(CONTENT, new Date('2026-01-05T10:00:00Z'))
+  const parsed = JSON.parse(text)
+  expect(parsed.version).toBe(BACKUP_VERSION)
+  expect(parsed.exportedAt).toBe('2026-01-05T10:00:00.000Z')
+})
+
