@@ -45,3 +45,14 @@ export function parseBackup(text: string): BackupParseResult {
     return { ok: false, reason: 'invalidContent' }
   }
 
+  return {
+    ok: true,
+    backup: {
+      version: BACKUP_VERSION,
+      exportedAt: typeof candidate.exportedAt === 'string' ? candidate.exportedAt : '',
+      settings,
+      expenses: keepValid(candidate.expenses, isExpense),
+      closedCycles: keepValid(candidate.closedCycles, isClosedCycle),
+    },
+  }
+}
