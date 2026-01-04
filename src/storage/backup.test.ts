@@ -20,3 +20,17 @@ it('writes the version and the export date', () => {
   expect(parsed.exportedAt).toBe('2026-01-05T10:00:00.000Z')
 })
 
+it('restores what was exported', () => {
+  const result = parseBackup(createBackup(CONTENT))
+  expect(result.ok).toBe(true)
+  if (result.ok) {
+    expect(result.backup.settings).toEqual(CONTENT.settings)
+    expect(result.backup.expenses).toEqual(CONTENT.expenses)
+    expect(result.backup.closedCycles).toEqual(CONTENT.closedCycles)
+  }
+})
+
+it('refuses text that is not JSON', () => {
+  expect(parseBackup('hello')).toEqual({ ok: false, reason: 'notJson' })
+})
+
