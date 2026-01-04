@@ -20,3 +20,17 @@ it('starts without settings and without status', () => {
   expect(state.status.value).toBeNull()
 })
 
+it('computes the status once the settings are saved', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.status.value?.remainingTodayCents).toBe(2307)
+})
+
+it('adds an expense dated today', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.addExpense('12,50', ' resto ')).toEqual({ ok: true })
+  expect(state.expenses.value[0]).toMatchObject({ date: '2026-01-10', amountCents: 1250, label: 'resto' })
+  expect(state.status.value?.remainingTodayCents).toBe(1057)
+})
+
