@@ -97,3 +97,20 @@ it('proposes the leftover once a cycle is over, then remembers the decision', ()
   expect(restarted.closingProposal.value).toBeNull()
 })
 
+it('exports and imports a backup', () => {
+  const source = stateOn(10)
+  source.saveSettings(SETTINGS)
+  source.addExpense('7', 'book')
+  const target = stateOn(10)
+  expect(target.importBackup(source.exportBackup())).toEqual({ ok: true })
+  expect(target.settings.value).toEqual(SETTINGS)
+  expect(target.expenses.value).toHaveLength(1)
+})
+
+it('refuses a broken backup and keeps the data', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.importBackup('not json')).toEqual({ ok: false, reason: 'notJson' })
+  expect(state.settings.value).toEqual(SETTINGS)
+})
+
