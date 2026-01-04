@@ -34,3 +34,8 @@ it('refuses text that is not JSON', () => {
   expect(parseBackup('hello')).toEqual({ ok: false, reason: 'notJson' })
 })
 
+it('refuses JSON that is not an object', () => {
+  expect(parseBackup('42')).toEqual({ ok: false, reason: 'invalidContent' })
+  expect(parseBackup('null')).toEqual({ ok: false, reason: 'invalidContent' })
+})
+
