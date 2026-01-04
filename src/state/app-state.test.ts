@@ -42,3 +42,26 @@ it('refuses an invalid or null amount', () => {
   expect(state.expenses.value).toHaveLength(0)
 })
 
+it('removes an expense', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  state.addExpense('5', '')
+  state.removeExpense(state.expenses.value[0].identifier)
+  expect(state.expenses.value).toEqual([])
+})
+
+it('lists the newest expenses first', () => {
+  const backend = createMemoryBackend()
+  const first = stateOn(9, backend)
+  first.saveSettings(SETTINGS)
+  first.addExpense('3', 'yesterday')
+  const second = stateOn(10, backend)
+  second.addExpense('4', 'earlier today')
+  second.addExpense('5', 'later today')
+  expect(second.cycleExpenses.value.map((item) => item.label)).toEqual([
+    'later today',
+    'earlier today',
+    'yesterday',
+  ])
+})
+
