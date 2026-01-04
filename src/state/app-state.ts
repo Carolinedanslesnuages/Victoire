@@ -80,3 +80,22 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     repositories.settings.save(next)
   }
 
+  function addExpense(amountText: string, label: string): AddExpenseResult {
+    const amountCents = parseEuros(amountText)
+    if (amountCents === null) {
+      return { ok: false, reason: 'invalidAmount' }
+    }
+    if (amountCents === 0) {
+      return { ok: false, reason: 'zeroAmount' }
+    }
+    const entry: Expense = {
+      identifier: createIdentifier(),
+      date: today.value,
+      amountCents,
+      label: label.trim(),
+    }
+    expenses.value = [...expenses.value, entry]
+    repositories.expenses.saveAll(expenses.value)
+    return { ok: true }
+  }
+
