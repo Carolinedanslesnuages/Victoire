@@ -19,3 +19,15 @@ it('starts without settings and without expenses', () => {
   expect(repositories.closedCycles.list()).toEqual([])
 })
 
+it('persists the settings', () => {
+  const backend = createMemoryBackend()
+  createRepositories(backend).settings.save(SETTINGS)
+  expect(createRepositories(backend).settings.load()).toEqual(SETTINGS)
+})
+
+it('persists the expenses', () => {
+  const backend = createMemoryBackend()
+  createRepositories(backend).expenses.saveAll([EXPENSE])
+  expect(createRepositories(backend).expenses.list()).toEqual([EXPENSE])
+})
+
