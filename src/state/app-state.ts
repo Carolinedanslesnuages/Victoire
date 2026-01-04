@@ -20,3 +20,7 @@ export type AddExpenseResult =
   | { ok: true }
   | { ok: false; reason: 'invalidAmount' | 'zeroAmount' }
 
+export type ImportResult =
+  | { ok: true }
+  | { ok: false; reason: 'notJson' | 'wrongVersion' | 'invalidContent' }
+
