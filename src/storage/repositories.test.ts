@@ -38,3 +38,15 @@ it('persists the closed cycles', () => {
   expect(createRepositories(backend).closedCycles.list()).toEqual([cycle])
 })
 
+it('ignores corrupted settings', () => {
+  const backend = createMemoryBackend()
+  backend.setItem(`${STORAGE_PREFIX}settings`, '{"payday": 99}')
+  expect(createRepositories(backend).settings.load()).toBeNull()
+})
+
+it('drops corrupted expenses', () => {
+  const backend = createMemoryBackend()
+  backend.setItem(`${STORAGE_PREFIX}expenses`, JSON.stringify([EXPENSE, { oops: 1 }]))
+  expect(createRepositories(backend).expenses.list()).toEqual([EXPENSE])
+})
+
