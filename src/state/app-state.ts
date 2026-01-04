@@ -99,3 +99,20 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     return { ok: true }
   }
 
+  function removeExpense(identifier: string): void {
+    expenses.value = expenses.value.filter((expense) => expense.identifier !== identifier)
+    repositories.expenses.saveAll(expenses.value)
+  }
+
+  function decideClosing(decision: ClosingDecision): void {
+    const proposal = closingProposal.value
+    if (proposal === null) {
+      return
+    }
+    closedCycles.value = [
+      ...closedCycles.value,
+      { startDate: proposal.startDate, leftoverCents: proposal.leftoverCents, decision },
+    ]
+    repositories.closedCycles.saveAll(closedCycles.value)
+  }
+
