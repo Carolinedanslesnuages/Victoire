@@ -48,3 +48,10 @@ export function writeJson(backend: StorageBackend, key: string, value: unknown):
   }
 }
 
+export function removeKey(backend: StorageBackend, key: string): void {
+  try {
+    backend.removeItem(STORAGE_PREFIX + key)
+  } catch {
+    // Nothing to clean when the storage is unavailable.
+  }
+}
