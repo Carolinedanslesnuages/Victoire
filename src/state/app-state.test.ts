@@ -114,3 +114,11 @@ it('refuses a broken backup and keeps the data', () => {
   expect(state.settings.value).toEqual(SETTINGS)
 })
 
+it('erases everything', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  state.addExpense('7', '')
+  state.resetAll()
+  expect(state.settings.value).toBeNull()
+  expect(state.expenses.value).toEqual([])
+})
