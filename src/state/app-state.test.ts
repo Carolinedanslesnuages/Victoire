@@ -65,3 +65,22 @@ it('lists the newest expenses first', () => {
   ])
 })
 
+it('restores everything after a restart', () => {
+  const backend = createMemoryBackend()
+  const first = stateOn(10, backend)
+  first.saveSettings(SETTINGS)
+  first.addExpense('8', 'coffee')
+  const restarted = stateOn(10, backend)
+  expect(restarted.settings.value).toEqual(SETTINGS)
+  expect(restarted.expenses.value).toHaveLength(1)
+})
+
+it('moves to the next day when the date is refreshed', () => {
+  let day = 10
+  const state = createAppState(createMemoryBackend(), () => new Date(2026, 0, day, 12, 0))
+  state.saveSettings(SETTINGS)
+  day = 11
+  state.refreshToday()
+  expect(state.today.value).toBe('2026-01-11')
+})
+
