@@ -71,3 +71,12 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
       .sort((first, second) => compareIsoDates(second.date, first.date))
   })
 
+  function refreshToday(): void {
+    today.value = localTodayIso(clock())
+  }
+
+  function saveSettings(next: Settings): void {
+    settings.value = next
+    repositories.settings.save(next)
+  }
+
