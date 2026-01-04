@@ -36,3 +36,11 @@ export function createRepositories(backend: StorageBackend) {
         return writeJson(backend, KEYS.closedCycles, cycles)
       },
     },
+    clear(): void {
+      removeKey(backend, KEYS.settings)
+      removeKey(backend, KEYS.expenses)
+      removeKey(backend, KEYS.closedCycles)
+    },
+  }
+}
+
