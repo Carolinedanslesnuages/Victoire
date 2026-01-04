@@ -11,3 +11,12 @@ const KEYS = {
 
 export function createRepositories(backend: StorageBackend) {
   return {
+    settings: {
+      load(): Settings | null {
+        const value = readJson<unknown>(backend, KEYS.settings, null)
+        return isSettings(value) ? value : null
+      },
+      save(settings: Settings): boolean {
+        return writeJson(backend, KEYS.settings, settings)
+      },
+    },
