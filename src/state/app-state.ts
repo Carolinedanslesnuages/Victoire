@@ -164,3 +164,4 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
   }
 }
 
+export type AppState = ReturnType<typeof createAppState>
