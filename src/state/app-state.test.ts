@@ -84,3 +84,16 @@ it('moves to the next day when the date is refreshed', () => {
   expect(state.today.value).toBe('2026-01-11')
 })
 
+it('proposes the leftover once a cycle is over, then remembers the decision', () => {
+  const backend = createMemoryBackend()
+  const january = stateOn(20, backend)
+  january.saveSettings(SETTINGS)
+  january.addExpense('450', 'month of spending')
+  const february = createAppState(backend, () => new Date(2026, 1, 10, 12, 0))
+  expect(february.closingProposal.value?.leftoverCents).toBe(15000)
+  february.decideClosing('saved')
+  expect(february.closingProposal.value).toBeNull()
+  const restarted = createAppState(backend, () => new Date(2026, 1, 10, 12, 0))
+  expect(restarted.closingProposal.value).toBeNull()
+})
+
