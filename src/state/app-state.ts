@@ -39,3 +39,26 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
   const closedCycles = ref<ClosedCycle[]>(repositories.closedCycles.list())
   const today = ref<IsoDate>(localTodayIso(clock()))
 
+  const status = computed<DayStatus | null>(() => {
+    if (settings.value === null) {
+      return null
+    }
+    return computeDayStatus({
+      settings: settings.value,
+      expenses: expenses.value,
+      today: today.value,
+    })
+  })
+
+  const closingProposal = computed<ClosingProposal | null>(() => {
+    if (settings.value === null) {
+      return null
+    }
+    return proposeClosing({
+      settings: settings.value,
+      expenses: expenses.value,
+      closedCycles: closedCycles.value,
+      today: today.value,
+    })
+  })
+
