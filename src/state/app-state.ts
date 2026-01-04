@@ -116,3 +116,10 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     repositories.closedCycles.saveAll(closedCycles.value)
   }
 
+  function exportBackup(): string {
+    return createBackup(
+      { settings: settings.value, expenses: expenses.value, closedCycles: closedCycles.value },
+      clock(),
+    )
+  }
+
