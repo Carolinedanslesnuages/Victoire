@@ -14,3 +14,11 @@ const dayMonthFormatter = new Intl.DateTimeFormat('fr-FR', {
   timeZone: 'UTC',
 })
 
+function toUtcDate(value: IsoDate): Date {
+  const parts = parseIsoDate(value)
+  if (!parts) {
+    throw new RangeError(`Invalid ISO date: ${value}`)
+  }
+  return new Date(Date.UTC(parts.year, parts.month - 1, parts.day))
+}
+
