@@ -44,3 +44,4 @@ export function createRepositories(backend: StorageBackend) {
   }
 }
 
+export type Repositories = ReturnType<typeof createRepositories>
