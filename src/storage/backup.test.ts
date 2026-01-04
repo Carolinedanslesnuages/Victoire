@@ -48,3 +48,18 @@ it('refuses invalid settings', () => {
   expect(parseBackup(text)).toEqual({ ok: false, reason: 'invalidContent' })
 })
 
+it('drops invalid entries and keeps the valid ones', () => {
+  const text = JSON.stringify({
+    version: 1,
+    settings: null,
+    expenses: [CONTENT.expenses[0], { identifier: '' }],
+    closedCycles: 'broken',
+  })
+  const result = parseBackup(text)
+  expect(result.ok).toBe(true)
+  if (result.ok) {
+    expect(result.backup.expenses).toEqual(CONTENT.expenses)
+    expect(result.backup.closedCycles).toEqual([])
+    expect(result.backup.settings).toBeNull()
+  }
+})
