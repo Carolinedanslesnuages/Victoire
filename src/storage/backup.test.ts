@@ -39,3 +39,12 @@ it('refuses JSON that is not an object', () => {
   expect(parseBackup('null')).toEqual({ ok: false, reason: 'invalidContent' })
 })
 
+it('refuses an unknown version', () => {
+  expect(parseBackup('{"version": 2}')).toEqual({ ok: false, reason: 'wrongVersion' })
+})
+
+it('refuses invalid settings', () => {
+  const text = JSON.stringify({ version: 1, settings: { payday: 99 } })
+  expect(parseBackup(text)).toEqual({ ok: false, reason: 'invalidContent' })
+})
+
