@@ -20,3 +20,19 @@ export function createRepositories(backend: StorageBackend) {
         return writeJson(backend, KEYS.settings, settings)
       },
     },
+    expenses: {
+      list(): Expense[] {
+        return keepValid(readJson<unknown>(backend, KEYS.expenses, []), isExpense)
+      },
+      saveAll(expenses: readonly Expense[]): boolean {
+        return writeJson(backend, KEYS.expenses, expenses)
+      },
+    },
+    closedCycles: {
+      list(): ClosedCycle[] {
+        return keepValid(readJson<unknown>(backend, KEYS.closedCycles, []), isClosedCycle)
+      },
+      saveAll(cycles: readonly ClosedCycle[]): boolean {
+        return writeJson(backend, KEYS.closedCycles, cycles)
+      },
+    },
