@@ -34,3 +34,8 @@ function createIdentifier(): string {
 export function createAppState(backend: StorageBackend, clock: () => Date = () => new Date()) {
   const repositories = createRepositories(backend)
 
+  const settings = ref<Settings | null>(repositories.settings.load())
+  const expenses = ref<Expense[]>(repositories.expenses.list())
+  const closedCycles = ref<ClosedCycle[]>(repositories.closedCycles.list())
+  const today = ref<IsoDate>(localTodayIso(clock()))
+
