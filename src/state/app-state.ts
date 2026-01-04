@@ -62,3 +62,12 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     })
   })
 
+  const cycleExpenses = computed<Expense[]>(() => {
+    if (status.value === null) {
+      return []
+    }
+    return expensesInCycle(expenses.value, status.value.bounds, today.value)
+      .reverse()
+      .sort((first, second) => compareIsoDates(second.date, first.date))
+  })
+
