@@ -24,3 +24,11 @@ export type BackupParseResult =
   | { ok: true; backup: BackupFile }
   | { ok: false; reason: 'notJson' | 'wrongVersion' | 'invalidContent' }
 
+export function parseBackup(text: string): BackupParseResult {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(text)
+  } catch {
+    return { ok: false, reason: 'notJson' }
+  }
+
