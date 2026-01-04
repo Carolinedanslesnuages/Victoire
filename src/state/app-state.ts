@@ -146,3 +146,21 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     closedCycles.value = []
   }
 
+  return {
+    settings,
+    expenses,
+    today,
+    status,
+    closingProposal,
+    cycleExpenses,
+    refreshToday,
+    saveSettings,
+    addExpense,
+    removeExpense,
+    decideClosing,
+    exportBackup,
+    importBackup,
+    resetAll,
+  }
+}
+
