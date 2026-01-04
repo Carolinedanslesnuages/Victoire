@@ -9,3 +9,18 @@ export interface BackupContent {
   closedCycles: readonly ClosedCycle[]
 }
 
+export function createBackup(content: BackupContent, now: Date = new Date()): string {
+  const backup: BackupFile = {
+    version: BACKUP_VERSION,
+    exportedAt: now.toISOString(),
+    settings: content.settings,
+    expenses: [...content.expenses],
+    closedCycles: [...content.closedCycles],
+  }
+  return JSON.stringify(backup, null, 2)
+}
+
+export type BackupParseResult =
+  | { ok: true; backup: BackupFile }
+  | { ok: false; reason: 'notJson' | 'wrongVersion' | 'invalidContent' }
+
