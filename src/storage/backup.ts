@@ -32,3 +32,16 @@ export function parseBackup(text: string): BackupParseResult {
     return { ok: false, reason: 'notJson' }
   }
 
+  if (typeof parsed !== 'object' || parsed === null) {
+    return { ok: false, reason: 'invalidContent' }
+  }
+  const candidate = parsed as Record<string, unknown>
+  if (candidate.version !== BACKUP_VERSION) {
+    return { ok: false, reason: 'wrongVersion' }
+  }
+
+  const settings = candidate.settings ?? null
+  if (settings !== null && !isSettings(settings)) {
+    return { ok: false, reason: 'invalidContent' }
+  }
+
