@@ -31,3 +31,10 @@ it('persists the expenses', () => {
   expect(createRepositories(backend).expenses.list()).toEqual([EXPENSE])
 })
 
+it('persists the closed cycles', () => {
+  const backend = createMemoryBackend()
+  const cycle = { startDate: '2025-12-05', leftoverCents: 9000, decision: 'saved' as const }
+  createRepositories(backend).closedCycles.saveAll([cycle])
+  expect(createRepositories(backend).closedCycles.list()).toEqual([cycle])
+})
+
