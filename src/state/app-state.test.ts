@@ -34,3 +34,11 @@ it('adds an expense dated today', () => {
   expect(state.status.value?.remainingTodayCents).toBe(1057)
 })
 
+it('refuses an invalid or null amount', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.addExpense('abc', '')).toEqual({ ok: false, reason: 'invalidAmount' })
+  expect(state.addExpense('0', '')).toEqual({ ok: false, reason: 'zeroAmount' })
+  expect(state.expenses.value).toHaveLength(0)
+})
+
