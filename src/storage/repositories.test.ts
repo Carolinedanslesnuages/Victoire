@@ -50,3 +50,12 @@ it('drops corrupted expenses', () => {
   expect(createRepositories(backend).expenses.list()).toEqual([EXPENSE])
 })
 
+it('clears everything', () => {
+  const backend = createMemoryBackend()
+  const repositories = createRepositories(backend)
+  repositories.settings.save(SETTINGS)
+  repositories.expenses.saveAll([EXPENSE])
+  repositories.clear()
+  expect(repositories.settings.load()).toBeNull()
+  expect(repositories.expenses.list()).toEqual([])
+})
