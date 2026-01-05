@@ -69,3 +69,11 @@ export const messages = {
       'Programmez un virement automatique vers votre épargne le jour de la paie : l’argent part avant que vous puissiez le dépenser.',
   },
 
+  closing: {
+    title: 'Un cycle vient de se terminer',
+    summary: (start: string, end: string, leftover: string): string =>
+      `Du ${start} au ${end}, il vous restait ${leftover}. Voulez-vous les virer sur votre épargne ?`,
+    saved: 'C’est viré',
+    ignored: 'Pas cette fois',
+  },
+
