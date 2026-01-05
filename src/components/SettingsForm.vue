@@ -131,3 +131,13 @@ function submit(): void {
   </form>
 </template>
 
+<style scoped>
+.settings-form__preview {
+  font-weight: 600;
+}
+
+.settings-form__reminder {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+</style>
