@@ -74,3 +74,10 @@ it('refuses an unreadable amount', async () => {
   expect(wrapper.find('[role="alert"]').text()).toContain('n’est pas valide')
 })
 
+it('refuses a configuration that leaves nothing to spend', async () => {
+  const wrapper = mount(SettingsForm, { props: { initial: null, submitLabel: 'Commencer' } })
+  await fill(wrapper, { netIncome: '1000', savings: '1000', payday: '5' })
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.emitted('save')).toBeUndefined()
+  expect(wrapper.find('[role="alert"]').text()).toContain('Il ne reste rien à dépenser')
+})
