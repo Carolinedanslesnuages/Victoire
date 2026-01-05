@@ -13,3 +13,9 @@ body {
   line-height: 1.5;
 }
 
+#app {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: var(--space-medium) var(--space-medium) 5.5rem;
+}
+
