@@ -19,3 +19,14 @@ export const messages = {
     exhausted: 'Le budget du cycle est épuisé.',
   },
 
+  addExpense: {
+    title: 'Noter une dépense',
+    amountLabel: 'Montant',
+    amountPlaceholder: '12,50',
+    labelLabel: 'Libellé (facultatif)',
+    labelPlaceholder: 'Déjeuner, livre…',
+    submit: 'Ajouter',
+    invalidAmount: 'Ce montant n’est pas valide (exemple : 12,50).',
+    zeroAmount: 'Le montant doit être supérieur à zéro.',
+  },
+
