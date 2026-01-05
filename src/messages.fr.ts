@@ -77,3 +77,15 @@ export const messages = {
     ignored: 'Pas cette fois',
   },
 
+  backup: {
+    title: 'Mes données',
+    intro: 'Elles restent sur cet appareil. Exportez-les de temps en temps pour les conserver.',
+    export: 'Exporter',
+    import: 'Importer',
+    exportedName: 'victoire-sauvegarde.json',
+    imported: 'Données importées.',
+    notJson: 'Ce fichier n’est pas une sauvegarde lisible.',
+    wrongVersion: 'Cette sauvegarde vient d’une autre version.',
+    invalidContent: 'Le contenu de ce fichier est incomplet.',
+  },
+} as const
