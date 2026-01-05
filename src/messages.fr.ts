@@ -39,3 +39,20 @@ export const messages = {
     dayTotal: (amount: string): string => `Total : ${amount}`,
   },
 
+  settings: {
+    title: 'Mes réglages',
+    intro: 'Quatre montants suffisent. Victoire calcule ce que vous pouvez dépenser par jour.',
+    netIncome: 'Revenu net du mois',
+    netIncomeHint: 'Ce que vous recevez chaque mois.',
+    savings: 'À mettre de côté',
+    savingsHint: 'Épargné le jour de la paie, avant tout le reste.',
+    jointAccount: 'Versé sur le compte joint',
+    jointAccountHint: 'Votre part des dépenses communes.',
+    fixedCosts: 'Frais fixes personnels',
+    fixedCostsHint: 'Transport, abonnements, factures qui vous sont propres.',
+    payday: 'Jour de paie',
+    paydayHint: 'Le cycle va de paie en paie.',
+    start: 'Commencer',
+    save: 'Enregistrer',
+    invalidAmount: 'Un montant n’est pas valide (exemple : 1 500 ou 12,50).',
+
