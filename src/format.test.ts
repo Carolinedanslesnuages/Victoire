@@ -9,3 +9,6 @@ it('writes a date without the weekday', () => {
   expect(formatDayMonth('2026-02-05')).toBe('5 février')
 })
 
+it('refuses an invalid date', () => {
+  expect(() => formatLongDate('nope')).toThrow(RangeError)
+})
