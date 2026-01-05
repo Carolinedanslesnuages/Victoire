@@ -35,3 +35,18 @@ const emit = defineEmits<{ 'update:modelValue': [tab: TabName] }>()
   background: var(--color-surface);
 }
 
+.tab-bar__item {
+  flex: 1;
+  padding: 0.9rem 0.5rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab-bar__item--active {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+</style>
