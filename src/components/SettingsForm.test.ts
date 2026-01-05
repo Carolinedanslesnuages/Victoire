@@ -31,3 +31,15 @@ it('shows the saved values', () => {
   expect(wrapper.find<HTMLInputElement>('input[name="payday"]').element.value).toBe('5')
 })
 
+it('previews what is left each day', async () => {
+  const wrapper = mount(SettingsForm, { props: { initial: null, submitLabel: 'Commencer' } })
+  await fill(wrapper, {
+    netIncome: '3000',
+    savings: '500',
+    jointAccount: '1500',
+    fixedCosts: '400',
+    payday: '5',
+  })
+  expect(wrapper.find('.settings-form__preview').text()).toContain('600,00')
+})
+
