@@ -105,3 +105,22 @@ function submit(): void {
       />
     </label>
 
+    <label class="field">
+      <span class="field__label">{{ messages.settings.payday }}</span>
+      <span class="field__hint">{{ messages.settings.paydayHint }}</span>
+      <input
+        v-model="form.payday"
+        class="field__input"
+        type="number"
+        inputmode="numeric"
+        min="1"
+        max="31"
+        name="payday"
+      />
+    </label>
+
+    <p v-if="preview" class="settings-form__preview">
+      {{ messages.settings.preview(formatEuros(preview.pot), formatEuros(preview.daily)) }}
+    </p>
+    <p class="settings-form__reminder">{{ messages.settings.reminder }}</p>
+
