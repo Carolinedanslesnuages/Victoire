@@ -22,3 +22,7 @@ function toUtcDate(value: IsoDate): Date {
   return new Date(Date.UTC(parts.year, parts.month - 1, parts.day))
 }
 
+export function formatLongDate(value: IsoDate): string {
+  return longFormatter.format(toUtcDate(value))
+}
+
