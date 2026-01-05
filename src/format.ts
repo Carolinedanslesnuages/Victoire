@@ -26,3 +26,6 @@ export function formatLongDate(value: IsoDate): string {
   return longFormatter.format(toUtcDate(value))
 }
 
+export function formatDayMonth(value: IsoDate): string {
+  return dayMonthFormatter.format(toUtcDate(value))
+}
