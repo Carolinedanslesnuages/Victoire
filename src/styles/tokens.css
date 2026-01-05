@@ -21,3 +21,17 @@
   --font-size-big: 2.75rem;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #141a18;
+    --color-surface: #1e2623;
+    --color-text: #eef2ef;
+    --color-muted: #a2aea8;
+    --color-border: #33403b;
+    --color-primary: #5fb59f;
+    --color-primary-text: #0f1f1a;
+    --color-comfortable: #5fb59f;
+    --color-close: #e0a247;
+    --color-over: #e57a67;
+  }
+}
