@@ -35,3 +35,42 @@ const form = reactive({
   payday: String(props.initial?.payday ?? 1),
 })
 
+function parseField(text: string): number | null {
+  return text.trim() === '' ? 0 : parseEuros(text)
+}
+
+const draft = computed<Settings | null>(() => {
+  const netIncomeCents = parseField(form.netIncome)
+  const savingsCents = parseField(form.savings)
+  const jointAccountCents = parseField(form.jointAccount)
+  const fixedCostsCents = parseField(form.fixedCosts)
+  if (
+    netIncomeCents === null ||
+    savingsCents === null ||
+    jointAccountCents === null ||
+    fixedCostsCents === null
+  ) {
+    return null
+  }
+  return {
+    netIncomeCents,
+    savingsCents,
+    jointAccountCents,
+    fixedCostsCents,
+    payday: Number(form.payday),
+  }
+})
+
+const problems = computed(() => (draft.value === null ? [] : findSettingsProblems(draft.value)))
+
+const preview = computed(() => {
+  if (draft.value === null || problems.value.length > 0) {
+    return null
+  }
+  const bounds = cycleBounds(localTodayIso(), draft.value.payday)
+  return {
+    pot: computePot(draft.value),
+    daily: evenDailyBudget(draft.value, cycleLength(bounds)),
+  }
+})
+
