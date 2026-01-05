@@ -56,3 +56,10 @@ export const messages = {
     save: 'Enregistrer',
     invalidAmount: 'Un montant n’est pas valide (exemple : 1 500 ou 12,50).',
 
+    problems: {
+      incomeMissing: 'Indiquez votre revenu net du mois.',
+      negativeAmount: 'Les montants ne peuvent pas être négatifs.',
+      paydayOutOfRange: 'Le jour de paie doit être compris entre 1 et 31.',
+      potNotPositive: 'Il ne reste rien à dépenser : réduisez l’épargne ou les frais.',
+    },
+
