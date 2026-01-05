@@ -124,3 +124,10 @@ function submit(): void {
     </p>
     <p class="settings-form__reminder">{{ messages.settings.reminder }}</p>
 
+    <ul v-if="errors.length > 0" class="error" role="alert">
+      <li v-for="message in errors" :key="message">{{ message }}</li>
+    </ul>
+    <button type="submit" class="button">{{ submitLabel }}</button>
+  </form>
+</template>
+
