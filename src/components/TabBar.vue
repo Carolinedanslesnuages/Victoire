@@ -23,3 +23,15 @@ const emit = defineEmits<{ 'update:modelValue': [tab: TabName] }>()
   </nav>
 </template>
 
+<style scoped>
+.tab-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
