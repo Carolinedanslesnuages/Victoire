@@ -86,3 +86,8 @@ p {
   outline-offset: 2px;
 }
 
+.error {
+  margin: 0 0 var(--space-medium);
+  padding-left: 1.25rem;
+  color: var(--color-over);
+}
