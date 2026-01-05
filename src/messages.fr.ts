@@ -30,3 +30,12 @@ export const messages = {
     zeroAmount: 'Le montant doit être supérieur à zéro.',
   },
 
+  history: {
+    title: 'Dépenses du cycle',
+    empty: 'Aucune dépense pour l’instant.',
+    noLabel: 'Sans libellé',
+    remove: 'Supprimer',
+    removeAria: (label: string, amount: string): string => `Supprimer ${label} (${amount})`,
+    dayTotal: (amount: string): string => `Total : ${amount}`,
+  },
+
