@@ -63,3 +63,9 @@ export const messages = {
       potNotPositive: 'Il ne reste rien à dépenser : réduisez l’épargne ou les frais.',
     },
 
+    preview: (pot: string, daily: string): string =>
+      `Il vous reste ${pot} par cycle, soit environ ${daily} par jour.`,
+    reminder:
+      'Programmez un virement automatique vers votre épargne le jour de la paie : l’argent part avant que vous puissiez le dépenser.',
+  },
+
