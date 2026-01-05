@@ -10,3 +10,16 @@ import { messages } from '../messages.fr'
 const props = defineProps<{ initial: Settings | null; submitLabel: string }>()
 const emit = defineEmits<{ save: [settings: Settings] }>()
 
+type AmountField = 'netIncome' | 'savings' | 'jointAccount' | 'fixedCosts'
+
+const amountFields: { key: AmountField; label: string; hint: string }[] = [
+  { key: 'netIncome', label: messages.settings.netIncome, hint: messages.settings.netIncomeHint },
+  { key: 'savings', label: messages.settings.savings, hint: messages.settings.savingsHint },
+  {
+    key: 'jointAccount',
+    label: messages.settings.jointAccount,
+    hint: messages.settings.jointAccountHint,
+  },
+  { key: 'fixedCosts', label: messages.settings.fixedCosts, hint: messages.settings.fixedCostsHint },
+]
+
