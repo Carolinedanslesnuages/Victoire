@@ -23,3 +23,15 @@ const amountFields: { key: AmountField; label: string; hint: string }[] = [
   { key: 'fixedCosts', label: messages.settings.fixedCosts, hint: messages.settings.fixedCostsHint },
 ]
 
+function fieldFrom(cents: number | undefined): string {
+  return cents === undefined ? '' : formatEditableEuros(cents)
+}
+
+const form = reactive({
+  netIncome: fieldFrom(props.initial?.netIncomeCents),
+  savings: fieldFrom(props.initial?.savingsCents),
+  jointAccount: fieldFrom(props.initial?.jointAccountCents),
+  fixedCosts: fieldFrom(props.initial?.fixedCostsCents),
+  payday: String(props.initial?.payday ?? 1),
+})
+
