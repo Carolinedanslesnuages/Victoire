@@ -74,3 +74,19 @@ const preview = computed(() => {
   }
 })
 
+const errors = ref<string[]>([])
+
+function submit(): void {
+  errors.value = []
+  if (draft.value === null) {
+    errors.value = [messages.settings.invalidAmount]
+    return
+  }
+  if (problems.value.length > 0) {
+    errors.value = problems.value.map((problem) => messages.settings.problems[problem])
+    return
+  }
+  emit('save', draft.value)
+}
+</script>
+
