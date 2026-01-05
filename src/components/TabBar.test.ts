@@ -18,3 +18,8 @@ it('marks the current screen', () => {
   expect(current[0].text()).toBe('Historique')
 })
 
+it('emits the chosen screen', async () => {
+  const wrapper = mount(TabBar, { props: { modelValue: 'today' } })
+  await wrapper.findAll('button')[2].trigger('click')
+  expect(wrapper.emitted('update:modelValue')).toEqual([['settings']])
+})
