@@ -90,3 +90,18 @@ function submit(): void {
 }
 </script>
 
+<template>
+  <form class="settings-form" novalidate @submit.prevent="submit">
+    <label v-for="field in amountFields" :key="field.key" class="field">
+      <span class="field__label">{{ field.label }}</span>
+      <span class="field__hint">{{ field.hint }}</span>
+      <input
+        v-model="form[field.key]"
+        class="field__input"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        :name="field.key"
+      />
+    </label>
+
