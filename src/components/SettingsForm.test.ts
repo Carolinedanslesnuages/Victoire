@@ -43,3 +43,34 @@ it('previews what is left each day', async () => {
   expect(wrapper.find('.settings-form__preview').text()).toContain('600,00')
 })
 
+it('emits the settings in cents when the form is valid', async () => {
+  const wrapper = mount(SettingsForm, { props: { initial: null, submitLabel: 'Commencer' } })
+  await fill(wrapper, {
+    netIncome: '3 000',
+    savings: '500',
+    jointAccount: '1500',
+    fixedCosts: '400,50',
+    payday: '5',
+  })
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.emitted('save')).toEqual([
+    [
+      {
+        netIncomeCents: 300000,
+        savingsCents: 50000,
+        jointAccountCents: 150000,
+        fixedCostsCents: 40050,
+        payday: 5,
+      },
+    ],
+  ])
+})
+
+it('refuses an unreadable amount', async () => {
+  const wrapper = mount(SettingsForm, { props: { initial: null, submitLabel: 'Commencer' } })
+  await fill(wrapper, { netIncome: 'beaucoup', payday: '5' })
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.emitted('save')).toBeUndefined()
+  expect(wrapper.find('[role="alert"]').text()).toContain('n’est pas valide')
+})
+
