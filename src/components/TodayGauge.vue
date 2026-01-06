@@ -17,3 +17,20 @@ const levelMessage = computed(() => {
 })
 </script>
 
+<template>
+  <section class="gauge" :class="`gauge--${status.level}`" aria-live="polite">
+    <p class="gauge__label">{{ messages.today.remainingLabel }}</p>
+    <p class="gauge__amount">{{ formatEuros(status.remainingTodayCents) }}</p>
+
+    <div
+      class="gauge__track"
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      :aria-valuenow="fillPercent"
+      :aria-label="messages.today.remainingLabel"
+    >
+      <div class="gauge__fill" :style="{ width: `${fillPercent}%` }"></div>
+    </div>
+    <p class="gauge__message">{{ levelMessage }}</p>
+
