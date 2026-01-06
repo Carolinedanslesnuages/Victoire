@@ -34,3 +34,21 @@ const levelMessage = computed(() => {
     </div>
     <p class="gauge__message">{{ levelMessage }}</p>
 
+    <dl class="gauge__details">
+      <div>
+        <dt>{{ messages.today.budgetLabel }}</dt>
+        <dd>{{ formatEuros(status.budgetTodayCents) }}</dd>
+      </div>
+      <div>
+        <dt>{{ messages.today.spentLabel }}</dt>
+        <dd>{{ formatEuros(status.spentTodayCents) }}</dd>
+      </div>
+      <div>
+        <dt>{{ messages.today.cycleLabel }}</dt>
+        <dd>{{ formatEuros(status.remainingCycleCents) }}</dd>
+      </div>
+    </dl>
+    <p class="gauge__days">{{ messages.today.daysLeft(status.daysLeft) }}</p>
+  </section>
+</template>
+
