@@ -61,3 +61,8 @@ function handleSubmit(): void {
   </form>
 </template>
 
+<style scoped>
+.expense-form__error {
+  color: var(--color-over);
+}
+</style>
