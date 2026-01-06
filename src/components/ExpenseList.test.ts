@@ -26,3 +26,8 @@ it('totals each day', () => {
   expect(totals).toEqual(['Total : 8,00 €', 'Total : 15,50 €'])
 })
 
+it('names the expenses that have no label', () => {
+  const wrapper = mount(ExpenseList, { props: { expenses: EXPENSES } })
+  expect(wrapper.text()).toContain('Sans libellé')
+})
+
