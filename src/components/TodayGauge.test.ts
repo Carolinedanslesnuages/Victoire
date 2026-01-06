@@ -26,3 +26,10 @@ it('fills the bar when nothing was spent', () => {
   expect(wrapper.find('.gauge__message').text()).toBe('Vous êtes dans le rythme.')
 })
 
+it('warns when the day is almost used up', () => {
+  const status = { ...STATUS, remainingTodayCents: 300, level: 'close' as const }
+  const wrapper = mount(TodayGauge, { props: { status } })
+  expect(wrapper.classes()).toContain('gauge--close')
+  expect(wrapper.find('[role="progressbar"]').attributes('aria-valuenow')).toBe('13')
+})
+
