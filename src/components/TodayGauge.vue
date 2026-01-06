@@ -52,3 +52,40 @@ const levelMessage = computed(() => {
   </section>
 </template>
 
+<style scoped>
+.gauge {
+  margin-bottom: var(--space-medium);
+  padding: var(--space-large) var(--space-medium);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.gauge__label {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.gauge__amount {
+  margin: 0;
+  font-size: var(--font-size-big);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.gauge__track {
+  height: 0.75rem;
+  margin: var(--space-medium) 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+
+.gauge__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-comfortable);
+  transition: width 0.3s ease;
+}
+
