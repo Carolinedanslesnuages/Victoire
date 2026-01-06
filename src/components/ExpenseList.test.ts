@@ -31,3 +31,8 @@ it('names the expenses that have no label', () => {
   expect(wrapper.text()).toContain('Sans libellé')
 })
 
+it('emits the identifier of the removed expense', async () => {
+  const wrapper = mount(ExpenseList, { props: { expenses: EXPENSES } })
+  await wrapper.findAll('.expense-list__remove')[1].trigger('click')
+  expect(wrapper.emitted('remove')).toEqual([['second']])
+})
