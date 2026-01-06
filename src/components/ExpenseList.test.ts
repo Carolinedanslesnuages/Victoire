@@ -20,3 +20,9 @@ it('groups the expenses by day', () => {
   expect(dates).toEqual(['mardi 6 janvier', 'lundi 5 janvier'])
 })
 
+it('totals each day', () => {
+  const wrapper = mount(ExpenseList, { props: { expenses: EXPENSES } })
+  const totals = wrapper.findAll('.expense-list__total').map((total) => total.text().replace(/\s/g, ' '))
+  expect(totals).toEqual(['Total : 8,00 €', 'Total : 15,50 €'])
+})
+
