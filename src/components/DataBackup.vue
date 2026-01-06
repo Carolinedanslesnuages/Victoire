@@ -19,3 +19,15 @@ function downloadBackup(): void {
   URL.revokeObjectURL(link.href)
 }
 
+async function handleFile(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) {
+    return
+  }
+  const result = props.importBackup(await file.text())
+  feedback.value = result.ok ? messages.backup.imported : messages.backup[result.reason]
+  input.value = ''
+}
+</script>
+
