@@ -14,3 +14,9 @@ it('explains when there is no expense yet', () => {
   expect(wrapper.find('.expense-list__empty').text()).toBe('Aucune dépense pour l’instant.')
 })
 
+it('groups the expenses by day', () => {
+  const wrapper = mount(ExpenseList, { props: { expenses: EXPENSES } })
+  const dates = wrapper.findAll('.expense-list__date').map((heading) => heading.text())
+  expect(dates).toEqual(['mardi 6 janvier', 'lundi 5 janvier'])
+})
+
