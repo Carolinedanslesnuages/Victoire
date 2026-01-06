@@ -18,3 +18,16 @@ const groups = computed(() => {
 })
 </script>
 
+<template>
+  <section>
+    <h2>{{ messages.history.title }}</h2>
+    <p v-if="groups.length === 0" class="expense-list__empty">{{ messages.history.empty }}</p>
+
+    <article v-for="group in groups" :key="group.date" class="card">
+      <header class="expense-list__header">
+        <h3 class="expense-list__date">{{ formatLongDate(group.date) }}</h3>
+        <span class="expense-list__total">
+          {{ messages.history.dayTotal(formatEuros(group.total)) }}
+        </span>
+      </header>
+
