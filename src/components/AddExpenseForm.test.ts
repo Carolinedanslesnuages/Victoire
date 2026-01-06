@@ -28,3 +28,10 @@ it('explains an invalid amount and keeps what was typed', async () => {
   expect(wrapper.find<HTMLInputElement>('input[name="amount"]').element.value).toBe('abc')
 })
 
+it('explains a null amount', async () => {
+  const submit = () => ({ ok: false as const, reason: 'zeroAmount' as const })
+  const wrapper = mount(AddExpenseForm, { props: { submit } })
+  await wrapper.find('input[name="amount"]').setValue('0')
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.find('[role="alert"]').text()).toContain('supérieur à zéro')
+})
