@@ -15,3 +15,8 @@ const STATUS: DayStatus = {
   level: 'comfortable',
 }
 
+it('shows the amount left for today', () => {
+  const wrapper = mount(TodayGauge, { props: { status: STATUS } })
+  expect(wrapper.find('.gauge__amount').text().replace(/\s/g, ' ')).toBe('23,07 €')
+})
+
