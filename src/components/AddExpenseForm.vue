@@ -27,3 +27,20 @@ function handleSubmit(): void {
 }
 </script>
 
+<template>
+  <form class="card" novalidate @submit.prevent="handleSubmit">
+    <h2>{{ messages.addExpense.title }}</h2>
+    <label class="field">
+      <span class="field__label">{{ messages.addExpense.amountLabel }}</span>
+      <input
+        ref="amountInput"
+        v-model="amount"
+        class="field__input"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        name="amount"
+        :placeholder="messages.addExpense.amountPlaceholder"
+      />
+    </label>
+
