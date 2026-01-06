@@ -20,3 +20,9 @@ it('shows the amount left for today', () => {
   expect(wrapper.find('.gauge__amount').text().replace(/\s/g, ' ')).toBe('23,07 €')
 })
 
+it('fills the bar when nothing was spent', () => {
+  const wrapper = mount(TodayGauge, { props: { status: STATUS } })
+  expect(wrapper.find('[role="progressbar"]').attributes('aria-valuenow')).toBe('100')
+  expect(wrapper.find('.gauge__message').text()).toBe('Vous êtes dans le rythme.')
+})
+
