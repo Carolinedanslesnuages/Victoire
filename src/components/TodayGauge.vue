@@ -9,3 +9,11 @@ const props = defineProps<{ status: DayStatus }>()
 
 const fillPercent = computed(() => Math.round(gaugeFillRatio(props.status) * 100))
 
+const levelMessage = computed(() => {
+  if (props.status.level === 'over' && props.status.budgetTodayCents <= 0) {
+    return messages.today.exhausted
+  }
+  return messages.today[props.status.level]
+})
+</script>
+
