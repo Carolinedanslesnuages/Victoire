@@ -31,3 +31,8 @@ const groups = computed(() => {
         </span>
       </header>
 
+      <ul class="expense-list__items">
+        <li v-for="item in group.items" :key="item.identifier" class="expense-list__item">
+          <span>{{ item.label || messages.history.noLabel }}</span>
+          <span class="expense-list__amount">{{ formatEuros(item.amountCents) }}</span>
+
