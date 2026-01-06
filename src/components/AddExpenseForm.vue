@@ -44,3 +44,20 @@ function handleSubmit(): void {
       />
     </label>
 
+    <label class="field">
+      <span class="field__label">{{ messages.addExpense.labelLabel }}</span>
+      <input
+        v-model="label"
+        class="field__input"
+        type="text"
+        autocomplete="off"
+        name="label"
+        :placeholder="messages.addExpense.labelPlaceholder"
+      />
+    </label>
+
+    <p v-if="errorText" class="expense-form__error" role="alert">{{ errorText }}</p>
+    <button type="submit" class="button">{{ messages.addExpense.submit }}</button>
+  </form>
+</template>
+
