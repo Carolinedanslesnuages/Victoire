@@ -105,3 +105,26 @@ const levelMessage = computed(() => {
   color: var(--color-over);
 }
 
+.gauge__details {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-small);
+  margin: var(--space-medium) 0 var(--space-small);
+}
+
+.gauge__details dt {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.gauge__details dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.gauge__days {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+</style>
