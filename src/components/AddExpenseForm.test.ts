@@ -19,3 +19,12 @@ it('clears the fields after a successful entry', async () => {
   expect(wrapper.find('[role="alert"]').exists()).toBe(false)
 })
 
+it('explains an invalid amount and keeps what was typed', async () => {
+  const submit = () => ({ ok: false as const, reason: 'invalidAmount' as const })
+  const wrapper = mount(AddExpenseForm, { props: { submit } })
+  await wrapper.find('input[name="amount"]').setValue('abc')
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.find('[role="alert"]').text()).toContain('n’est pas valide')
+  expect(wrapper.find<HTMLInputElement>('input[name="amount"]').element.value).toBe('abc')
+})
+
