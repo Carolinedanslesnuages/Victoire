@@ -8,3 +8,16 @@ defineProps<{ proposal: ClosingProposal }>()
 const emit = defineEmits<{ decide: [decision: ClosingDecision] }>()
 </script>
 
+<template>
+  <section class="card closing" aria-live="polite">
+    <h2>{{ messages.closing.title }}</h2>
+    <p>
+      {{
+        messages.closing.summary(
+          formatDayMonth(proposal.startDate),
+          formatDayMonth(proposal.endDate),
+          formatEuros(proposal.leftoverCents),
+        )
+      }}
+    </p>
+
