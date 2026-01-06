@@ -89,3 +89,19 @@ const levelMessage = computed(() => {
   transition: width 0.3s ease;
 }
 
+.gauge--close .gauge__fill {
+  background: var(--color-close);
+}
+
+.gauge--over .gauge__fill {
+  background: var(--color-over);
+}
+
+.gauge--close .gauge__amount {
+  color: var(--color-close);
+}
+
+.gauge--over .gauge__amount {
+  color: var(--color-over);
+}
+
