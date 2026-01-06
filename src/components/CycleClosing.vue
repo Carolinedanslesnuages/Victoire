@@ -32,3 +32,14 @@ const emit = defineEmits<{ decide: [decision: ClosingDecision] }>()
   </section>
 </template>
 
+<style scoped>
+.closing {
+  border-color: var(--color-primary);
+}
+
+.closing__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-small);
+}
+</style>
