@@ -33,3 +33,11 @@ it('warns when the day is almost used up', () => {
   expect(wrapper.find('[role="progressbar"]').attributes('aria-valuenow')).toBe('13')
 })
 
+it('shows an empty bar and a negative amount when over', () => {
+  const status = { ...STATUS, remainingTodayCents: -693, level: 'over' as const }
+  const wrapper = mount(TodayGauge, { props: { status } })
+  expect(wrapper.classes()).toContain('gauge--over')
+  expect(wrapper.find('[role="progressbar"]').attributes('aria-valuenow')).toBe('0')
+  expect(wrapper.find('.gauge__message').text()).toContain('dépassé')
+})
+
