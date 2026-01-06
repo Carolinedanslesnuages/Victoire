@@ -91,3 +91,20 @@ const groups = computed(() => {
   padding: 0.35rem 0;
 }
 
+.expense-list__item > :first-child {
+  flex: 1;
+}
+
+.expense-list__amount {
+  font-weight: 600;
+}
+
+.expense-list__remove {
+  border: 0;
+  background: transparent;
+  color: var(--color-over);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+</style>
