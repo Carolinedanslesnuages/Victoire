@@ -15,3 +15,9 @@ it('describes the leftover and the period', () => {
   expect(text).toContain('150,00 €')
 })
 
+it('emits saved when the transfer was made', async () => {
+  const wrapper = mount(CycleClosing, { props: { proposal: PROPOSAL } })
+  await wrapper.findAll('button')[0].trigger('click')
+  expect(wrapper.emitted('decide')).toEqual([['saved']])
+})
+
