@@ -4,3 +4,7 @@ import type { ClosingDecision, ClosingProposal } from '../domain/types'
 import { formatDayMonth } from '../format'
 import { messages } from '../messages.fr'
 
+defineProps<{ proposal: ClosingProposal }>()
+const emit = defineEmits<{ decide: [decision: ClosingDecision] }>()
+</script>
+
