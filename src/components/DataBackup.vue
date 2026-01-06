@@ -10,3 +10,12 @@ const props = defineProps<{
 
 const feedback = ref('')
 
+function downloadBackup(): void {
+  const blob = new Blob([props.exportBackup()], { type: 'application/json' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = messages.backup.exportedName
+  link.click()
+  URL.revokeObjectURL(link.href)
+}
+
