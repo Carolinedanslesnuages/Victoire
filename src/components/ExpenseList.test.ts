@@ -9,3 +9,8 @@ const EXPENSES: Expense[] = [
   { identifier: 'first', date: '2026-01-05', amountCents: 300, label: '' },
 ]
 
+it('explains when there is no expense yet', () => {
+  const wrapper = mount(ExpenseList, { props: { expenses: [] } })
+  expect(wrapper.find('.expense-list__empty').text()).toBe('Aucune dépense pour l’instant.')
+})
+
