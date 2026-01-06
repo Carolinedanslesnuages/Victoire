@@ -47,3 +47,12 @@ it('says the cycle budget is exhausted when nothing is left to share', () => {
   expect(wrapper.find('.gauge__message').text()).toBe('Le budget du cycle est épuisé.')
 })
 
+it('counts the days before payday', () => {
+  expect(mount(TodayGauge, { props: { status: STATUS } }).find('.gauge__days').text()).toBe(
+    '26 jours avant la paie',
+  )
+  const lastDay = { ...STATUS, daysLeft: 1 }
+  expect(mount(TodayGauge, { props: { status: lastDay } }).find('.gauge__days').text()).toBe(
+    'Dernier jour avant la paie',
+  )
+})
