@@ -21,3 +21,8 @@ it('emits saved when the transfer was made', async () => {
   expect(wrapper.emitted('decide')).toEqual([['saved']])
 })
 
+it('emits ignored when the user declines', async () => {
+  const wrapper = mount(CycleClosing, { props: { proposal: PROPOSAL } })
+  await wrapper.findAll('button')[1].trigger('click')
+  expect(wrapper.emitted('decide')).toEqual([['ignored']])
+})
