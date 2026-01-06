@@ -41,3 +41,9 @@ it('shows an empty bar and a negative amount when over', () => {
   expect(wrapper.find('.gauge__message').text()).toContain('dépassé')
 })
 
+it('says the cycle budget is exhausted when nothing is left to share', () => {
+  const status = { ...STATUS, budgetTodayCents: 0, remainingTodayCents: 0, level: 'over' as const }
+  const wrapper = mount(TodayGauge, { props: { status } })
+  expect(wrapper.find('.gauge__message').text()).toBe('Le budget du cycle est épuisé.')
+})
+
