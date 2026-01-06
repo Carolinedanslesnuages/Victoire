@@ -73,3 +73,21 @@ const groups = computed(() => {
   text-transform: capitalize;
 }
 
+.expense-list__total {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.expense-list__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.expense-list__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-small);
+  padding: 0.35rem 0;
+}
+
