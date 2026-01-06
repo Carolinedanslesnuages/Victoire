@@ -21,3 +21,14 @@ const emit = defineEmits<{ decide: [decision: ClosingDecision] }>()
       }}
     </p>
 
+    <div class="closing__actions">
+      <button type="button" class="button" @click="emit('decide', 'saved')">
+        {{ messages.closing.saved }}
+      </button>
+      <button type="button" class="button button--quiet" @click="emit('decide', 'ignored')">
+        {{ messages.closing.ignored }}
+      </button>
+    </div>
+  </section>
+</template>
+
