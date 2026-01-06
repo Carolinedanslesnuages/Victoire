@@ -9,3 +9,9 @@ const PROPOSAL = {
   leftoverCents: 15000,
 }
 
+it('describes the leftover and the period', () => {
+  const text = mount(CycleClosing, { props: { proposal: PROPOSAL } }).text().replace(/\s/g, ' ')
+  expect(text).toContain('Du 5 janvier au 5 février')
+  expect(text).toContain('150,00 €')
+})
+
