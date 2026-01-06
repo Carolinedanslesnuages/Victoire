@@ -36,3 +36,40 @@ const groups = computed(() => {
           <span>{{ item.label || messages.history.noLabel }}</span>
           <span class="expense-list__amount">{{ formatEuros(item.amountCents) }}</span>
 
+          <button
+            type="button"
+            class="expense-list__remove"
+            :aria-label="
+              messages.history.removeAria(
+                item.label || messages.history.noLabel,
+                formatEuros(item.amountCents),
+              )
+            "
+            @click="emit('remove', item.identifier)"
+          >
+            {{ messages.history.remove }}
+          </button>
+        </li>
+      </ul>
+    </article>
+  </section>
+</template>
+
+<style scoped>
+.expense-list__empty {
+  color: var(--color-muted);
+}
+
+.expense-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-small);
+}
+
+.expense-list__date {
+  margin: 0;
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
