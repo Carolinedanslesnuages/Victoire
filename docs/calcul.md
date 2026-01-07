@@ -38,3 +38,9 @@ il n’y a ni pénalité ni joker, seulement un report.
 - **Presque épuisé** : il reste un cinquième du budget du jour, ou moins.
 - **Dépassé** : le budget du jour est dépassé, ou le reste du cycle est épuisé.
 
+## La fin du cycle
+
+Quand un nouveau cycle commence, ce qu’il restait du précédent est proposé comme virement
+supplémentaire vers l’épargne. Rien n’est proposé si aucune dépense n’avait été notée, ou si tout
+a été dépensé. La décision (viré ou non) est enregistrée pour ne pas être demandée deux fois.
+
