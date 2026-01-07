@@ -17,3 +17,6 @@ Le jour de la paie, l’argent est réparti en quatre parts :
 3. les frais fixes personnels (transport, abonnements, factures) ;
 4. **le reste**, qui est le seul montant suivi par l’application.
 
+Exemple avec 3 000 € nets : 500 € d’épargne, 1 500 € sur le compte joint et 400 € de frais fixes
+laissent 600 € pour le cycle, soit environ 20 € par jour.
+
