@@ -17,3 +17,9 @@ function mountApp(backend: StorageBackend = createMemoryBackend()) {
   return mount(App)
 }
 
+it('asks for the settings on first use', () => {
+  const wrapper = mountApp()
+  expect(wrapper.find('.onboarding').exists()).toBe(true)
+  expect(wrapper.find('input[name="netIncome"]').exists()).toBe(true)
+})
+
