@@ -23,3 +23,12 @@ it('asks for the settings on first use', () => {
   expect(wrapper.find('input[name="netIncome"]').exists()).toBe(true)
 })
 
+async function completeOnboarding(wrapper: ReturnType<typeof mountApp>) {
+  await wrapper.find('input[name="netIncome"]').setValue('3000')
+  await wrapper.find('input[name="savings"]').setValue('500')
+  await wrapper.find('input[name="jointAccount"]').setValue('1500')
+  await wrapper.find('input[name="fixedCosts"]').setValue('400')
+  await wrapper.find('input[name="payday"]').setValue('5')
+  await wrapper.find('form').trigger('submit')
+}
+
