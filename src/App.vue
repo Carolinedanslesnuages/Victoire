@@ -43,3 +43,10 @@ function handleSave(next: Settings): void {
 }
 </script>
 
+<template>
+  <main v-if="settings === null" class="onboarding">
+    <h1>{{ messages.appName }}</h1>
+    <p>{{ messages.settings.intro }}</p>
+    <SettingsForm :initial="null" :submit-label="messages.settings.start" @save="handleSave" />
+  </main>
+
