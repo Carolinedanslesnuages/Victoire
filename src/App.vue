@@ -37,3 +37,9 @@ function handleVisibility(): void {
 onMounted(() => document.addEventListener('visibilitychange', handleVisibility))
 onBeforeUnmount(() => document.removeEventListener('visibilitychange', handleVisibility))
 
+function handleSave(next: Settings): void {
+  saveSettings(next)
+  tab.value = 'today'
+}
+</script>
+
