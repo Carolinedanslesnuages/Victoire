@@ -57,3 +57,10 @@ it('lists the expense in the history', async () => {
   expect(wrapper.find('.expense-list__item').text()).toContain('livre')
 })
 
+it('remembers the settings after a reload', async () => {
+  const backend = createMemoryBackend()
+  await completeOnboarding(mountApp(backend))
+  const reloaded = mountApp(backend)
+  expect(reloaded.find('.onboarding').exists()).toBe(false)
+  expect(reloaded.find('.gauge').exists()).toBe(true)
+})
