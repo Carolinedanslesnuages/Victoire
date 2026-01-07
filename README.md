@@ -49,3 +49,10 @@ npm run typecheck  # vérification des types
 npm run build      # version de production
 ```
 
+## Choix techniques
+
+- Vue 3, TypeScript et Vite.
+- Application web installable (PWA) : on l’ajoute à l’écran d’accueil du téléphone.
+- Le calcul vit dans `src/domain`, sans dépendance à Vue, et il est couvert par des tests.
+- Les montants sont stockés en centimes pour éviter les erreurs d’arrondi.
+
