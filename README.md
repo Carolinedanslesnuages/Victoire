@@ -20,3 +20,9 @@ Le jour de la paie, l’argent est réparti en quatre parts :
 Exemple avec 3 000 € nets : 500 € d’épargne, 1 500 € sur le compte joint et 400 € de frais fixes
 laissent 600 € pour le cycle, soit environ 20 € par jour.
 
+## Le calcul
+
+Le budget du jour est ce qu’il reste sur le cycle divisé par le nombre de jours avant la prochaine
+paie, aujourd’hui compris. Ce qui n’est pas dépensé un jour est réparti sur les jours suivants ;
+un jour trop dépensé réduit les suivants. Les détails sont dans [docs/calcul.md](docs/calcul.md).
+
