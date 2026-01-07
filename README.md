@@ -56,3 +56,7 @@ npm run build      # version de production
 - Le calcul vit dans `src/domain`, sans dépendance à Vue, et il est couvert par des tests.
 - Les montants sont stockés en centimes pour éviter les erreurs d’arrondi.
 
+## Ce qui est laissé de côté
+
+Plusieurs budgets, mascotte, badges, abonnement, commandes vocales et widget : rien de cela n’est
+nécessaire pour tenir son rythme de dépense. On pourra l’ajouter plus tard si le cœur sert vraiment.
