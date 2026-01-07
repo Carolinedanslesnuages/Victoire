@@ -47,3 +47,13 @@ it('lowers the amount left after an expense', async () => {
   expect(wrapper.find('.gauge__amount').text().replace(/\s/g, ' ')).toBe('18,07 €')
 })
 
+it('lists the expense in the history', async () => {
+  const wrapper = mountApp()
+  await completeOnboarding(wrapper)
+  await wrapper.find('input[name="amount"]').setValue('7,50')
+  await wrapper.find('input[name="label"]').setValue('livre')
+  await wrapper.find('form').trigger('submit')
+  await wrapper.findAll('.tab-bar__item')[1].trigger('click')
+  expect(wrapper.find('.expense-list__item').text()).toContain('livre')
+})
+
