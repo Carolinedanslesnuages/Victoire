@@ -28,3 +28,12 @@ const {
 
 const tab = ref<TabName>('today')
 
+function handleVisibility(): void {
+  if (document.visibilityState === 'visible') {
+    refreshToday()
+  }
+}
+
+onMounted(() => document.addEventListener('visibilitychange', handleVisibility))
+onBeforeUnmount(() => document.removeEventListener('visibilitychange', handleVisibility))
+
