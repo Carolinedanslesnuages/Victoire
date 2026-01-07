@@ -40,3 +40,12 @@ async function handleFile(event: Event): Promise<void> {
         {{ messages.backup.export }}
       </button>
 
+      <label class="button button--quiet backup__import">
+        {{ messages.backup.import }}
+        <input type="file" accept="application/json,.json" hidden @change="handleFile" />
+      </label>
+    </div>
+    <p v-if="feedback" class="backup__feedback" role="status">{{ feedback }}</p>
+  </section>
+</template>
+
