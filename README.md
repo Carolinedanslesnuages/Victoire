@@ -26,3 +26,11 @@ Le budget du jour est ce qu’il reste sur le cycle divisé par le nombre de jou
 paie, aujourd’hui compris. Ce qui n’est pas dépensé un jour est réparti sur les jours suivants ;
 un jour trop dépensé réduit les suivants. Les détails sont dans [docs/calcul.md](docs/calcul.md).
 
+À la fin du cycle, ce qu’il reste vous est proposé comme virement supplémentaire vers l’épargne.
+
+## Les écrans
+
+- **Aujourd’hui** : le reste du jour, une jauge, et la saisie d’une dépense.
+- **Historique** : les dépenses du cycle, jour par jour.
+- **Réglages** : les montants, le jour de paie, l’export et l’import des données.
+
