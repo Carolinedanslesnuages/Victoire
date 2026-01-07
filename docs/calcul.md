@@ -44,3 +44,8 @@ Quand un nouveau cycle commence, ce qu’il restait du précédent est proposé 
 supplémentaire vers l’épargne. Rien n’est proposé si aucune dépense n’avait été notée, ou si tout
 a été dépensé. La décision (viré ou non) est enregistrée pour ne pas être demandée deux fois.
 
+## Limites connues
+
+- Le reste du cycle d’un cycle terminé est recalculé avec les réglages actuels : si vous les
+  modifiez, la proposition de fin de cycle se base sur les nouveaux montants.
+- Une dépense est toujours datée du jour où elle est saisie.
