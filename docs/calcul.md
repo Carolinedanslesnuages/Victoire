@@ -15,3 +15,11 @@ Avec 3 000 − 500 − 1 500 − 400, le reste du cycle est de 600 €.
 Un cycle commence le jour de paie et se termine la veille de la paie suivante. Si le jour de paie
 n’existe pas dans un mois (par exemple le 31 en février), c’est le dernier jour du mois qui compte.
 
+## Le budget du jour
+
+```
+budget du jour = (reste du cycle − dépenses avant aujourd’hui) ÷ jours restants
+```
+
+Les jours restants comptent aujourd’hui. Le résultat est arrondi à l’inférieur, au centime.
+
