@@ -34,3 +34,8 @@ un jour trop dépensé réduit les suivants. Les détails sont dans [docs/calcul
 - **Historique** : les dépenses du cycle, jour par jour.
 - **Réglages** : les montants, le jour de paie, l’export et l’import des données.
 
+## Les données
+
+Tout reste sur l’appareil, dans le stockage du navigateur. Il n’y a ni compte, ni serveur.
+Pensez à exporter vos données de temps en temps depuis les réglages.
+
