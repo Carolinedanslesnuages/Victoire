@@ -49,3 +49,19 @@ async function handleFile(event: Event): Promise<void> {
   </section>
 </template>
 
+<style scoped>
+.backup__intro {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.backup__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-small);
+}
+
+.backup__import {
+  display: inline-block;
+}
+</style>
