@@ -31,3 +31,12 @@ async function handleFile(event: Event): Promise<void> {
 }
 </script>
 
+<template>
+  <section class="card">
+    <h2>{{ messages.backup.title }}</h2>
+    <p class="backup__intro">{{ messages.backup.intro }}</p>
+    <div class="backup__actions">
+      <button type="button" class="button button--quiet" @click="downloadBackup">
+        {{ messages.backup.export }}
+      </button>
+
