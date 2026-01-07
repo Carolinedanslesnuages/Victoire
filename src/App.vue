@@ -58,3 +58,14 @@ function handleSave(next: Settings): void {
         <AddExpenseForm :submit="addExpense" />
       </template>
 
+      <ExpenseList v-else-if="tab === 'history'" :expenses="cycleExpenses" @remove="removeExpense" />
+
+      <template v-else-if="tab === 'settings'">
+        <h1>{{ messages.settings.title }}</h1>
+        <SettingsForm :initial="settings" :submit-label="messages.settings.save" @save="handleSave" />
+        <DataBackup :export-backup="exportBackup" :import-backup="importBackup" />
+      </template>
+    </main>
+    <TabBar v-model="tab" />
+  </template>
+</template>
