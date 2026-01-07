@@ -12,3 +12,19 @@ import { messages } from './messages.fr'
 import { useAppState } from './state/use-app-state'
 import type { TabName } from './tabs'
 
+const {
+  settings,
+  status,
+  closingProposal,
+  cycleExpenses,
+  refreshToday,
+  saveSettings,
+  addExpense,
+  removeExpense,
+  decideClosing,
+  exportBackup,
+  importBackup,
+} = useAppState()
+
+const tab = ref<TabName>('today')
+
