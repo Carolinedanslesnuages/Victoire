@@ -23,3 +23,18 @@ budget du jour = (reste du cycle − dépenses avant aujourd’hui) ÷ jours res
 
 Les jours restants comptent aujourd’hui. Le résultat est arrondi à l’inférieur, au centime.
 
+## Ce qu’il reste pour aujourd’hui
+
+```
+reste du jour = budget du jour − dépenses d’aujourd’hui
+```
+
+Dépenser moins que prévu fait monter le budget des jours suivants. Dépenser plus le fait baisser :
+il n’y a ni pénalité ni joker, seulement un report.
+
+## Les niveaux de la jauge
+
+- **Dans le rythme** : il reste plus d’un cinquième du budget du jour.
+- **Presque épuisé** : il reste un cinquième du budget du jour, ou moins.
+- **Dépassé** : le budget du jour est dépassé, ou le reste du cycle est épuisé.
+
