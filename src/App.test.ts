@@ -32,3 +32,18 @@ async function completeOnboarding(wrapper: ReturnType<typeof mountApp>) {
   await wrapper.find('form').trigger('submit')
 }
 
+it('shows the daily amount once configured', async () => {
+  const wrapper = mountApp()
+  await completeOnboarding(wrapper)
+  expect(wrapper.find('.gauge').exists()).toBe(true)
+  expect(wrapper.find('.gauge__amount').text().replace(/\s/g, ' ')).toBe('23,07 €')
+})
+
+it('lowers the amount left after an expense', async () => {
+  const wrapper = mountApp()
+  await completeOnboarding(wrapper)
+  await wrapper.find('input[name="amount"]').setValue('5')
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.find('.gauge__amount').text().replace(/\s/g, ' ')).toBe('18,07 €')
+})
+
