@@ -8,3 +8,5 @@
 - Écrans Aujourd’hui, Historique et Réglages.
 - Jauge colorée selon le rythme de dépense.
 
+- Données stockées sur l’appareil, avec export et import d’une sauvegarde.
+- Installation sur l’écran d’accueil (PWA).
