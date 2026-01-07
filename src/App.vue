@@ -50,3 +50,11 @@ function handleSave(next: Settings): void {
     <SettingsForm :initial="null" :submit-label="messages.settings.start" @save="handleSave" />
   </main>
 
+  <template v-else>
+    <main>
+      <template v-if="tab === 'today' && status">
+        <CycleClosing v-if="closingProposal" :proposal="closingProposal" @decide="decideClosing" />
+        <TodayGauge :status="status" />
+        <AddExpenseForm :submit="addExpense" />
+      </template>
+
