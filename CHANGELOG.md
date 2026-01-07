@@ -5,3 +5,6 @@
 - Calcul du budget du jour sur un cycle de paie à paie, avec report automatique.
 - Proposition de virement vers l’épargne à la fin du cycle.
 
+- Écrans Aujourd’hui, Historique et Réglages.
+- Jauge colorée selon le rythme de dépense.
+
