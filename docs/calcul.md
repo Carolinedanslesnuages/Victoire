@@ -12,8 +12,15 @@ Avec 3 000 − 500 − 1 500 − 400, le reste du cycle est de 600 €.
 
 ## Le cycle
 
-Un cycle commence le jour de paie et se termine la veille de la paie suivante. Si le jour de paie
-n’existe pas dans un mois (par exemple le 31 en février), c’est le dernier jour du mois qui compte.
+Un cycle commence le jour de paie et se termine la veille de la paie suivante.
+
+Le jour de paie habituel (par exemple le 25) n’est qu’une estimation :
+
+- si ce jour n’existe pas dans le mois (le 31 en février), c’est le dernier jour du mois ;
+- s’il tombe un samedi, un dimanche ou un jour férié français, la paie est estimée au jour ouvré
+  suivant (le 25 décembre 2026 donne ainsi le lundi 28) ;
+- quand la paie arrive, vous indiquez le jour réel dans l’application : le cycle commence ce jour-là,
+  qu’il soit plus tôt ou plus tard que l’estimation.
 
 ## Le budget du jour
 

@@ -1,5 +1,10 @@
 # Journal des changements
 
+## 0.1.1
+
+- Jour de paie estimé au jour ouvré suivant (week-ends et jours fériés français).
+- Confirmation du jour réel de paie : le cycle se recale sur la date indiquée.
+
 ## 0.1.0
 
 - Calcul du budget du jour sur un cycle de paie à paie, avec report automatique.
