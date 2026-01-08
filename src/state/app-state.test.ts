@@ -204,3 +204,23 @@ it('keeps the expense unchanged when the update is refused', () => {
   expect(state.updateExpense(identifier, { amountText: 'x', label: '', date: '2026-01-10' })).toEqual({ ok: false, reason: 'invalidAmount' })
   expect(state.expenses.value[0].amountCents).toBe(500)
 })
+
+it('reviews the finished cycles and adds up the savings', () => {
+  const backend = createMemoryBackend()
+  const january = stateOn(20, backend)
+  january.saveSettings(SETTINGS)
+  january.addExpense('450', 'month of spending')
+  const february = createAppState(backend, () => new Date(2026, 1, 10, 12, 0))
+  expect(february.reviews.value).toHaveLength(1)
+  expect(february.savedTotalCents.value).toBe(50000)
+  february.decideClosing('saved')
+  expect(february.savedTotalCents.value).toBe(65000)
+})
+
+it('has nothing to review before the first cycle ends', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  state.addExpense('5', '')
+  expect(state.reviews.value).toEqual([])
+  expect(state.savedTotalCents.value).toBe(0)
+})

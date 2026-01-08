@@ -3,6 +3,8 @@ import { paydayToConfirm } from '../domain/cycle'
 import { compareIsoDates, isValidIsoDate, localTodayIso } from '../domain/dates'
 import { computeDayStatus, expensesInCycle } from '../domain/allowance'
 import { proposeClosing } from '../domain/closing'
+import { reviewCycles, totalSaved } from '../domain/review'
+import type { CycleReview } from '../domain/review'
 import { parseEuros } from '../domain/money'
 import type {
   ClosedCycle,
@@ -84,6 +86,21 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
       recordedPaydays: paydays.value,
     })
   })
+
+  const reviews = computed<CycleReview[]>(() => {
+    if (settings.value === null) {
+      return []
+    }
+    return reviewCycles({
+      settings: settings.value,
+      expenses: expenses.value,
+      closedCycles: closedCycles.value,
+      today: today.value,
+      recordedPaydays: paydays.value,
+    })
+  })
+
+  const savedTotalCents = computed<number>(() => totalSaved(reviews.value))
 
   const paydayQuestion = computed<IsoDate | null>(() => {
     if (settings.value === null) {
@@ -259,6 +276,8 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     status,
     closingProposal,
     paydayQuestion,
+    reviews,
+    savedTotalCents,
     cycleExpenses,
     refreshToday,
     saveSettings,
