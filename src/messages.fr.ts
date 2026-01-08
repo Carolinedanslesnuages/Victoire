@@ -91,6 +91,30 @@ export const messages = {
     ignored: 'Pas cette fois',
   },
 
+  review: {
+    title: 'Cycles précédents',
+    period: (start: string, end: string): string => `Du ${start} au ${end}`,
+    spent: (spent: string, pot: string): string => `Dépensé : ${spent} sur ${pot}`,
+    leftover: (amount: string): string => `Reste : ${amount}`,
+    overshoot: (amount: string): string => `Dépassé de ${amount}`,
+    overspentDays: (count: number): string => {
+      if (count === 0) {
+        return 'Aucun jour dépassé'
+      }
+      return count === 1 ? '1 jour dépassé' : `${count} jours dépassés`
+    },
+    decisionSaved: 'Reste viré sur l’épargne',
+    decisionIgnored: 'Reste non viré',
+    saved: (amount: string): string => `Épargné sur ce cycle : ${amount}`,
+  },
+
+  savings: {
+    title: 'Épargné depuis le début',
+    detail: (cycles: number): string =>
+      cycles === 1 ? 'Sur 1 cycle terminé' : `Sur ${cycles} cycles terminés`,
+    assumption: 'Compte l’épargne programmée de chaque cycle, plus les restes que vous avez virés.',
+  },
+
   payday: {
     title: 'Votre paie est-elle arrivée ?',
     question: (date: string): string =>

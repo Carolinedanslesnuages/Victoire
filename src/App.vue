@@ -2,9 +2,11 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import AddExpenseForm from './components/AddExpenseForm.vue'
 import CycleClosing from './components/CycleClosing.vue'
+import CycleReviewList from './components/CycleReviewList.vue'
 import DataBackup from './components/DataBackup.vue'
 import ExpenseList from './components/ExpenseList.vue'
 import PaydayConfirmation from './components/PaydayConfirmation.vue'
+import SavingsSummary from './components/SavingsSummary.vue'
 import SettingsForm from './components/SettingsForm.vue'
 import TabBar from './components/TabBar.vue'
 import TodayGauge from './components/TodayGauge.vue'
@@ -19,6 +21,8 @@ const {
   status,
   closingProposal,
   paydayQuestion,
+  reviews,
+  savedTotalCents,
   recordPayday,
   startWithRemaining,
   cycleExpenses,
@@ -76,16 +80,19 @@ function handleSave(next: Settings, remainingCents: number | null): void {
         <CycleClosing v-if="closingProposal" :proposal="closingProposal" @decide="decideClosing" />
         <TodayGauge :status="status" />
         <AddExpenseForm :submit="addExpense" :today="today" :cycle-start="status.bounds.start" />
+        <SavingsSummary v-if="reviews.length > 0" :total-cents="savedTotalCents" :cycles="reviews.length" />
       </template>
 
-      <ExpenseList
-        v-else-if="tab === 'history' && status"
-        :expenses="cycleExpenses"
-        :today="today"
-        :cycle-start="status.bounds.start"
-        :update="updateExpense"
-        @remove="removeExpense"
-      />
+      <template v-else-if="tab === 'history' && status">
+        <ExpenseList
+          :expenses="cycleExpenses"
+          :today="today"
+          :cycle-start="status.bounds.start"
+          :update="updateExpense"
+          @remove="removeExpense"
+        />
+        <CycleReviewList :reviews="reviews" />
+      </template>
 
       <template v-else-if="tab === 'settings'">
         <h1>{{ messages.settings.title }}</h1>
