@@ -56,4 +56,5 @@ export interface BackupFile {
   settings: Settings | null
   expenses: Expense[]
   closedCycles: ClosedCycle[]
+  paydays: IsoDate[]
 }

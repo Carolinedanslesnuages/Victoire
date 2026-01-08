@@ -8,12 +8,13 @@ export interface ClosingInput {
   expenses: readonly Expense[]
   closedCycles: readonly ClosedCycle[]
   today: IsoDate
+  recordedPaydays?: readonly IsoDate[]
 }
 
 export function proposeClosing(input: ClosingInput): ClosingProposal | null {
-  const { settings, expenses, closedCycles, today } = input
-  const current = cycleBounds(today, settings.payday)
-  const previous = previousCycleBounds(current, settings.payday)
+  const { settings, expenses, closedCycles, today, recordedPaydays = [] } = input
+  const current = cycleBounds(today, settings.payday, recordedPaydays)
+  const previous = previousCycleBounds(current, settings.payday, recordedPaydays)
 
   if (closedCycles.some((cycle) => cycle.startDate === previous.start)) {
     return null

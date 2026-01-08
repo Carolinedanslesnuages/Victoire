@@ -39,11 +39,12 @@ export interface DayStatusInput {
   settings: Settings
   expenses: readonly Expense[]
   today: IsoDate
+  recordedPaydays?: readonly IsoDate[]
 }
 
 export function computeDayStatus(input: DayStatusInput): DayStatus {
-  const { settings, expenses, today } = input
-  const bounds = cycleBounds(today, settings.payday)
+  const { settings, expenses, today, recordedPaydays = [] } = input
+  const bounds = cycleBounds(today, settings.payday, recordedPaydays)
   const potCents = computePot(settings)
   const cycleExpenses = expensesInCycle(expenses, bounds, today)
 
