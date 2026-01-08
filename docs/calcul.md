@@ -58,6 +58,20 @@ Victoire en déduit ce qui est déjà dépensé (reste du cycle − reste indiqu
 une dépense datée du début du cycle, intitulée « Déjà dépensé avant Victoire ». Elle apparaît dans
 l’historique et peut être supprimée.
 
+## Modifier une dépense
+
+Une dépense peut être datée d’un jour du cycle en cours (jamais dans le futur ni avant la paie) et
+modifiée depuis l’historique : montant, libellé et jour. Le budget du jour est recalculé.
+
+## Le bilan et l’épargne suivie
+
+Pour chaque cycle terminé qui contient au moins une dépense, le bilan indique ce qui a été dépensé,
+ce qu’il restait, le nombre de jours où le budget du jour a été dépassé, et si le reste a été viré.
+
+L’épargne suivie est la somme, sur ces cycles, de l’épargne programmée (celle des réglages) et des
+restes virés. Victoire suppose que le virement programmé a bien eu lieu : elle ne voit pas votre
+compte en banque.
+
 ## Limites connues
 
 - Le reste du cycle d’un cycle terminé est recalculé avec les réglages actuels : si vous les

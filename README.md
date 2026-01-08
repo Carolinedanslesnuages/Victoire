@@ -30,8 +30,8 @@ un jour trop dépensé réduit les suivants. Les détails sont dans [docs/calcul
 
 ## Les écrans
 
-- **Aujourd’hui** : le reste du jour, une jauge, et la saisie d’une dépense.
-- **Historique** : les dépenses du cycle, jour par jour.
+- **Aujourd’hui** : le reste du jour, une jauge, la saisie d’une dépense et le total épargné.
+- **Historique** : les dépenses du cycle, jour par jour, modifiables, puis le bilan des cycles précédents.
 - **Réglages** : les montants, le jour de paie, l’export et l’import des données.
 
 ## Les données

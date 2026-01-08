@@ -1,5 +1,11 @@
 # Journal des changements
 
+## 0.2.0
+
+- Choix du jour d’une dépense (dans le cycle en cours) et modification depuis l’historique.
+- Bilan des cycles précédents : dépensé, reste, jours dépassés, reste viré ou non.
+- Total épargné depuis le début, affiché sur l’écran du jour.
+
 ## 0.1.1
 
 - Jour de paie estimé au jour ouvré suivant (week-ends et jours fériés français).
