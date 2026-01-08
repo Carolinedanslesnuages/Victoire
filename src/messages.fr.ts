@@ -50,8 +50,9 @@ export const messages = {
     jointAccountHint: 'Votre part des dépenses communes.',
     fixedCosts: 'Frais fixes personnels',
     fixedCostsHint: 'Transport, abonnements, factures qui vous sont propres.',
-    payday: 'Jour de paie',
-    paydayHint: 'Le cycle va de paie en paie.',
+    payday: 'Jour de paie habituel',
+    paydayHint:
+      'Si ce jour tombe un week-end ou un jour férié, la paie est estimée au jour ouvré suivant. Vous confirmez la vraie date quand elle arrive.',
     start: 'Commencer',
     save: 'Enregistrer',
     invalidAmount: 'Un montant n’est pas valide (exemple : 1 500 ou 12,50).',
@@ -75,6 +76,14 @@ export const messages = {
       `Du ${start} au ${end}, il vous restait ${leftover}. Voulez-vous les virer sur votre épargne ?`,
     saved: 'C’est viré',
     ignored: 'Pas cette fois',
+  },
+
+  payday: {
+    title: 'Votre paie est-elle arrivée ?',
+    question: (date: string): string =>
+      `Elle est prévue vers le ${date}. Quand elle arrive, indiquez le jour réel : le nouveau cycle commence ce jour-là.`,
+    dateLabel: 'Jour où elle est arrivée',
+    confirm: 'Ma paie est arrivée',
   },
 
   backup: {

@@ -4,6 +4,7 @@ import AddExpenseForm from './components/AddExpenseForm.vue'
 import CycleClosing from './components/CycleClosing.vue'
 import DataBackup from './components/DataBackup.vue'
 import ExpenseList from './components/ExpenseList.vue'
+import PaydayConfirmation from './components/PaydayConfirmation.vue'
 import SettingsForm from './components/SettingsForm.vue'
 import TabBar from './components/TabBar.vue'
 import TodayGauge from './components/TodayGauge.vue'
@@ -14,8 +15,11 @@ import type { TabName } from './tabs'
 
 const {
   settings,
+  today,
   status,
   closingProposal,
+  paydayQuestion,
+  recordPayday,
   cycleExpenses,
   refreshToday,
   saveSettings,
@@ -53,6 +57,12 @@ function handleSave(next: Settings): void {
   <template v-else>
     <main>
       <template v-if="tab === 'today' && status">
+        <PaydayConfirmation
+          v-if="paydayQuestion"
+          :nominal-date="paydayQuestion"
+          :today="today"
+          @confirm="recordPayday"
+        />
         <CycleClosing v-if="closingProposal" :proposal="closingProposal" @decide="decideClosing" />
         <TodayGauge :status="status" />
         <AddExpenseForm :submit="addExpense" />
