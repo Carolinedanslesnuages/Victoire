@@ -131,6 +131,26 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     repositories.closedCycles.saveAll(closedCycles.value)
   }
 
+  function startWithRemaining(remainingCents: number, label: string): boolean {
+    const current = status.value
+    if (current === null) {
+      return false
+    }
+    const spentCents = current.potCents - remainingCents
+    if (spentCents <= 0) {
+      return false
+    }
+    const entry: Expense = {
+      identifier: createIdentifier(),
+      date: current.bounds.start,
+      amountCents: spentCents,
+      label,
+    }
+    expenses.value = [...expenses.value, entry]
+    repositories.expenses.saveAll(expenses.value)
+    return true
+  }
+
   function recordPayday(date: IsoDate): RecordPaydayResult {
     if (!isValidIsoDate(date)) {
       return { ok: false, reason: 'invalidDate' }
@@ -194,6 +214,7 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     addExpense,
     removeExpense,
     decideClosing,
+    startWithRemaining,
     recordPayday,
     exportBackup,
     importBackup,

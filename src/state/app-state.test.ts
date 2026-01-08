@@ -153,3 +153,19 @@ it('keeps the recorded paydays in a backup', () => {
   target.importBackup(source.exportBackup())
   expect(target.status.value?.bounds.start).toBe('2026-01-06')
 })
+
+it('turns the remaining amount into what was already spent this cycle', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.startWithRemaining(30000, 'avant')).toBe(true)
+  expect(state.expenses.value[0]).toMatchObject({ date: '2026-01-05', amountCents: 30000, label: 'avant' })
+  expect(state.status.value?.spentCycleCents).toBe(30000)
+  expect(state.status.value?.budgetTodayCents).toBe(1153)
+})
+
+it('adds nothing when the remaining amount is the whole pot or more', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.startWithRemaining(60000, 'avant')).toBe(false)
+  expect(state.expenses.value).toEqual([])
+})
