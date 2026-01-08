@@ -169,3 +169,38 @@ it('adds nothing when the remaining amount is the whole pot or more', () => {
   expect(state.startWithRemaining(60000, 'avant')).toBe(false)
   expect(state.expenses.value).toEqual([])
 })
+
+it('adds an expense on an earlier day of the cycle', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.addExpense('9', 'forgotten', '2026-01-08')).toEqual({ ok: true })
+  expect(state.expenses.value[0].date).toBe('2026-01-08')
+  expect(state.status.value?.spentTodayCents).toBe(0)
+})
+
+it('refuses an expense dated in the future, before the cycle or on an invalid day', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.addExpense('9', '', '2026-01-11')).toEqual({ ok: false, reason: 'futureDate' })
+  expect(state.addExpense('9', '', '2026-01-04')).toEqual({ ok: false, reason: 'outOfCycle' })
+  expect(state.addExpense('9', '', '2026-02-30')).toEqual({ ok: false, reason: 'invalidDate' })
+  expect(state.expenses.value).toEqual([])
+})
+
+it('updates the amount, the label and the day of an expense', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  state.addExpense('5', 'coffee')
+  const { identifier } = state.expenses.value[0]
+  expect(state.updateExpense(identifier, { amountText: '7,50', label: ' tea ', date: '2026-01-09' })).toEqual({ ok: true })
+  expect(state.expenses.value[0]).toEqual({ identifier, date: '2026-01-09', amountCents: 750, label: 'tea' })
+})
+
+it('keeps the expense unchanged when the update is refused', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  state.addExpense('5', 'coffee')
+  const { identifier } = state.expenses.value[0]
+  expect(state.updateExpense(identifier, { amountText: 'x', label: '', date: '2026-01-10' })).toEqual({ ok: false, reason: 'invalidAmount' })
+  expect(state.expenses.value[0].amountCents).toBe(500)
+})

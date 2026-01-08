@@ -17,9 +17,24 @@ import { createBackup, parseBackup } from '../storage/backup'
 import { createRepositories } from '../storage/repositories'
 import type { StorageBackend } from '../storage/storage'
 
-export type AddExpenseResult =
-  | { ok: true }
-  | { ok: false; reason: 'invalidAmount' | 'zeroAmount' }
+export type ExpenseFailure =
+  | 'invalidAmount'
+  | 'zeroAmount'
+  | 'invalidDate'
+  | 'futureDate'
+  | 'outOfCycle'
+
+export type AddExpenseResult = { ok: true } | { ok: false; reason: ExpenseFailure }
+
+export interface ExpenseFields {
+  amountText: string
+  label: string
+  date: IsoDate
+}
+
+type CheckedFields =
+  | { ok: true; amountCents: number; label: string; date: IsoDate }
+  | { ok: false; reason: ExpenseFailure }
 
 export type RecordPaydayResult =
   | { ok: true }
@@ -95,21 +110,57 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     repositories.settings.save(next)
   }
 
-  function addExpense(amountText: string, label: string): AddExpenseResult {
-    const amountCents = parseEuros(amountText)
+  function checkFields(fields: ExpenseFields): CheckedFields {
+    const amountCents = parseEuros(fields.amountText)
     if (amountCents === null) {
       return { ok: false, reason: 'invalidAmount' }
     }
     if (amountCents === 0) {
       return { ok: false, reason: 'zeroAmount' }
     }
+    if (!isValidIsoDate(fields.date)) {
+      return { ok: false, reason: 'invalidDate' }
+    }
+    if (compareIsoDates(fields.date, today.value) > 0) {
+      return { ok: false, reason: 'futureDate' }
+    }
+    const cycleStart = status.value?.bounds.start
+    if (cycleStart !== undefined && compareIsoDates(fields.date, cycleStart) < 0) {
+      return { ok: false, reason: 'outOfCycle' }
+    }
+    return { ok: true, amountCents, label: fields.label.trim(), date: fields.date }
+  }
+
+  function addExpense(
+    amountText: string,
+    label: string,
+    date: IsoDate = today.value,
+  ): AddExpenseResult {
+    const checked = checkFields({ amountText, label, date })
+    if (!checked.ok) {
+      return checked
+    }
     const entry: Expense = {
       identifier: createIdentifier(),
-      date: today.value,
-      amountCents,
-      label: label.trim(),
+      date: checked.date,
+      amountCents: checked.amountCents,
+      label: checked.label,
     }
     expenses.value = [...expenses.value, entry]
+    repositories.expenses.saveAll(expenses.value)
+    return { ok: true }
+  }
+
+  function updateExpense(identifier: string, fields: ExpenseFields): AddExpenseResult {
+    const checked = checkFields(fields)
+    if (!checked.ok) {
+      return checked
+    }
+    expenses.value = expenses.value.map((expense) =>
+      expense.identifier === identifier
+        ? { ...expense, date: checked.date, amountCents: checked.amountCents, label: checked.label }
+        : expense,
+    )
     repositories.expenses.saveAll(expenses.value)
     return { ok: true }
   }
@@ -212,6 +263,7 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     refreshToday,
     saveSettings,
     addExpense,
+    updateExpense,
     removeExpense,
     decideClosing,
     startWithRemaining,
