@@ -51,6 +51,13 @@ Quand un nouveau cycle commence, ce qu’il restait du précédent est proposé 
 supplémentaire vers l’épargne. Rien n’est proposé si aucune dépense n’avait été notée, ou si tout
 a été dépensé. La décision (viré ou non) est enregistrée pour ne pas être demandée deux fois.
 
+## Commencer en cours de cycle
+
+À l’installation, le champ facultatif « reste actuel » permet de démarrer au milieu d’un cycle.
+Victoire en déduit ce qui est déjà dépensé (reste du cycle − reste indiqué) et l’enregistre comme
+une dépense datée du début du cycle, intitulée « Déjà dépensé avant Victoire ». Elle apparaît dans
+l’historique et peut être supprimée.
+
 ## Limites connues
 
 - Le reste du cycle d’un cycle terminé est recalculé avec les réglages actuels : si vous les

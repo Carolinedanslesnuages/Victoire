@@ -4,6 +4,7 @@
 
 - Jour de paie estimé au jour ouvré suivant (week-ends et jours fériés français).
 - Confirmation du jour réel de paie : le cycle se recale sur la date indiquée.
+- Démarrage en cours de cycle : on indique ce qu’il reste, Victoire en déduit ce qui est déjà dépensé.
 
 ## 0.1.0
 
