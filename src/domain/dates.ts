@@ -75,3 +75,7 @@ export function compareIsoDates(first: IsoDate, second: IsoDate): number {
   }
   return first < second ? -1 : 1
 }
+
+export function dayOfWeek(value: IsoDate): number {
+  return new Date(toUtcTime(value)).getUTCDay()
+}

@@ -3,6 +3,7 @@ import {
   addDays,
   clampDayToMonth,
   compareIsoDates,
+  dayOfWeek,
   daysInMonth,
   diffInDays,
   isValidIsoDate,
@@ -79,4 +80,10 @@ it('compares ISO dates', () => {
   expect(compareIsoDates('2026-01-05', '2026-01-06')).toBe(-1)
   expect(compareIsoDates('2026-01-06', '2026-01-05')).toBe(1)
   expect(compareIsoDates('2026-01-05', '2026-01-05')).toBe(0)
+})
+
+it('finds the day of the week', () => {
+  expect(dayOfWeek('2026-01-05')).toBe(1)
+  expect(dayOfWeek('2026-01-04')).toBe(0)
+  expect(dayOfWeek('2026-01-10')).toBe(6)
 })
