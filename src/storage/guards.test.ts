@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { isClosedCycle, isExpense, isSettings, keepValid } from './guards'
+import { isClosedCycle, isExpense, isIsoDateString, isSettings, keepValid } from './guards'
 
 const SETTINGS = {
   netIncomeCents: 300000,
@@ -44,4 +44,10 @@ it('checks closed cycles', () => {
 it('keeps only valid entries of a list', () => {
   expect(keepValid([EXPENSE, { nope: true }], isExpense)).toEqual([EXPENSE])
   expect(keepValid('not a list', isExpense)).toEqual([])
+})
+
+it('recognizes ISO date strings', () => {
+  expect(isIsoDateString('2026-01-05')).toBe(true)
+  expect(isIsoDateString('2026-13-01')).toBe(false)
+  expect(isIsoDateString(20260105)).toBe(false)
 })

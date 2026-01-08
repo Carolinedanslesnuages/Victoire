@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
-import { compareIsoDates, localTodayIso } from '../domain/dates'
+import { paydayToConfirm } from '../domain/cycle'
+import { compareIsoDates, isValidIsoDate, localTodayIso } from '../domain/dates'
 import { computeDayStatus, expensesInCycle } from '../domain/allowance'
 import { proposeClosing } from '../domain/closing'
 import { parseEuros } from '../domain/money'
@@ -20,6 +21,10 @@ export type AddExpenseResult =
   | { ok: true }
   | { ok: false; reason: 'invalidAmount' | 'zeroAmount' }
 
+export type RecordPaydayResult =
+  | { ok: true }
+  | { ok: false; reason: 'invalidDate' | 'futureDate' }
+
 export type ImportResult =
   | { ok: true }
   | { ok: false; reason: 'notJson' | 'wrongVersion' | 'invalidContent' }
@@ -37,6 +42,7 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
   const settings = ref<Settings | null>(repositories.settings.load())
   const expenses = ref<Expense[]>(repositories.expenses.list())
   const closedCycles = ref<ClosedCycle[]>(repositories.closedCycles.list())
+  const paydays = ref<IsoDate[]>(repositories.paydays.list())
   const today = ref<IsoDate>(localTodayIso(clock()))
 
   const status = computed<DayStatus | null>(() => {
@@ -47,6 +53,7 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
       settings: settings.value,
       expenses: expenses.value,
       today: today.value,
+      recordedPaydays: paydays.value,
     })
   })
 
@@ -59,7 +66,15 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
       expenses: expenses.value,
       closedCycles: closedCycles.value,
       today: today.value,
+      recordedPaydays: paydays.value,
     })
+  })
+
+  const paydayQuestion = computed<IsoDate | null>(() => {
+    if (settings.value === null) {
+      return null
+    }
+    return paydayToConfirm(today.value, settings.value.payday, paydays.value)
   })
 
   const cycleExpenses = computed<Expense[]>(() => {
@@ -116,9 +131,26 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     repositories.closedCycles.saveAll(closedCycles.value)
   }
 
+  function recordPayday(date: IsoDate): RecordPaydayResult {
+    if (!isValidIsoDate(date)) {
+      return { ok: false, reason: 'invalidDate' }
+    }
+    if (compareIsoDates(date, today.value) > 0) {
+      return { ok: false, reason: 'futureDate' }
+    }
+    paydays.value = [...paydays.value.filter((recorded) => recorded !== date), date]
+    repositories.paydays.saveAll(paydays.value)
+    return { ok: true }
+  }
+
   function exportBackup(): string {
     return createBackup(
-      { settings: settings.value, expenses: expenses.value, closedCycles: closedCycles.value },
+      {
+        settings: settings.value,
+        expenses: expenses.value,
+        closedCycles: closedCycles.value,
+        paydays: paydays.value,
+      },
       clock(),
     )
   }
@@ -131,11 +163,13 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     settings.value = result.backup.settings
     expenses.value = result.backup.expenses
     closedCycles.value = result.backup.closedCycles
+    paydays.value = result.backup.paydays
     if (result.backup.settings !== null) {
       repositories.settings.save(result.backup.settings)
     }
     repositories.expenses.saveAll(expenses.value)
     repositories.closedCycles.saveAll(closedCycles.value)
+    repositories.paydays.saveAll(paydays.value)
     return { ok: true }
   }
 
@@ -144,6 +178,7 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     settings.value = null
     expenses.value = []
     closedCycles.value = []
+    paydays.value = []
   }
 
   return {
@@ -152,12 +187,14 @@ export function createAppState(backend: StorageBackend, clock: () => Date = () =
     today,
     status,
     closingProposal,
+    paydayQuestion,
     cycleExpenses,
     refreshToday,
     saveSettings,
     addExpense,
     removeExpense,
     decideClosing,
+    recordPayday,
     exportBackup,
     importBackup,
     resetAll,

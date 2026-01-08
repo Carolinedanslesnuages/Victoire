@@ -59,3 +59,11 @@ it('clears everything', () => {
   expect(repositories.settings.load()).toBeNull()
   expect(repositories.expenses.list()).toEqual([])
 })
+
+it('persists the recorded paydays and ignores invalid ones', () => {
+  const backend = createMemoryBackend()
+  createRepositories(backend).paydays.saveAll(['2026-11-25'])
+  expect(createRepositories(backend).paydays.list()).toEqual(['2026-11-25'])
+  backend.setItem(`${STORAGE_PREFIX}paydays`, JSON.stringify(['2026-11-25', 'soon']))
+  expect(createRepositories(backend).paydays.list()).toEqual(['2026-11-25'])
+})

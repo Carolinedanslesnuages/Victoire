@@ -1,5 +1,5 @@
-import type { BackupFile, ClosedCycle, Expense, Settings } from '../domain/types'
-import { isClosedCycle, isExpense, isSettings, keepValid } from './guards'
+import type { BackupFile, ClosedCycle, Expense, IsoDate, Settings } from '../domain/types'
+import { isClosedCycle, isExpense, isIsoDateString, isSettings, keepValid } from './guards'
 
 export const BACKUP_VERSION = 1
 
@@ -7,6 +7,7 @@ export interface BackupContent {
   settings: Settings | null
   expenses: readonly Expense[]
   closedCycles: readonly ClosedCycle[]
+  paydays: readonly IsoDate[]
 }
 
 export function createBackup(content: BackupContent, now: Date = new Date()): string {
@@ -16,6 +17,7 @@ export function createBackup(content: BackupContent, now: Date = new Date()): st
     settings: content.settings,
     expenses: [...content.expenses],
     closedCycles: [...content.closedCycles],
+    paydays: [...content.paydays],
   }
   return JSON.stringify(backup, null, 2)
 }
@@ -53,6 +55,7 @@ export function parseBackup(text: string): BackupParseResult {
       settings,
       expenses: keepValid(candidate.expenses, isExpense),
       closedCycles: keepValid(candidate.closedCycles, isClosedCycle),
+      paydays: keepValid(candidate.paydays, isIsoDateString),
     },
   }
 }

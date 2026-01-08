@@ -122,3 +122,34 @@ it('erases everything', () => {
   expect(state.settings.value).toBeNull()
   expect(state.expenses.value).toEqual([])
 })
+
+it('starts the cycle on the recorded payday', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.recordPayday('2026-01-06')).toEqual({ ok: true })
+  expect(state.status.value?.bounds.start).toBe('2026-01-06')
+})
+
+it('refuses a payday in the future or a date that does not exist', () => {
+  const state = stateOn(10)
+  state.saveSettings(SETTINGS)
+  expect(state.recordPayday('2026-01-11')).toEqual({ ok: false, reason: 'futureDate' })
+  expect(state.recordPayday('2026-02-30')).toEqual({ ok: false, reason: 'invalidDate' })
+})
+
+it('asks about the payday until it is recorded', () => {
+  const state = stateOn(4)
+  state.saveSettings(SETTINGS)
+  expect(state.paydayQuestion.value).toBe('2026-01-05')
+  state.recordPayday('2026-01-04')
+  expect(state.paydayQuestion.value).toBeNull()
+})
+
+it('keeps the recorded paydays in a backup', () => {
+  const source = stateOn(10)
+  source.saveSettings(SETTINGS)
+  source.recordPayday('2026-01-06')
+  const target = stateOn(10)
+  target.importBackup(source.exportBackup())
+  expect(target.status.value?.bounds.start).toBe('2026-01-06')
+})

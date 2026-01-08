@@ -11,6 +11,7 @@ const CONTENT = {
   },
   expenses: [{ identifier: 'abc', date: '2026-01-05', amountCents: 1250, label: 'resto' }],
   closedCycles: [{ startDate: '2025-12-05', leftoverCents: 9000, decision: 'saved' as const }],
+  paydays: ['2025-12-26'],
 }
 
 it('writes the version and the export date', () => {
@@ -27,6 +28,7 @@ it('restores what was exported', () => {
     expect(result.backup.settings).toEqual(CONTENT.settings)
     expect(result.backup.expenses).toEqual(CONTENT.expenses)
     expect(result.backup.closedCycles).toEqual(CONTENT.closedCycles)
+    expect(result.backup.paydays).toEqual(CONTENT.paydays)
   }
 })
 

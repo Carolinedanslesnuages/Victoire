@@ -1,6 +1,10 @@
 import { isValidIsoDate } from '../domain/dates'
 import type { ClosedCycle, Expense, Settings } from '../domain/types'
 
+export function isIsoDateString(value: unknown): value is string {
+  return typeof value === 'string' && isValidIsoDate(value)
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
