@@ -20,6 +20,7 @@ const {
   closingProposal,
   paydayQuestion,
   recordPayday,
+  startWithRemaining,
   cycleExpenses,
   refreshToday,
   saveSettings,
@@ -41,8 +42,11 @@ function handleVisibility(): void {
 onMounted(() => document.addEventListener('visibilitychange', handleVisibility))
 onBeforeUnmount(() => document.removeEventListener('visibilitychange', handleVisibility))
 
-function handleSave(next: Settings): void {
+function handleSave(next: Settings, remainingCents: number | null): void {
   saveSettings(next)
+  if (remainingCents !== null) {
+    startWithRemaining(remainingCents, messages.settings.openingLabel)
+  }
   tab.value = 'today'
 }
 </script>
@@ -51,7 +55,12 @@ function handleSave(next: Settings): void {
   <main v-if="settings === null" class="onboarding">
     <h1>{{ messages.appName }}</h1>
     <p>{{ messages.settings.intro }}</p>
-    <SettingsForm :initial="null" :submit-label="messages.settings.start" @save="handleSave" />
+    <SettingsForm
+      :initial="null"
+      :submit-label="messages.settings.start"
+      ask-remaining
+      @save="handleSave"
+    />
   </main>
 
   <template v-else>
@@ -72,7 +81,12 @@ function handleSave(next: Settings): void {
 
       <template v-else-if="tab === 'settings'">
         <h1>{{ messages.settings.title }}</h1>
-        <SettingsForm :initial="settings" :submit-label="messages.settings.save" @save="handleSave" />
+        <SettingsForm
+          :initial="settings"
+          :submit-label="messages.settings.save"
+          :ask-remaining="cycleExpenses.length === 0"
+          @save="handleSave"
+        />
         <DataBackup :export-backup="exportBackup" :import-backup="importBackup" />
       </template>
     </main>

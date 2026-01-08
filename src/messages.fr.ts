@@ -56,6 +56,11 @@ export const messages = {
     start: 'Commencer',
     save: 'Enregistrer',
     invalidAmount: 'Un montant n’est pas valide (exemple : 1 500 ou 12,50).',
+    remaining: 'Reste actuel sur ce cycle (facultatif)',
+    remainingHint:
+      'Si vous commencez en cours de cycle : ce qu’il vous reste aujourd’hui sur votre argent perso. Victoire en déduit ce qui est déjà dépensé.',
+    remainingTooHigh: (pot: string): string => `Le reste ne peut pas dépasser ${pot}.`,
+    openingLabel: 'Déjà dépensé avant Victoire',
 
     problems: {
       incomeMissing: 'Indiquez votre revenu net du mois.',

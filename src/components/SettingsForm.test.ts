@@ -62,6 +62,7 @@ it('emits the settings in cents when the form is valid', async () => {
         fixedCostsCents: 40050,
         payday: 5,
       },
+      null,
     ],
   ])
 })
@@ -80,4 +81,39 @@ it('refuses a configuration that leaves nothing to spend', async () => {
   await wrapper.find('form').trigger('submit')
   expect(wrapper.emitted('save')).toBeUndefined()
   expect(wrapper.find('[role="alert"]').text()).toContain('Il ne reste rien à dépenser')
+})
+
+const COMPLETE = { netIncome: '3000', savings: '500', jointAccount: '1500', fixedCosts: '400', payday: '25' }
+
+it('does not ask for the remaining amount unless requested', () => {
+  const wrapper = mount(SettingsForm, { props: { initial: null, submitLabel: 'Commencer' } })
+  expect(wrapper.find('input[name="remaining"]').exists()).toBe(false)
+})
+
+it('emits the remaining amount when it is typed', async () => {
+  const wrapper = mount(SettingsForm, {
+    props: { initial: null, submitLabel: 'Commencer', askRemaining: true },
+  })
+  await fill(wrapper, { ...COMPLETE, remaining: '40' })
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.emitted('save')?.[0][1]).toBe(4000)
+})
+
+it('emits no remaining amount when the field is left empty', async () => {
+  const wrapper = mount(SettingsForm, {
+    props: { initial: null, submitLabel: 'Commencer', askRemaining: true },
+  })
+  await fill(wrapper, COMPLETE)
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.emitted('save')?.[0][1]).toBeNull()
+})
+
+it('refuses a remaining amount larger than the pot', async () => {
+  const wrapper = mount(SettingsForm, {
+    props: { initial: null, submitLabel: 'Commencer', askRemaining: true },
+  })
+  await fill(wrapper, { ...COMPLETE, remaining: '700' })
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.emitted('save')).toBeUndefined()
+  expect(wrapper.find('[role="alert"]').text()).toContain('ne peut pas dépasser')
 })

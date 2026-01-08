@@ -64,3 +64,15 @@ it('remembers the settings after a reload', async () => {
   expect(reloaded.find('.onboarding').exists()).toBe(false)
   expect(reloaded.find('.gauge').exists()).toBe(true)
 })
+
+it('starts from the remaining amount when the cycle is already under way', async () => {
+  const wrapper = mountApp()
+  await wrapper.find('input[name="netIncome"]').setValue('3000')
+  await wrapper.find('input[name="savings"]').setValue('500')
+  await wrapper.find('input[name="jointAccount"]').setValue('1500')
+  await wrapper.find('input[name="fixedCosts"]').setValue('400')
+  await wrapper.find('input[name="payday"]').setValue('5')
+  await wrapper.find('input[name="remaining"]').setValue('300')
+  await wrapper.find('form').trigger('submit')
+  expect(wrapper.find('.gauge__amount').text().replace(/\s/g, ' ')).toBe('11,53 €')
+})

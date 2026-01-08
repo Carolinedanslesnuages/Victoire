@@ -7,8 +7,8 @@ import { computePot, evenDailyBudget, findSettingsProblems } from '../domain/pot
 import type { Settings } from '../domain/types'
 import { messages } from '../messages.fr'
 
-const props = defineProps<{ initial: Settings | null; submitLabel: string }>()
-const emit = defineEmits<{ save: [settings: Settings] }>()
+const props = defineProps<{ initial: Settings | null; submitLabel: string; askRemaining?: boolean }>()
+const emit = defineEmits<{ save: [settings: Settings, remainingCents: number | null] }>()
 
 type AmountField = 'netIncome' | 'savings' | 'jointAccount' | 'fixedCosts'
 
@@ -33,6 +33,7 @@ const form = reactive({
   jointAccount: fieldFrom(props.initial?.jointAccountCents),
   fixedCosts: fieldFrom(props.initial?.fixedCostsCents),
   payday: String(props.initial?.payday ?? 1),
+  remaining: '',
 })
 
 function parseField(text: string): number | null {
@@ -86,7 +87,20 @@ function submit(): void {
     errors.value = problems.value.map((problem) => messages.settings.problems[problem])
     return
   }
-  emit('save', draft.value)
+  let remainingCents: number | null = null
+  if (props.askRemaining && form.remaining.trim() !== '') {
+    remainingCents = parseEuros(form.remaining)
+    if (remainingCents === null) {
+      errors.value = [messages.settings.invalidAmount]
+      return
+    }
+    const potCents = computePot(draft.value)
+    if (remainingCents > potCents) {
+      errors.value = [messages.settings.remainingTooHigh(formatEuros(potCents))]
+      return
+    }
+  }
+  emit('save', draft.value, remainingCents)
 }
 </script>
 
@@ -116,6 +130,19 @@ function submit(): void {
         min="1"
         max="31"
         name="payday"
+      />
+    </label>
+
+    <label v-if="askRemaining" class="field">
+      <span class="field__label">{{ messages.settings.remaining }}</span>
+      <span class="field__hint">{{ messages.settings.remainingHint }}</span>
+      <input
+        v-model="form.remaining"
+        class="field__input"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        name="remaining"
       />
     </label>
 
