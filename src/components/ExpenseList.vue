@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { totalOf } from '../domain/allowance'
-import { formatEuros } from '../domain/money'
-import type { Expense } from '../domain/types'
+import { formatEditableEuros, formatEuros } from '../domain/money'
+import type { Expense, IsoDate } from '../domain/types'
 import { formatLongDate } from '../format'
 import { messages } from '../messages.fr'
+import type { AddExpenseResult, ExpenseFields } from '../state/app-state'
 
-const props = defineProps<{ expenses: Expense[] }>()
+const props = defineProps<{
+  expenses: Expense[]
+  today: IsoDate
+  cycleStart: IsoDate
+  update: (identifier: string, fields: ExpenseFields) => AddExpenseResult
+}>()
 const emit = defineEmits<{ remove: [identifier: string] }>()
 
 const groups = computed(() => {
@@ -16,6 +22,35 @@ const groups = computed(() => {
   }
   return [...byDate.entries()].map(([date, items]) => ({ date, items, total: totalOf(items) }))
 })
+
+const editing = ref<string | null>(null)
+const draft = reactive<ExpenseFields>({ amountText: '', label: '', date: '' })
+const errorText = ref('')
+
+function startEdit(expense: Expense): void {
+  editing.value = expense.identifier
+  draft.amountText = formatEditableEuros(expense.amountCents)
+  draft.label = expense.label
+  draft.date = expense.date
+  errorText.value = ''
+}
+
+function cancelEdit(): void {
+  editing.value = null
+  errorText.value = ''
+}
+
+function saveEdit(): void {
+  if (editing.value === null) {
+    return
+  }
+  const result = props.update(editing.value, { ...draft })
+  if (result.ok) {
+    cancelEdit()
+    return
+  }
+  errorText.value = messages.addExpense[result.reason]
+}
 </script>
 
 <template>
@@ -33,22 +68,77 @@ const groups = computed(() => {
 
       <ul class="expense-list__items">
         <li v-for="item in group.items" :key="item.identifier" class="expense-list__item">
-          <span>{{ item.label || messages.history.noLabel }}</span>
-          <span class="expense-list__amount">{{ formatEuros(item.amountCents) }}</span>
-
-          <button
-            type="button"
-            class="expense-list__remove"
-            :aria-label="
-              messages.history.removeAria(
-                item.label || messages.history.noLabel,
-                formatEuros(item.amountCents),
-              )
-            "
-            @click="emit('remove', item.identifier)"
+          <form
+            v-if="editing === item.identifier"
+            class="expense-list__edit"
+            novalidate
+            @submit.prevent="saveEdit"
           >
-            {{ messages.history.remove }}
-          </button>
+            <input
+              v-model="draft.amountText"
+              class="field__input"
+              type="text"
+              inputmode="decimal"
+              autocomplete="off"
+              name="amount"
+              :aria-label="messages.addExpense.amountLabel"
+            />
+            <input
+              v-model="draft.label"
+              class="field__input"
+              type="text"
+              autocomplete="off"
+              name="label"
+              :aria-label="messages.addExpense.labelLabel"
+            />
+            <input
+              v-model="draft.date"
+              class="field__input"
+              type="date"
+              name="date"
+              :min="cycleStart"
+              :max="today"
+              :aria-label="messages.addExpense.dateLabel"
+            />
+            <p v-if="errorText" class="expense-list__error" role="alert">{{ errorText }}</p>
+            <div class="expense-list__edit-actions">
+              <button type="submit" class="button">{{ messages.history.save }}</button>
+              <button type="button" class="button button--quiet" @click="cancelEdit">
+                {{ messages.history.cancel }}
+              </button>
+            </div>
+          </form>
+
+          <template v-else>
+            <span>{{ item.label || messages.history.noLabel }}</span>
+            <span class="expense-list__amount">{{ formatEuros(item.amountCents) }}</span>
+            <button
+              type="button"
+              class="expense-list__action expense-list__edit-button"
+              :aria-label="
+                messages.history.editAria(
+                  item.label || messages.history.noLabel,
+                  formatEuros(item.amountCents),
+                )
+              "
+              @click="startEdit(item)"
+            >
+              {{ messages.history.edit }}
+            </button>
+            <button
+              type="button"
+              class="expense-list__action expense-list__remove"
+              :aria-label="
+                messages.history.removeAria(
+                  item.label || messages.history.noLabel,
+                  formatEuros(item.amountCents),
+                )
+              "
+              @click="emit('remove', item.identifier)"
+            >
+              {{ messages.history.remove }}
+            </button>
+          </template>
         </li>
       </ul>
     </article>
@@ -99,12 +189,31 @@ const groups = computed(() => {
   font-weight: 600;
 }
 
-.expense-list__remove {
+.expense-list__action {
   border: 0;
   background: transparent;
-  color: var(--color-over);
+  color: var(--color-primary);
   font: inherit;
   font-size: 0.875rem;
   cursor: pointer;
+}
+
+.expense-list__remove {
+  color: var(--color-over);
+}
+
+.expense-list__edit {
+  display: grid;
+  gap: var(--space-small);
+}
+
+.expense-list__edit-actions {
+  display: flex;
+  gap: var(--space-small);
+}
+
+.expense-list__error {
+  margin: 0;
+  color: var(--color-over);
 }
 </style>

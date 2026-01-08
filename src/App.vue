@@ -25,6 +25,7 @@ const {
   refreshToday,
   saveSettings,
   addExpense,
+  updateExpense,
   removeExpense,
   decideClosing,
   exportBackup,
@@ -74,10 +75,17 @@ function handleSave(next: Settings, remainingCents: number | null): void {
         />
         <CycleClosing v-if="closingProposal" :proposal="closingProposal" @decide="decideClosing" />
         <TodayGauge :status="status" />
-        <AddExpenseForm :submit="addExpense" />
+        <AddExpenseForm :submit="addExpense" :today="today" :cycle-start="status.bounds.start" />
       </template>
 
-      <ExpenseList v-else-if="tab === 'history'" :expenses="cycleExpenses" @remove="removeExpense" />
+      <ExpenseList
+        v-else-if="tab === 'history' && status"
+        :expenses="cycleExpenses"
+        :today="today"
+        :cycle-start="status.bounds.start"
+        :update="updateExpense"
+        @remove="removeExpense"
+      />
 
       <template v-else-if="tab === 'settings'">
         <h1>{{ messages.settings.title }}</h1>

@@ -28,6 +28,10 @@ export const messages = {
     submit: 'Ajouter',
     invalidAmount: 'Ce montant n’est pas valide (exemple : 12,50).',
     zeroAmount: 'Le montant doit être supérieur à zéro.',
+    dateLabel: 'Jour',
+    invalidDate: 'Cette date n’est pas valide.',
+    futureDate: 'Le jour ne peut pas être dans le futur.',
+    outOfCycle: 'Ce jour est avant le début du cycle en cours.',
   },
 
   history: {
@@ -35,6 +39,10 @@ export const messages = {
     empty: 'Aucune dépense pour l’instant.',
     noLabel: 'Sans libellé',
     remove: 'Supprimer',
+    edit: 'Modifier',
+    save: 'Enregistrer',
+    cancel: 'Annuler',
+    editAria: (label: string, amount: string): string => `Modifier ${label} (${amount})`,
     removeAria: (label: string, amount: string): string => `Supprimer ${label} (${amount})`,
     dayTotal: (amount: string): string => `Total : ${amount}`,
   },

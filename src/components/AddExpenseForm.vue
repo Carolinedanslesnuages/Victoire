@@ -1,29 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import type { IsoDate } from '../domain/types'
 import { messages } from '../messages.fr'
 import type { AddExpenseResult } from '../state/app-state'
 
-const props = defineProps<{ submit: (amountText: string, label: string) => AddExpenseResult }>()
+const props = defineProps<{
+  submit: (amountText: string, label: string, date: IsoDate) => AddExpenseResult
+  today: IsoDate
+  cycleStart: IsoDate
+}>()
 
 const amount = ref('')
 const label = ref('')
+const date = ref<IsoDate>(props.today)
 const errorText = ref('')
 const amountInput = ref<HTMLInputElement | null>(null)
 
+watch(
+  () => props.today,
+  (value) => {
+    date.value = value
+  },
+)
+
 function handleSubmit(): void {
-  const result = props.submit(amount.value, label.value)
+  const result = props.submit(amount.value, label.value, date.value)
   if (result.ok) {
     amount.value = ''
     label.value = ''
+    date.value = props.today
     errorText.value = ''
     amountInput.value?.focus()
     return
   }
 
-  errorText.value =
-    result.reason === 'zeroAmount'
-      ? messages.addExpense.zeroAmount
-      : messages.addExpense.invalidAmount
+  errorText.value = messages.addExpense[result.reason]
 }
 </script>
 
@@ -53,6 +64,18 @@ function handleSubmit(): void {
         autocomplete="off"
         name="label"
         :placeholder="messages.addExpense.labelPlaceholder"
+      />
+    </label>
+
+    <label class="field">
+      <span class="field__label">{{ messages.addExpense.dateLabel }}</span>
+      <input
+        v-model="date"
+        class="field__input"
+        type="date"
+        name="date"
+        :min="cycleStart"
+        :max="today"
       />
     </label>
 
